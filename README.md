@@ -17,6 +17,12 @@ A production-ready Flutter project template implementing Clean Architecture prin
 - **Riverpod State Management** — Powerful and testable state management solution
 - **Multi-language Support** — Full internationalization with easy language switching and localized assets
 - **Locale-Aware Navigation** — Router integration with locale-based navigation support
+- **Analytics Integration** — Flexible analytics system for tracking user behavior and app performance
+- **Push Notifications** — Complete notification handling with deep linking and background processing
+- **Biometric Authentication** — Secure fingerprint and face recognition support
+- **Feature Flags** — A/B testing and staged rollouts with remote configuration
+- **Advanced Image Handling** — Lazy loading, caching, SVG support, image effects, and animated placeholders
+- **Structured Logging** — Comprehensive logging system with levels, tags, and performance tracking
 - **Advanced Caching System** — Memory and disk caching with TTL, encryption, and type-safe APIs
 - **Dynamic Theming** — Customizable themes with light/dark mode support and persistence
 - **Comprehensive Utilities** — Rich set of extensions for DateTime, BuildContext, Widget, String, and more
@@ -34,6 +40,7 @@ Comprehensive documentation is available in the `/docs` folder:
 - [Architecture Guide](docs/ARCHITECTURE_GUIDE.md) - Detailed explanation of the project structure and principles
 - [Utilities Guide](docs/UTILITIES_GUIDE.md) - How to use the utility extensions and helpers
 - [Localization Guide](docs/LOCALIZATION_GUIDE.md) - Complete guide to multi-language support
+- [Image Handling Guide](docs/IMAGE_HANDLING_GUIDE.md) - Advanced guide for image loading, processing, and effects
 - [Interactive Documentation](docs/index.html) - Browser-based interactive documentation with examples
 - [DateTime Extensions Guide](docs/datetime_extensions.html) - Complete reference for date and time utilities
 
@@ -164,6 +171,221 @@ Quickly scaffold new features with all the necessary files:
 ```
 
 ## 📝 Core Features
+
+### Analytics Integration
+
+Track user interactions and app performance with a flexible analytics system:
+
+```dart
+// Access analytics
+final analytics = ref.watch(analyticsProvider);
+
+// Log screen views
+analytics.logScreenView('HomeScreen', parameters: {'referrer': 'deeplink'});
+
+// Log user actions
+analytics.logUserAction(
+  action: 'button_tap',
+  category: 'engagement',
+  label: 'sign_up_button',
+);
+
+// Track errors
+analytics.logError(
+  errorType: 'network_error',
+  message: 'Failed to fetch user data',
+  isFatal: false,
+);
+
+// Measure performance
+analytics.logPerformance(
+  name: 'image_processing',
+  value: 340.5,
+  unit: 'ms',
+);
+
+// Use automatic screen tracking
+return AnalyticsScreenView(
+  screenName: 'ProductDetailsScreen',
+  parameters: {'product_id': product.id},
+  child: Scaffold(/* ... */),
+);
+```
+
+### Push Notifications
+
+Complete notification handling with deep linking and background processing:
+
+```dart
+// Access notification service
+final service = ref.watch(notificationServiceProvider);
+
+// Request permission
+final status = await service.requestPermission();
+
+// Show a local notification
+await service.showLocalNotification(
+  id: 'msg-123',
+  title: 'New message',
+  body: 'You received a new message from John',
+  action: '/chat/john',
+  channel: 'messages',
+);
+
+// Subscribe to topics
+await service.subscribeToTopic('news');
+
+// Handle notification taps through the deep link handler
+final deepLinkHandler = ref.watch(notificationDeepLinkHandlerProvider);
+final pendingDeepLink = deepLinkHandler.pendingDeepLink;
+if (pendingDeepLink != null) {
+  router.push(pendingDeepLink);
+  deepLinkHandler.clearPendingDeepLink();
+}
+```
+
+### Biometric Authentication
+
+Secure fingerprint and face recognition for protecting sensitive operations:
+
+```dart
+// Access biometric authentication
+final biometricAuth = ref.watch(biometricAuthControllerProvider);
+
+// Check if biometrics are available
+final isAvailable = await ref.watch(biometricsAvailableProvider.future);
+
+// Authenticate the user
+if (isAvailable) {
+  final result = await biometricAuth.authenticate(
+    reason: 'Please authenticate to access your account',
+    authReason: AuthReason.appAccess,
+  );
+  
+  if (result == BiometricResult.success) {
+    // User authenticated successfully
+    navigator.push('/secure_area');
+  }
+}
+
+// Check if session has expired
+if (biometricAuth.isAuthenticationNeeded(timeout: Duration(minutes: 5))) {
+  // Re-authenticate the user
+}
+```
+
+### Feature Flags
+
+Runtime feature toggling for A/B testing and staged rollouts:
+
+```dart
+// Access feature flag service
+final service = ref.watch(featureFlagServiceProvider);
+
+// Check if a feature is enabled
+if (service.isFeatureEnabled('premium_features')) {
+  // Show premium features
+}
+
+// Get a configuration value
+final apiTimeout = service.getInt('api_timeout_ms', defaultValue: 30000);
+
+// Using the provider helpers
+final isDarkModeEnabled = ref.watch(featureFlagProvider('enable_dark_mode', defaultValue: true));
+final primaryColor = ref.watch(colorConfigProvider('primary_color', defaultValue: Colors.blue));
+
+// Use the feature flag widget
+return FeatureFlag(
+  featureKey: 'experimental_ui',
+  child: NewExperimentalWidget(),
+  fallback: ClassicWidget(),
+);
+```
+
+### Advanced Image Handling
+
+Optimized image loading with caching, SVG support, effects, and beautiful placeholders:
+
+```dart
+// Process images
+final processor = ref.watch(imageProcessorProvider);
+final thumbnail = await processor.generateThumbnail(
+  imageData: imageBytes,
+  maxDimension: 200,
+  quality: 80,
+);
+
+// Advanced image widget with shimmer placeholders
+return AdvancedImage(
+  imageUrl: 'https://example.com/image.jpg',
+  width: 300,
+  height: 200,
+  fit: BoxFit.cover,
+  placeholder: ShimmerPlaceholder(
+    borderRadius: BorderRadius.circular(8),
+  ),
+  useThumbnailPreview: true,
+  fadeInDuration: Duration(milliseconds: 300),
+);
+
+// SVG rendering with coloring
+SvgImage.asset(
+  'assets/images/icon.svg',
+  width: 48,
+  height: 48,
+  color: Theme.of(context).primaryColor,
+);
+
+// Apply visual effects to images
+ImageTransformer(
+  effect: ImageEffectConfig(
+    effectType: ImageEffectType.sepia,
+    intensity: 0.7,
+  ),
+  child: Image.network('https://example.com/photo.jpg'),
+);
+```
+
+### Structured Logging
+
+Comprehensive logging with levels, tags, and performance tracking:
+
+```dart
+// Access the logger
+final logger = ref.watch(loggerProvider);
+
+// Log with different levels
+logger.d('Debug message');
+logger.i('User logged in', data: {'user_id': userId});
+logger.w('Resource is running low', data: {'memory': '85%'});
+logger.e('Operation failed', error: exception, stackTrace: stackTrace);
+
+// Create a tagged logger for a specific component
+final apiLogger = ref.watch(taggedLoggerProvider('API'));
+apiLogger.i('Request started', data: {'endpoint': '/users'});
+
+// Track performance
+final result = logger.timeSync('Sort operation', () {
+  return sortItems(largeList);
+});
+
+final response = await logger.timeAsync('API request', () async {
+  return await api.fetchData();
+});
+
+// Use logger mixin in a class
+class UserRepository with LoggerMixin {
+  Future<User> fetchUser(String id) async {
+    logInfo('Fetching user', data: {'id': id});
+    try {
+      // ... implementation
+    } catch (e, stack) {
+      logError('Failed to fetch user', error: e, stackTrace: stack);
+      rethrow;
+    }
+  }
+}
+```
 
 ### Multi-language Support
 
@@ -338,7 +560,13 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## 🔍 Core Modules
 
+- **Analytics**: Comprehensive event tracking with privacy controls
+- **Authentication**: Secure biometric authentication with session management
+- **Feature Flags**: Runtime feature toggling with A/B testing support
+- **Images**: Advanced image handling with processing, caching, SVG support, visual effects, and animated placeholders
 - **Localization**: Multi-language support with context extensions and asset localization
+- **Logging**: Structured logging with levels, tags, and performance tracking
+- **Notifications**: Complete push notification system with deep linking
 - **Error Handling**: Custom Failure class hierarchy for consistent error handling
 - **Network**: Type-safe API client with automatic error handling and retry mechanisms
 - **Storage**: Secure storage for sensitive data with encryption support
