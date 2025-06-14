@@ -15,13 +15,15 @@ A production-ready Flutter project template implementing Clean Architecture prin
 
 - **Clean Architecture** — Separation of concerns with domain, data, and presentation layers
 - **Riverpod State Management** — Powerful and testable state management solution
-- **Multi-language Support** — Full internationalization with easy language switching
+- **Multi-language Support** — Full internationalization with easy language switching and localized assets
+- **Locale-Aware Navigation** — Router integration with locale-based navigation support
 - **Advanced Caching System** — Memory and disk caching with TTL, encryption, and type-safe APIs
 - **Dynamic Theming** — Customizable themes with light/dark mode support and persistence
 - **Comprehensive Utilities** — Rich set of extensions for DateTime, BuildContext, Widget, String, and more
 - **Error Handling** — Consistent error handling with custom Failure classes
 - **Dependency Injection** — Clean dependency management with Riverpod
 - **Code Generation Tools** — Feature generator for rapid development
+- **Project Renaming Tools** — Easy app and package renaming across all platforms
 - **Example Implementations** — Ready-to-use screens demonstrating the architecture
 - **Extensive Documentation** — Detailed guides for architecture, utilities, and extensions
 
@@ -31,6 +33,7 @@ Comprehensive documentation is available in the `/docs` folder:
 
 - [Architecture Guide](docs/ARCHITECTURE_GUIDE.md) - Detailed explanation of the project structure and principles
 - [Utilities Guide](docs/UTILITIES_GUIDE.md) - How to use the utility extensions and helpers
+- [Localization Guide](docs/LOCALIZATION_GUIDE.md) - Complete guide to multi-language support
 - [Interactive Documentation](docs/index.html) - Browser-based interactive documentation with examples
 - [DateTime Extensions Guide](docs/datetime_extensions.html) - Complete reference for date and time utilities
 
@@ -38,32 +41,42 @@ Comprehensive documentation is available in the `/docs` folder:
 
 The project follows a feature-first organization with a core module for shared functionality:
 
-```
+```plaintext
 lib/
 ├── core/            # Core functionality used across features
+│   ├── cli/         # Command-line utilities
 │   ├── constants/   # App-wide constants
+│   ├── docs/        # Documentation helpers
 │   ├── error/       # Error handling
+│   ├── generators/  # Code generation helpers
 │   ├── localization/ # Internationalization
 │   ├── network/     # Network services
 │   ├── providers/   # Core providers
-│   ├── router/      # Routing
+│   ├── router/      # Routing with locale support
 │   ├── storage/     # Local storage & caching
 │   ├── theme/       # Theming
 │   ├── ui/          # Shared UI components
 │   └── utils/       # Utility functions and extensions
 ├── examples/        # Example implementations
+│   ├── cache_example.dart
+│   ├── language_selector.dart
+│   ├── localization_demo.dart
+│   ├── localization_assets_demo.dart
+│   └── theme_showcase.dart
 ├── features/        # Feature modules
 │   ├── auth/        # Authentication feature
 │   ├── home/        # Home screen feature
+│   ├── settings/    # App settings feature
 │   └── ui_showcase/ # UI component showcase
 ├── gen/             # Generated code
 ├── l10n/            # Localization files
+│   └── arb/         # ARB translation files for multiple languages
 └── main.dart        # App entry point
 ```
 
 Each feature follows the Clean Architecture pattern with three layers:
 
-```
+```plaintext
 feature/
 ├── data/            # Data layer
 │   ├── datasources/ # Remote and local data sources
@@ -74,8 +87,8 @@ feature/
 │   ├── repositories/ # Repository interfaces
 │   └── usecases/    # Business logic
 └── presentation/    # Presentation layer
-    ├── pages/       # UI pages
     ├── providers/   # State management
+    ├── screens/     # UI screens
     └── widgets/     # UI components
 ```
 
@@ -90,26 +103,101 @@ feature/
 ### Installation
 
 1. Clone the repository:
+
    ```bash
    git clone https://github.com/yourusername/flutter_riverpod_clean_architecture.git
    ```
 
 2. Navigate to the project directory:
+
    ```bash
    cd flutter_riverpod_clean_architecture
    ```
 
 3. Install dependencies:
+
    ```bash
    flutter pub get
    ```
 
 4. Run the app:
+
    ```bash
    flutter run
    ```
 
+## 🛠️ Utility Scripts
+
+The project includes several utility scripts that help streamline development:
+
+### App Renaming
+
+Easily rebrand your app across all platforms with a single command:
+
+```bash
+./rename_app.sh --app-name "Your App Name" --package-name com.yourcompany.appname
+```
+
+This script updates:
+
+- App display name in Android, iOS, macOS, Windows, Linux, and Web
+- Package/bundle identifiers in all platforms
+- File structures and import references
+- Build configurations for all supported platforms
+
+### Language Generation
+
+Add new languages or update translations with the localization helper:
+
+```bash
+./generate_language.sh --add fr,es,de  # Add French, Spanish, and German
+./generate_language.sh --sync           # Synchronize all ARB files with the base English file
+./generate_language.sh --gen            # Generate Dart code from ARB files
+```
+
+### Feature Generation
+
+Quickly scaffold new features with all the necessary files:
+
+```bash
+./create_feature.sh feature_name        # Create a new feature structure
+```
+
 ## 📝 Core Features
+
+### Multi-language Support
+
+Built-in internationalization with easy language switching:
+
+```dart
+// Access translated text
+Text(context.tr('common.welcome_message'));
+
+// With parameters
+Text(context.tr('user.greeting', {'name': userData.displayName}));
+
+// Format dates based on current locale
+Text(context.formatDate(DateTime.now(), 'medium'));
+
+// Format currency based on current locale
+Text(context.formatCurrency(19.99));
+
+// Change language
+ref.read(localeProvider.notifier).setLocale(const Locale('es'));
+
+// Access language-specific assets
+Image.asset(LocalizedAssetService.getLocalizedImagePath('logo.png'));
+```
+
+**Key features:**
+
+- Support for multiple languages (English, Spanish, French, German, Japanese, Bengali)
+- Automatic locale detection
+- Parameter interpolation and pluralization
+- Date and currency formatting based on locale
+- Persistence of language selection
+- Language-specific assets with fallback mechanism
+- Locale-aware navigation
 
 ### Advanced Caching System
 
@@ -139,6 +227,7 @@ final cachedUser = await cacheManager.getItem('user_1');
 ```
 
 **Key features:**
+
 - Type-safe generics for storing any data type
 - TTL (Time-To-Live) control for cache expiration
 - Optional encryption for sensitive data
@@ -168,35 +257,11 @@ ref.read(themeModeProvider.notifier).state = ThemeMode.dark;
 ```
 
 **Key features:**
+
 - Dynamic color palette generation from a primary color
 - Runtime theme updates that persist across app restarts
 - Independent light and dark theme configuration
 - Customizable text styles, shape themes, and component appearances
-
-### Multi-language Support
-
-Built-in internationalization with easy language switching:
-
-```dart
-// Access translated text
-Text(context.tr('common.welcome_message'));
-
-// With parameters
-Text(context.tr('user.greeting', {'name': userData.displayName}));
-
-// Change language
-ref.read(localeProvider.notifier).setLocale(const Locale('es'));
-
-// Get current locale
-final currentLocale = ref.watch(localeProvider);
-```
-
-**Key features:**
-- Support for multiple languages out of the box
-- Automatic locale detection
-- Parameter interpolation
-- Persistence of language selection
-- Easy extension to add new languages
 
 ### Comprehensive Extensions
 
@@ -218,30 +283,20 @@ final slug = "Product Title".toSlug(); // "product-title"
 final truncated = longString.truncate(20);
 ```
 
-## 🧰 Feature Generation
+### Locale-Aware Router
 
-The project includes tools to quickly scaffold new features:
+Navigate with locale support using GoRouter:
 
-```bash
-# Generate a new feature with all necessary layers
-./generate_feature.sh feature_name EntityName
+```dart
+// Navigate with the current locale
+context.go('/products');
+
+// Navigate with a specific locale
+context.goWithLocale('/products', const Locale('es'));
+
+// Get localized routes
+final path = LocaleAwareRouter.getLocalizedPath('/settings');
 ```
-
-This automatically creates:
-- Data layer (models, repositories, data sources)
-- Domain layer (entities, repositories, use cases)
-- Presentation layer (pages, providers, widgets)
-- Basic tests for each layer
-
-## 📱 Example Screens
-
-The project includes several example screens that demonstrate the architecture and features:
-
-- **Theme Customizer** - Interactive theme generation and customization
-- **Multi-language Demo** - Language switching with sample translations
-- **Caching Example** - Demonstrates memory and disk caching in action
-- **API Client Demo** - Shows communication with remote services
-- **Form Validation** - Example of form handling with validation
 
 ## 🧪 Testing
 
@@ -257,6 +312,7 @@ flutter test --coverage && genhtml coverage/lcov.info -o coverage/html
 ```
 
 The project follows a comprehensive testing strategy:
+
 - Unit tests for business logic and utilities
 - Widget tests for UI components
 - Integration tests for feature workflows
@@ -280,26 +336,13 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 This project is licensed under the MIT License - see the LICENSE file for details.
 
-## 📬 Contact
+## 🔍 Core Modules
 
-Created by [Your Name]
-
-- GitHub: [@yourgithub](https://github.com/yourgithub)
-- Twitter: [@your_twitter](https://twitter.com/your_twitter)
-- LinkedIn: [Your LinkedIn](https://linkedin.com/in/yourprofile)
-
-Project Link: [https://github.com/yourusername/flutter_riverpod_clean_architecture](https://github.com/yourusername/flutter_riverpod_clean_architecture)
-
----
-
-## 🔍 What's Included
-
-### Core Modules
-
+- **Localization**: Multi-language support with context extensions and asset localization
 - **Error Handling**: Custom Failure class hierarchy for consistent error handling
 - **Network**: Type-safe API client with automatic error handling and retry mechanisms
 - **Storage**: Secure storage for sensitive data with encryption support
-- **Router**: Go Router integration for declarative routing
+- **Router**: Go Router integration with locale-aware navigation
 - **Constants**: App-wide constants for consistent configuration
 - **Providers**: Core providers for app-wide state management
 - **UI Components**: Reusable widgets that follow the app's design system
@@ -314,20 +357,11 @@ Project Link: [https://github.com/yourusername/flutter_riverpod_clean_architectu
 
 ### Development Tools
 
+- **App Renaming**: Cross-platform app and package name renaming script
+- **Localization Management**: Tools for adding and synchronizing translations
+- **Feature Generation**: Scaffold new features with clean architecture structure
 - **Linting**: Custom lint rules for code quality
-- **CI/CD**: GitHub Actions workflows for testing and deployment
-- **Code Generation**: Build tools for generating boilerplate code
 - **Documentation**: Comprehensive guides and examples
-
-## ✨ Showcase
-
-For a complete showcase of all features, run the app and navigate to the UI Showcase section, where you can explore:
-
-- Component Library
-- Theme Variations
-- Animation Examples
-- Form Controls
-- Navigation Patterns
 
 ## 📚 Further Resources
 
