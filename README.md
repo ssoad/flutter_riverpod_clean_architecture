@@ -5,7 +5,7 @@
 ![Riverpod](https://img.shields.io/badge/Riverpod-2.0+-0175C2.svg?style=flat)
 ![License](https://img.shields.io/badge/License-MIT-purple.svg)
 
-A production-ready Flutter project template implementing Clean Architecture principles with Riverpod for state management.
+A production-ready Flutter project template implementing Clean Architecture principles with Riverpod for state management. This template provides a solid foundation for building scalable, maintainable, and testable Flutter applications.
 
 <p align="center">
   <img src="https://flutter.dev/assets/images/shared/brand/flutter/logo/flutter-lockup.png" alt="Flutter" height="100"/>
@@ -15,21 +15,24 @@ A production-ready Flutter project template implementing Clean Architecture prin
 
 - **Clean Architecture** — Separation of concerns with domain, data, and presentation layers
 - **Riverpod State Management** — Powerful and testable state management solution
-- **Multi-language Support** — Internationalization with 5 languages out of the box
-- **Dynamic Theming** — Customizable themes with light/dark mode and persistence
-- **Advanced Caching** — Memory and disk caching with TTL and encryption support
-- **Code Generation Tools** — Feature generator for quick scaffolding
-- **Comprehensive Extensions** — DateTime, BuildContext, Widget, String, and Iterable extensions
-- **Detailed Documentation** — Architecture guides and example implementations
+- **Multi-language Support** — Full internationalization with easy language switching
+- **Advanced Caching System** — Memory and disk caching with TTL, encryption, and type-safe APIs
+- **Dynamic Theming** — Customizable themes with light/dark mode support and persistence
+- **Comprehensive Utilities** — Rich set of extensions for DateTime, BuildContext, Widget, String, and more
+- **Error Handling** — Consistent error handling with custom Failure classes
+- **Dependency Injection** — Clean dependency management with Riverpod
+- **Code Generation Tools** — Feature generator for rapid development
+- **Example Implementations** — Ready-to-use screens demonstrating the architecture
+- **Extensive Documentation** — Detailed guides for architecture, utilities, and extensions
 
 ## 📖 Documentation
 
 Comprehensive documentation is available in the `/docs` folder:
 
-- [Architecture Guide](docs/ARCHITECTURE_GUIDE.md) - Detailed explanation of the project architecture
-- [Utilities Guide](docs/UTILITIES_GUIDE.md) - Guide to using the utility extensions
-- [Interactive Documentation](docs/index.html) - Open this in a browser for interactive documentation
-- [DateTime Extensions Guide](docs/datetime_extensions.html) - Detailed guide for working with dates
+- [Architecture Guide](docs/ARCHITECTURE_GUIDE.md) - Detailed explanation of the project structure and principles
+- [Utilities Guide](docs/UTILITIES_GUIDE.md) - How to use the utility extensions and helpers
+- [Interactive Documentation](docs/index.html) - Browser-based interactive documentation with examples
+- [DateTime Extensions Guide](docs/datetime_extensions.html) - Complete reference for date and time utilities
 
 ## 🏗️ Project Structure
 
@@ -53,11 +56,12 @@ lib/
 │   ├── auth/        # Authentication feature
 │   ├── home/        # Home screen feature
 │   └── ui_showcase/ # UI component showcase
+├── gen/             # Generated code
 ├── l10n/            # Localization files
 └── main.dart        # App entry point
 ```
 
-Each feature follows a layered structure:
+Each feature follows the Clean Architecture pattern with three layers:
 
 ```
 feature/
@@ -105,92 +109,171 @@ feature/
    flutter run
    ```
 
-## 🧰 Feature Generation
+## 📝 Core Features
 
-The project includes scripts to generate new features with all required files:
+### Advanced Caching System
 
-```bash
-# Generate a new feature
-./generate_feature.sh feature_name EntityName
-```
-
-This creates a complete feature structure with domain, data, and presentation layers.
-
-## 🔌 Core Modules
-
-### Caching System
+The project implements a robust two-level caching system with both memory and disk storage options:
 
 ```dart
-// Define memory cache provider for a specific type
+// Memory cache configuration
 final userMemoryCacheProvider = memoryCacheManagerProvider<UserEntity>();
 
-// Define disk cache provider with serialization
+// Disk cache with type-safe parameters
 final userDiskCacheParams = DiskCacheParams<UserEntity>(
-  config: CacheConfig.secure(),
+  config: CacheConfig(
+    maxItems: 100, 
+    expiryDuration: Duration(hours: 24),
+    encryption: true
+  ),
   fromJson: (json) => UserModel.fromJson(json).toEntity(),
   toJson: (user) => UserModel.fromEntity(user).toJson(),
 );
 
 final userDiskCacheProvider = diskCacheManagerProvider<UserEntity>(userDiskCacheParams);
+
+// Using the cache
+final cacheManager = ref.watch(userDiskCacheProvider);
+await cacheManager.setItem('user_1', userEntity);
+final cachedUser = await cacheManager.getItem('user_1');
 ```
 
-### Theme System
+**Key features:**
+- Type-safe generics for storing any data type
+- TTL (Time-To-Live) control for cache expiration
+- Optional encryption for sensitive data
+- Memory cache for ultra-fast access
+- Disk persistence for data that needs to survive app restarts
+
+### Dynamic Theming
+
+The theme system allows for complete customization of app appearance:
 
 ```dart
-// In a Consumer widget
-final themes = ref.watch(themesProvider);
+// Access the theme configuration
+final themeConfig = ref.watch(themeConfigProvider);
 final themeMode = ref.watch(themeModeProvider);
 
 // Use in MaterialApp
 return MaterialApp(
-  theme: themes.$1, // Light theme
-  darkTheme: themes.$2, // Dark theme
+  theme: themeConfig.lightTheme,
+  darkTheme: themeConfig.darkTheme,
   themeMode: themeMode,
 );
 
-// Update primary color
-ref.read(themeConfigProvider.notifier).updatePrimaryColor(Colors.blue);
+// Update theme settings
+ref.read(themeConfigProvider.notifier).updatePrimaryColor(Colors.indigo);
+ref.read(themeConfigProvider.notifier).updateBorderRadius(8.0);
+ref.read(themeModeProvider.notifier).state = ThemeMode.dark;
 ```
+
+**Key features:**
+- Dynamic color palette generation from a primary color
+- Runtime theme updates that persist across app restarts
+- Independent light and dark theme configuration
+- Customizable text styles, shape themes, and component appearances
 
 ### Multi-language Support
 
+Built-in internationalization with easy language switching:
+
 ```dart
-// Using BuildContext extension
-final localizedText = context.tr('key.to.translate');
+// Access translated text
+Text(context.tr('common.welcome_message'));
 
 // With parameters
-final greeting = context.tr('greeting', {'name': 'John'});
+Text(context.tr('user.greeting', {'name': userData.displayName}));
 
 // Change language
 ref.read(localeProvider.notifier).setLocale(const Locale('es'));
+
+// Get current locale
+final currentLocale = ref.watch(localeProvider);
 ```
 
-## 🧪 Running Tests
+**Key features:**
+- Support for multiple languages out of the box
+- Automatic locale detection
+- Parameter interpolation
+- Persistence of language selection
+- Easy extension to add new languages
+
+### Comprehensive Extensions
+
+Utility extensions that simplify common tasks:
+
+```dart
+// DateTime extensions
+final formattedDate = dateTime.formatAs('MMMM d, yyyy');
+final timeAgo = dateTime.timeAgo; // "2 hours ago"
+final isToday = dateTime.isToday;
+
+// BuildContext extensions
+context.showSnackBar('Operation successful');
+final screenSize = context.screenSize;
+final isTablet = context.isTablet;
+
+// String extensions
+final slug = "Product Title".toSlug(); // "product-title"
+final truncated = longString.truncate(20);
+```
+
+## 🧰 Feature Generation
+
+The project includes tools to quickly scaffold new features:
+
+```bash
+# Generate a new feature with all necessary layers
+./generate_feature.sh feature_name EntityName
+```
+
+This automatically creates:
+- Data layer (models, repositories, data sources)
+- Domain layer (entities, repositories, use cases)
+- Presentation layer (pages, providers, widgets)
+- Basic tests for each layer
+
+## 📱 Example Screens
+
+The project includes several example screens that demonstrate the architecture and features:
+
+- **Theme Customizer** - Interactive theme generation and customization
+- **Multi-language Demo** - Language switching with sample translations
+- **Caching Example** - Demonstrates memory and disk caching in action
+- **API Client Demo** - Shows communication with remote services
+- **Form Validation** - Example of form handling with validation
+
+## 🧪 Testing
 
 ```bash
 # Run all tests
 flutter test
 
-# Generate a test file for a specific class
-./test_generator.sh ClassName
+# Run tests for a specific feature
+flutter test test/features/auth
+
+# Generate coverage report
+flutter test --coverage && genhtml coverage/lcov.info -o coverage/html
 ```
 
-## 📱 Example Screens
-
-The project includes several example screens to demonstrate the architecture and features:
-
-- **Theme Showcase** - Demonstrates theme customization capabilities
-- **Language Selector** - Shows language switching functionality
-- **Cache Example** - Demonstrates the caching system in action
+The project follows a comprehensive testing strategy:
+- Unit tests for business logic and utilities
+- Widget tests for UI components
+- Integration tests for feature workflows
+- Golden tests for visual regression
 
 ## 🤝 Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
 
 1. Fork the repository
+
 2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+
 3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+
 4. Push to the branch (`git push origin feature/amazing-feature`)
+
 5. Open a Pull Request
 
 ## 📄 License
@@ -199,6 +282,56 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## 📬 Contact
 
-Your Name - [@your_twitter](https://twitter.com/your_twitter) - email@example.com
+Created by [Your Name]
+
+- GitHub: [@yourgithub](https://github.com/yourgithub)
+- Twitter: [@your_twitter](https://twitter.com/your_twitter)
+- LinkedIn: [Your LinkedIn](https://linkedin.com/in/yourprofile)
 
 Project Link: [https://github.com/yourusername/flutter_riverpod_clean_architecture](https://github.com/yourusername/flutter_riverpod_clean_architecture)
+
+---
+
+## 🔍 What's Included
+
+### Core Modules
+
+- **Error Handling**: Custom Failure class hierarchy for consistent error handling
+- **Network**: Type-safe API client with automatic error handling and retry mechanisms
+- **Storage**: Secure storage for sensitive data with encryption support
+- **Router**: Go Router integration for declarative routing
+- **Constants**: App-wide constants for consistent configuration
+- **Providers**: Core providers for app-wide state management
+- **UI Components**: Reusable widgets that follow the app's design system
+
+### Utility Extensions
+
+- **BuildContext Extensions**: Easy access to theme, localization, navigation, and screen properties
+- **DateTime Extensions**: Formatting, comparison, manipulation, and human-readable representations
+- **String Extensions**: Validation, formatting, and transformation utilities
+- **Widget Extensions**: Padding, margin, gesture, and conditional rendering helpers
+- **Iterable Extensions**: Collection manipulation and transformation utilities
+
+### Development Tools
+
+- **Linting**: Custom lint rules for code quality
+- **CI/CD**: GitHub Actions workflows for testing and deployment
+- **Code Generation**: Build tools for generating boilerplate code
+- **Documentation**: Comprehensive guides and examples
+
+## ✨ Showcase
+
+For a complete showcase of all features, run the app and navigate to the UI Showcase section, where you can explore:
+
+- Component Library
+- Theme Variations
+- Animation Examples
+- Form Controls
+- Navigation Patterns
+
+## 📚 Further Resources
+
+- [Flutter Documentation](https://docs.flutter.dev/)
+- [Riverpod Documentation](https://riverpod.dev/)
+- [Clean Architecture Guide](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html)
+- [Effective Dart Style Guide](https://dart.dev/guides/language/effective-dart)
