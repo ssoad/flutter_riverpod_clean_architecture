@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if page.title %}{{ page.title }} - {% endif %}Flutter Riverpod Clean Architecture</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+    <style>
+        :root {
+            --primary-color: #0175C2;
+            --secondary-color: #42a5f5;
+            --accent-color: #13B9FD;
+            --text-color: #333333;
+            --light-text-color: #666666;
+            --background-color: #ffffff;
+            --code-background: #f5f5f5;
+            --border-color: #e0e0e0;
+            --selection-background: #b3e5fc;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --primary-color: #29B6F6;
+                --secondary-color: #42a5f5;
+                --accent-color: #13B9FD;
+                --text-color: #f0f0f0;
+                --light-text-color: #aaaaaa;
+                --background-color: #121212;
+                --code-background: #1d1d1d;
+                --border-color: #333333;
+                --selection-background: #0d47a1;
+            }
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background: var(--background-color);
+            margin: 0;
+            padding: 0;
+            transition: all 0.3s ease;
+        }
+
+        ::selection {
+            background: var(--selection-background);
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            min-height: 100vh;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+            .sidebar {
+                position: fixed;
+                left: -250px;
+                top: 0;
+                height: 100%;
+                z-index: 100;
+                transition: left 0.3s ease;
+            }
+            .sidebar.active {
+                left: 0;
+            }
+            #sidebar-toggle {
+                display: block !important;
+            }
+        }
+
+        .sidebar {
+            background: var(--code-background);
+            padding: 20px;
+            border-right: 1px solid var(--border-color);
+        }
+
+        .content {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px 40px;
+        }
+
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 30px;
+            border-radius: 5px;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            color: var(--primary-color);
+            font-weight: 600;
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+
+        h1 {
+            font-size: 2.2em;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+
+        h2 {
+            font-size: 1.8em;
+        }
+
+        h3 {
+            font-size: 1.5em;
+        }
+
+        h4 {
+            font-size: 1.3em;
+        }
+
+        a {
+            color: var(--secondary-color);
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        a:hover {
+            color: var(--accent-color);
+            text-decoration: underline;
+        }
+
+        code {
+            font-family: 'Fira Code', Consolas, Monaco, 'Andale Mono', monospace;
+            background: var(--code-background);
+            padding: 3px 5px;
+            border-radius: 3px;
+            font-size: 0.9em;
+        }
+
+        pre {
+            background: var(--code-background);
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            border: 1px solid var(--border-color);
+            margin: 20px 0;
+        }
+
+        pre code {
+            background: transparent;
+            padding: 0;
+            border: none;
+        }
+
+        blockquote {
+            border-left: 4px solid var(--secondary-color);
+            padding-left: 20px;
+            margin-left: 0;
+            color: var(--light-text-color);
+            font-style: italic;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 20px 0;
+        }
+
+        table, th, td {
+            border: 1px solid var(--border-color);
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: var(--code-background);
+        }
+
+        hr {
+            border: none;
+            border-top: 1px solid var(--border-color);
+            margin: 30px 0;
+        }
+
+        .sidebar-title {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: var(--primary-color);
+        }
+
+        .sidebar-nav {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sidebar-nav-item {
+            margin-bottom: 5px;
+        }
+
+        .sidebar-nav-link {
+            display: block;
+            padding: 8px 15px;
+            border-radius: 5px;
+            transition: background 0.2s ease;
+        }
+
+        .sidebar-nav-link:hover,
+        .sidebar-nav-link.active {
+            background: rgba(66, 165, 245, 0.1);
+        }
+
+        .sidebar-category {
+            margin-top: 20px;
+            font-weight: 600;
+            color: var(--primary-color);
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 5px;
+            margin-bottom: 10px;
+        }
+
+        .tag {
+            background-color: rgba(19, 185, 253, 0.1);
+            color: var(--secondary-color);
+            padding: 3px 8px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            margin-right: 5px;
+            display: inline-block;
+        }
+
+        #sidebar-toggle {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            z-index: 101;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: none;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            padding: 20px;
+            border-top: 1px solid var(--border-color);
+            color: var(--light-text-color);
+        }
+
+        /* Additional styles for API documentation */
+        .api-section {
+            margin-bottom: 40px;
+        }
+
+        .api-method {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: var(--code-background);
+            border-radius: 5px;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .api-method h3 {
+            margin-top: 0;
+        }
+
+        .parameter-table th:first-child,
+        .parameter-table td:first-child {
+            width: 20%;
+        }
+
+        .parameter-table th:nth-child(2),
+        .parameter-table td:nth-child(2) {
+            width: 15%;
+        }
+
+        /* Code example tabs */
+        .code-tabs {
+            margin: 20px 0;
+        }
+
+        .code-tab-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: -1px;
+        }
+
+        .code-tab-button {
+            padding: 8px 16px;
+            background: var(--code-background);
+            border: 1px solid var(--border-color);
+            border-bottom: none;
+            border-radius: 5px 5px 0 0;
+            cursor: pointer;
+        }
+
+        .code-tab-button.active {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .code-tab-content {
+            display: none;
+        }
+
+        .code-tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <button id="sidebar-toggle">☰</button>
+    
+    <div class="container">
+        <aside class="sidebar">
+            <div class="sidebar-title">Flutter Riverpod Clean Architecture</div>
+            
+            <div class="sidebar-category">Core Guides</div>
+            <ul class="sidebar-nav">
+                <li class="sidebar-nav-item">
+                    <a href="/flutter_riverpod_clean_architecture/architecture.html" class="sidebar-nav-link {% if page.url == '/architecture.html' %}active{% endif %}">Architecture Guide</a>
+                </li>
+                <li class="sidebar-nav-item">
+                    <a href="/flutter_riverpod_clean_architecture/localization.html" class="sidebar-nav-link {% if page.url == '/localization.html' %}active{% endif %}">Localization Guide</a>
+                </li>
+                <li class="sidebar-nav-item">
+                    <a href="/flutter_riverpod_clean_architecture/image_handling.html" class="sidebar-nav-link {% if page.url == '/image_handling.html' %}active{% endif %}">Image Handling</a>
+                </li>
+            </ul>
+            
+            <div class="sidebar-category">Advanced Features</div>
+            <ul class="sidebar-nav">
+                <li class="sidebar-nav-item">
+                    <a href="/flutter_riverpod_clean_architecture/biometric_auth.html" class="sidebar-nav-link {% if page.url == '/biometric_auth.html' %}active{% endif %}">Biometric Auth</a>
+                </li>
+                <li class="sidebar-nav-item">
+                    <a href="/flutter_riverpod_clean_architecture/analytics.html" class="sidebar-nav-link {% if page.url == '/analytics.html' %}active{% endif %}">Analytics</a>
+                </li>
+                <li class="sidebar-nav-item">
+                    <a href="/flutter_riverpod_clean_architecture/feature_flags.html" class="sidebar-nav-link {% if page.url == '/feature_flags.html' %}active{% endif %}">Feature Flags</a>
+                </li>
+                <li class="sidebar-nav-item">
+                    <a href="/flutter_riverpod_clean_architecture/accessibility.html" class="sidebar-nav-link {% if page.url == '/accessibility.html' %}active{% endif %}">Accessibility</a>
+                </li>
+                <li class="sidebar-nav-item">
+                    <a href="/flutter_riverpod_clean_architecture/offline_architecture.html" class="sidebar-nav-link {% if page.url == '/offline_architecture.html' %}active{% endif %}">Offline Architecture</a>
+                </li>
+                <li class="sidebar-nav-item">
+                    <a href="/flutter_riverpod_clean_architecture/cicd.html" class="sidebar-nav-link {% if page.url == '/cicd.html' %}active{% endif %}">CI/CD Guide</a>
+                </li>
+            </ul>
+            
+            <div class="sidebar-category">Utilities</div>
+            <ul class="sidebar-nav">
+                <li class="sidebar-nav-item">
+                    <a href="/flutter_riverpod_clean_architecture/utilities.html" class="sidebar-nav-link {% if page.url == '/utilities.html' %}active{% endif %}">Utilities Guide</a>
+                </li>
+                <li class="sidebar-nav-item">
+                    <a href="/flutter_riverpod_clean_architecture/datetime_extensions.html" class="sidebar-nav-link {% if page.url == '/datetime_extensions.html' %}active{% endif %}">DateTime Extensions</a>
+                </li>
+            </ul>
+        </aside>
+        
+        <main class="content">
+            {{ content }}
+            
+            <footer>
+                <p>Flutter Riverpod Clean Architecture Template © 2023-2025</p>
+                <p><a href="https://github.com/ssoad/flutter_riverpod_clean_architecture">GitHub Repository</a></p>
+            </footer>
+        </main>
+    </div>
+    
+    <script>
+        // Mobile sidebar toggle
+        document.getElementById('sidebar-toggle').addEventListener('click', function() {
+            document.querySelector('.sidebar').classList.toggle('active');
+        });
+        
+        // Code tabs functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const codeTabs = document.querySelectorAll('.code-tabs');
+            
+            codeTabs.forEach(function(tabsContainer) {
+                const buttons = tabsContainer.querySelectorAll('.code-tab-button');
+                const contents = tabsContainer.querySelectorAll('.code-tab-content');
+                
+                buttons.forEach(function(button, index) {
+                    button.addEventListener('click', function() {
+                        buttons.forEach(b => b.classList.remove('active'));
+                        contents.forEach(c => c.classList.remove('active'));
+                        
+                        button.classList.add('active');
+                        contents[index].classList.add('active');
+                    });
+                });
+                
+                // Activate first tab by default
+                if (buttons.length > 0) {
+                    buttons[0].click();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -14,11 +14,19 @@ jobs:
       - name: Checkout 🛎️
         uses: actions/checkout@v3
 
-      - name: Build and Deploy 🚀
-        uses: actions/jekyll-build-pages@v1
+      - name: Set up Python
+        uses: actions/setup-python@v4
         with:
-          source: ./docs
-          destination: ./docs/_site
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install markdown pyyaml beautifulsoup4
+
+      - name: Convert Markdown to HTML
+        run: |
+          python docs/convert_docs.py
           
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

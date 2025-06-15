@@ -1,189 +1,157 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flutter Riverpod Clean Architecture Documentation</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        header {
-            background-color: #0175C2;
-            color: white;
-            padding: 20px;
-            text-align: center;
-            margin-bottom: 30px;
-            border-radius: 5px;
-        }
-        h1, h2, h3 {
-            color: #0175C2;
-        }
-        .card {
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-        .card h3 {
-            margin-top: 0;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 10px;
-        }
-        .tag {
-            background-color: #e1f5fe;
-            color: #0288d1;
-            padding: 3px 8px;
-            border-radius: 15px;
-            font-size: 0.8em;
-            margin-right: 5px;
-            display: inline-block;
-        }
-        a {
-            color: #0288d1;
-            text-decoration: none;
-        }
-        a:hover {
-            text-decoration: underline;
-        }
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 20px;
-        }
-    </style>
-</head>
-<body>
-    <header>
-        <h1>Flutter Riverpod Clean Architecture</h1>
-        <p>Comprehensive documentation for the production-ready Flutter template</p>
-    </header>
+---
+layout: default
+title: Home
+---
 
-    <main>
-        <h2>Documentation Guides</h2>
-        
-        <div class="grid">
-            <div class="card">
-                <h3>Architecture Guide</h3>
-                <p>Detailed explanation of the project structure and principles.</p>
-                <div>
-                    <span class="tag">Core</span>
-                    <span class="tag">Structure</span>
-                </div>
-                <p><a href="ARCHITECTURE_GUIDE.md">View Guide</a></p>
-            </div>
-            
-            <div class="card">
-                <h3>Localization Guide</h3>
-                <p>Complete guide to multi-language support and localized assets.</p>
-                <div>
-                    <span class="tag">i18n</span>
-                    <span class="tag">Languages</span>
-                </div>
-                <p><a href="LOCALIZATION_GUIDE.md">View Guide</a></p>
-            </div>
-            
-            <div class="card">
-                <h3>Image Handling Guide</h3>
-                <p>Advanced guide for image loading, processing, caching, and effects.</p>
-                <div>
-                    <span class="tag">Images</span>
-                    <span class="tag">SVG</span>
-                    <span class="tag">Effects</span>
-                </div>
-                <p><a href="IMAGE_HANDLING_GUIDE.md">View Guide</a></p>
-            </div>
-            
-            <div class="card">
-                <h3>Utilities Guide</h3>
-                <p>How to use the utility extensions and helpers throughout the project.</p>
-                <div>
-                    <span class="tag">Extensions</span>
-                    <span class="tag">Helpers</span>
-                </div>
-                <p><a href="UTILITIES_GUIDE.md">View Guide</a></p>
-            </div>
-            
-            <div class="card">
-                <h3>DateTime Extensions</h3>
-                <p>Complete reference for date and time utilities provided by the template.</p>
-                <div>
-                    <span class="tag">DateTime</span>
-                    <span class="tag">Formatting</span>
-                </div>
-                <p><a href="datetime_extensions.html">View Guide</a></p>
-            </div>
+<header>
+    <h1>Flutter Riverpod Clean Architecture</h1>
+    <p>Production-ready Flutter template with advanced features and clean architecture</p>
+</header>
+
+<div class="api-section">
+    <h2>Getting Started</h2>
+    <p>
+        This documentation covers all aspects of the Flutter Riverpod Clean Architecture template, 
+        a production-ready solution for building scalable, maintainable Flutter applications.
+    </p>
+    
+    <div class="code-tabs">
+        <div class="code-tab-buttons">
+            <button class="code-tab-button">Clone Repository</button>
+            <button class="code-tab-button">Use as Template</button>
+        </div>
+        <div class="code-tab-content">
+            <pre><code class="language-bash">git clone https://github.com/ssoad/flutter_riverpod_clean_architecture.git
+cd flutter_riverpod_clean_architecture
+flutter pub get</code></pre>
+        </div>
+        <div class="code-tab-content">
+            <p>You can use this project as a template:</p>
+            <ol>
+                <li>Go to <a href="https://github.com/ssoad/flutter_riverpod_clean_architecture" target="_blank">the GitHub repository</a></li>
+                <li>Click on "Use this template" button</li>
+                <li>Follow the GitHub instructions to create your repository</li>
+                <li>Clone your new repository locally</li>
+            </ol>
+        </div>
+    </div>
+</div>
+
+<div class="api-section">
+    <h2>Core Features</h2>
+    
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px;">
+        <div class="api-method">
+            <h3>Clean Architecture</h3>
+            <p>Structured with domain, data, and presentation layers for clear separation of concerns.</p>
+            <span class="tag">Core</span>
+            <span class="tag">Structure</span>
+            <p><a href="architecture.html">Learn More →</a></p>
         </div>
         
-        <h2>Core Modules</h2>
-        
-        <div class="grid">
-            <div class="card">
-                <h3>Analytics</h3>
-                <p>Comprehensive event tracking system with privacy controls.</p>
-                <div>
-                    <span class="tag">Tracking</span>
-                    <span class="tag">Events</span>
-                </div>
-            </div>
-            
-            <div class="card">
-                <h3>Authentication</h3>
-                <p>Secure biometric authentication with session management.</p>
-                <div>
-                    <span class="tag">Biometric</span>
-                    <span class="tag">Security</span>
-                </div>
-            </div>
-            
-            <div class="card">
-                <h3>Feature Flags</h3>
-                <p>Runtime feature toggling with A/B testing support.</p>
-                <div>
-                    <span class="tag">A/B Testing</span>
-                    <span class="tag">Configuration</span>
-                </div>
-            </div>
-            
-            <div class="card">
-                <h3>Images</h3>
-                <p>Advanced image handling with processing, caching, SVG support, visual effects, and animated placeholders.</p>
-                <div>
-                    <span class="tag">Image Processing</span>
-                    <span class="tag">Loading</span>
-                    <span class="tag">Caching</span>
-                </div>
-                <p><a href="IMAGE_HANDLING_GUIDE.md">View Guide</a></p>
-            </div>
-            
-            <div class="card">
-                <h3>Logging</h3>
-                <p>Structured logging with levels, tags, and performance tracking.</p>
-                <div>
-                    <span class="tag">Debugging</span>
-                    <span class="tag">Monitoring</span>
-                </div>
-            </div>
-            
-            <div class="card">
-                <h3>Notifications</h3>
-                <p>Complete push notification system with deep linking.</p>
-                <div>
-                    <span class="tag">Push</span>
-                    <span class="tag">Deep Links</span>
-                </div>
-            </div>
+        <div class="api-method">
+            <h3>Riverpod Integration</h3>
+            <p>Modern state management with dependency injection and providers.</p>
+            <span class="tag">State Management</span>
+            <span class="tag">DI</span>
+            <p><a href="architecture.html#riverpod">Learn More →</a></p>
         </div>
-    </main>
+        
+        <div class="api-method">
+            <h3>Internationalization</h3>
+            <p>Comprehensive multi-language support with localized assets.</p>
+            <span class="tag">i18n</span>
+            <span class="tag">Localization</span>
+            <p><a href="localization.html">Learn More →</a></p>
+        </div>
+        
+        <div class="api-method">
+            <h3>Image Processing</h3>
+            <p>Advanced image loading, caching, and transformation.</p>
+            <span class="tag">Images</span>
+            <span class="tag">Caching</span>
+            <p><a href="image_handling.html">Learn More →</a></p>
+        </div>
+    </div>
+</div>
 
-    <footer style="margin-top: 40px; border-top: 1px solid #eee; padding-top: 20px; text-align: center;">
-        <p>Flutter Riverpod Clean Architecture Template &copy; 2023</p>
-    </footer>
-</body>
-</html>
+<div class="api-section">
+    <h2>Advanced Features</h2>
+    
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px;">
+        <div class="api-method">
+            <h3>Biometric Authentication</h3>
+            <p>Secure authentication with fingerprint, face recognition, and more.</p>
+            <span class="tag">Security</span>
+            <span class="tag">Auth</span>
+            <p><a href="biometric_auth.html">Learn More →</a></p>
+        </div>
+        
+        <div class="api-method">
+            <h3>Analytics</h3>
+            <p>Event tracking with privacy controls and multiple provider support.</p>
+            <span class="tag">Tracking</span>
+            <span class="tag">Events</span>
+            <p><a href="analytics.html">Learn More →</a></p>
+        </div>
+        
+        <div class="api-method">
+            <h3>Feature Flags</h3>
+            <p>Runtime feature toggling with A/B testing capabilities.</p>
+            <span class="tag">Configuration</span>
+            <span class="tag">Testing</span>
+            <p><a href="feature_flags.html">Learn More →</a></p>
+        </div>
+        
+        <div class="api-method">
+            <h3>Offline Functionality</h3>
+            <p>Robust offline support with synchronization and conflict resolution.</p>
+            <span class="tag">Persistence</span>
+            <span class="tag">Sync</span>
+            <p><a href="offline_architecture.html">Learn More →</a></p>
+        </div>
+        
+        <div class="api-method">
+            <h3>Accessibility</h3>
+            <p>Comprehensive accessibility features for inclusive applications.</p>
+            <span class="tag">a11y</span>
+            <span class="tag">Inclusive</span>
+            <p><a href="accessibility.html">Learn More →</a></p>
+        </div>
+        
+        <div class="api-method">
+            <h3>CI/CD Pipeline</h3>
+            <p>Complete workflow for continuous integration and delivery.</p>
+            <span class="tag">DevOps</span>
+            <span class="tag">Automation</span>
+            <p><a href="cicd.html">Learn More →</a></p>
+        </div>
+    </div>
+</div>
+
+<div class="api-section">
+    <h2>Project Structure</h2>
+    
+    <pre><code class="language-plaintext">lib/
+├── main.dart                     # Application entry point
+├── core/                         # Core functionality
+│   ├── accessibility/            # Accessibility features
+│   ├── analytics/                # Analytics services
+│   ├── auth/                     # Authentication
+│   ├── error/                    # Error handling
+│   ├── feature_flags/            # Feature flags
+│   ├── images/                   # Image utilities
+│   ├── l10n/                     # Localization
+│   ├── network/                  # Network handling
+│   ├── storage/                  # Local storage
+│   ├── theme/                    # Theming
+│   └── updates/                  # App update handling
+├── features/                     # Feature modules
+│   ├── feature_a/                # Example feature
+│   │   ├── data/                 # Data layer
+│   │   ├── domain/               # Domain layer
+│   │   └── presentation/         # UI layer
+│   └── feature_b/                # Another feature
+├── gen/                          # Generated code
+└── l10n/                         # Localization resources</code></pre>
+</div>
