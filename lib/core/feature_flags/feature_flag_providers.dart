@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod_clean_architecture/core/analytics/analytics_providers.dart';
 import 'package:flutter_riverpod_clean_architecture/core/feature_flags/feature_flag_service.dart';
 import 'package:flutter_riverpod_clean_architecture/core/feature_flags/local_feature_flag_service.dart';
+import 'package:flutter_riverpod_clean_architecture/core/feature_flags/remote_feature_flag_service.dart';
 
 /// Key for default feature flags
 const Map<String, dynamic> kDefaultFeatureFlags = {
@@ -12,6 +14,8 @@ const Map<String, dynamic> kDefaultFeatureFlags = {
   'enable_analytics': true,
   'enable_crash_reporting': true,
   'enable_biometric_login': true,
+  'use_debug_biometrics': false,
+  'force_firebase_analytics': false,
 
   // Feature parameters
   'cache_ttl_seconds': 3600,
@@ -29,7 +33,11 @@ const Map<String, dynamic> kDefaultFeatureFlags = {
 
 /// Provider for the feature flag service
 final featureFlagServiceProvider = Provider<FeatureFlagService>((ref) {
-  final service = LocalFeatureFlagService();
+  // Use remote feature flags in production, local in debug mode
+  final service =
+      kDebugMode
+          ? LocalFeatureFlagService() as FeatureFlagService
+          : RemoteFeatureFlagService();
 
   // Set default values
   service.setDefaults(kDefaultFeatureFlags);

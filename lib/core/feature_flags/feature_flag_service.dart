@@ -34,4 +34,7 @@ abstract class FeatureFlagService {
 
   /// Unregister a previously registered callback
   void removeListener(VoidCallback listener);
+
+  /// Cleanup resources
+  void dispose();
 }

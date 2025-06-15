@@ -1,0 +1,125 @@
+default_platform(:android)
+
+ENV_FILES = {
+  development: '.env.development',
+  staging: '.env.staging',
+  production: '.env.production',
+}
+
+platform :android do
+  desc "Build Android app"
+  lane :build do |options|
+    env = options[:env] || :development
+    
+    # Load environment variables
+    load_env_file(ENV_FILES[env])
+    
+    # Set the app version
+    increment_version_number(
+      version_name: ENV['APP_VERSION_NAME'],
+      version_code: ENV['APP_VERSION_CODE'].to_i,
+    )
+    
+    # Build the Android app
+    build_command = "cd .. && flutter build appbundle --release"
+    if env == :development
+      build_command = "cd .. && flutter build apk --debug"
+    end
+    sh(build_command)
+  end
+  
+  desc "Deploy to Google Play"
+  lane :deploy do |options|
+    env = options[:env] || :production
+    track = options[:track] || "internal"
+    
+    # Load environment variables
+    load_env_file(ENV_FILES[env])
+    
+    # Build the app
+    build(env: env)
+    
+    # Upload to Google Play
+    upload_to_play_store(
+      track: track,
+      aab: "../build/app/outputs/bundle/release/app-release.aab",
+      skip_upload_screenshots: true,
+      skip_upload_images: true,
+      skip_upload_metadata: true,
+    )
+  end
+end
+
+platform :ios do
+  desc "Build iOS app"
+  lane :build do |options|
+    env = options[:env] || :development
+    
+    # Load environment variables
+    load_env_file(ENV_FILES[env])
+    
+    # Set the app version
+    increment_version_number(
+      version_number: ENV['APP_VERSION_NAME'],
+      xcodeproj: "../ios/Runner.xcodeproj"
+    )
+    increment_build_number(
+      build_number: ENV['APP_VERSION_CODE'],
+      xcodeproj: "../ios/Runner.xcodeproj"
+    )
+    
+    # Build the iOS app
+    build_command = "cd .. && flutter build ipa --release"
+    if env == :development
+      build_command = "cd .. && flutter build ios --debug --no-codesign"
+    end
+    sh(build_command)
+  end
+  
+  desc "Deploy to TestFlight"
+  lane :deploy do |options|
+    env = options[:env] || :production
+    
+    # Load environment variables
+    load_env_file(ENV_FILES[env])
+    
+    # Build the app
+    build(env: env)
+    
+    # Upload to TestFlight
+    upload_to_testflight(
+      skip_waiting_for_build_processing: true,
+      apple_id: ENV['APPLE_APP_ID'],
+      skip_submission: true,
+      distribute_external: false,
+      ipa: "../build/ios/ipa/Runner.ipa"
+    )
+  end
+end
+
+def load_env_file(file_path)
+  require 'dotenv'
+  Dotenv.load(file_path)
+end
+
+def increment_version_number(options)
+  case lane_context[SharedValues::PLATFORM_NAME]
+  when :android
+    gradle_file_path = "../android/app/build.gradle.kts"
+    file_content = File.read(gradle_file_path)
+    
+    # Update version name
+    if options[:version_name]
+      file_content = file_content.gsub(/versionName\s*=\s*"[^"]*"/, "versionName = \"#{options[:version_name]}\"")
+    end
+    
+    # Update version code
+    if options[:version_code]
+      file_content = file_content.gsub(/versionCode\s*=\s*\d+/, "versionCode = #{options[:version_code]}")
+    end
+    
+    File.write(gradle_file_path, file_content)
+  when :ios
+    # iOS version updating handled by the fastlane increment methods
+  end
+end

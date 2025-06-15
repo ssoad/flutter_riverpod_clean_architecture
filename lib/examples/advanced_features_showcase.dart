@@ -1,15 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod_clean_architecture/core/accessibility/accessibility_providers.dart';
+import 'package:flutter_riverpod_clean_architecture/core/accessibility/accessibility_widgets.dart';
 import 'package:flutter_riverpod_clean_architecture/core/analytics/analytics_providers.dart';
-import 'package:flutter_riverpod_clean_architecture/core/auth/biometric_providers.dart';
+// Biometrics demo is imported directly
+import 'package:flutter_riverpod_clean_architecture/examples/biometrics_demo.dart';
 import 'package:flutter_riverpod_clean_architecture/core/feature_flags/feature_flag_providers.dart';
-
 import 'package:flutter_riverpod_clean_architecture/core/images/advanced_image.dart';
 import 'package:flutter_riverpod_clean_architecture/core/images/image_transformer.dart';
 import 'package:flutter_riverpod_clean_architecture/core/images/shimmer_placeholder.dart';
 import 'package:flutter_riverpod_clean_architecture/core/images/svg_renderer.dart';
 import 'package:flutter_riverpod_clean_architecture/core/logging/logger_provider.dart';
+import 'package:flutter_riverpod_clean_architecture/core/network/offline_sync_providers.dart';
+import 'package:flutter_riverpod_clean_architecture/core/network/offline_sync_service.dart';
 import 'package:flutter_riverpod_clean_architecture/core/notifications/notification_providers.dart';
+// Theme handling is managed through feature flags
+import 'package:flutter_riverpod_clean_architecture/core/updates/update_providers.dart';
+import 'package:flutter_riverpod_clean_architecture/core/updates/update_service.dart';
+import 'package:flutter_riverpod_clean_architecture/core/utils/app_review_providers.dart';
 
 import '../core/feature_flags/local_feature_flag_service.dart';
 
@@ -25,6 +33,15 @@ class AdvancedFeaturesShowcase extends ConsumerStatefulWidget {
 class _AdvancedFeaturesShowcaseState
     extends ConsumerState<AdvancedFeaturesShowcase>
     with LoggerStateMixin {
+  // Image effect controls state
+  final Map<ImageEffectType, double> _effectsIntensity = {
+    ImageEffectType.none: 1.0,
+    ImageEffectType.grayscale: 0.0,
+    ImageEffectType.sepia: 0.0,
+    ImageEffectType.blur: 0.0,
+  };
+  ImageEffectType _selectedEffect = ImageEffectType.none;
+
   @override
   void initState() {
     super.initState();
@@ -76,6 +93,18 @@ class _AdvancedFeaturesShowcaseState
 
           _buildSectionHeader('Structured Logging'),
           _buildLogging(),
+
+          _buildSectionHeader('Accessibility'),
+          _buildAccessibility(),
+
+          _buildSectionHeader('App Update Flow'),
+          _buildUpdateFlow(),
+
+          _buildSectionHeader('Offline-First Architecture'),
+          _buildOfflineSync(),
+
+          _buildSectionHeader('App Review System'),
+          _buildAppReview(),
         ],
       ),
     );
@@ -214,70 +243,12 @@ class _AdvancedFeaturesShowcaseState
   }
 
   Widget _buildBiometrics() {
-    final biometricAuth = ref.watch(biometricAuthControllerProvider);
-    final biometricsAvailable = ref.watch(biometricsAvailableProvider);
-
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text('Authenticate with biometrics:'),
-            const SizedBox(height: 16),
-            biometricsAvailable.when(
-              data: (isAvailable) {
-                if (!isAvailable) {
-                  return const Text('Biometrics not available on this device');
-                }
-
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Status: ${biometricAuth.isAuthenticated ? "Authenticated" : "Not authenticated"}',
-                    ),
-                    const SizedBox(height: 16),
-                    ElevatedButton(
-                      onPressed: () async {
-                        final result = await biometricAuth.authenticate(
-                          reason:
-                              'Please authenticate to access secure features',
-                        );
-
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text('Authentication result: $result'),
-                          ),
-                        );
-                      },
-                      child: const Text('Authenticate'),
-                    ),
-                    if (biometricAuth.isAuthenticated)
-                      TextButton(
-                        onPressed: () {
-                          biometricAuth.logout();
-                          setState(() {});
-                        },
-                        child: const Text('Log Out'),
-                      ),
-                  ],
-                );
-              },
-              loading: () => const CircularProgressIndicator(),
-              error:
-                  (_, __) =>
-                      const Text('Error checking biometrics availability'),
-            ),
-          ],
-        ),
-      ),
-    );
+    return const BiometricsDemo();
   }
 
   Widget _buildNotifications() {
     final service = ref.watch(notificationServiceProvider);
-    final notificationsEnabled = ref.watch(notificationsEnabledProvider);
+    final notificationsEnabledAsync = ref.watch(notificationsEnabledProvider);
 
     return Card(
       child: Padding(
@@ -287,7 +258,7 @@ class _AdvancedFeaturesShowcaseState
           children: [
             const Text('Manage push notifications:'),
             const SizedBox(height: 16),
-            notificationsEnabled.when(
+            notificationsEnabledAsync.when(
               data: (isEnabled) {
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -340,15 +311,6 @@ class _AdvancedFeaturesShowcaseState
     );
   }
 
-  // Image effect controls state
-  final Map<ImageEffectType, double> _effectsIntensity = {
-    ImageEffectType.none: 1.0,
-    ImageEffectType.grayscale: 0.0,
-    ImageEffectType.sepia: 0.0,
-    ImageEffectType.blur: 0.0,
-  };
-  ImageEffectType _selectedEffect = ImageEffectType.none;
-
   Widget _buildAdvancedImages() {
     return Card(
       child: Padding(
@@ -398,6 +360,7 @@ class _AdvancedFeaturesShowcaseState
               ),
             ),
 
+            // Advanced image loading
             const SizedBox(height: 16),
             Text(
               'Advanced image loading:',
@@ -578,6 +541,453 @@ class _AdvancedFeaturesShowcaseState
                     );
                   },
                   child: const Text('Performance Log'),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAccessibility() {
+    final accessibilitySettings = ref.watch(accessibilitySettingsProvider);
+
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text('Make your app usable by everyone:'),
+            const SizedBox(height: 16),
+            ListTile(
+              title: const Text('Screen Reader Active'),
+              subtitle: Text(
+                accessibilitySettings.isScreenReaderActive ? 'Yes' : 'No',
+              ),
+              leading: Icon(
+                accessibilitySettings.isScreenReaderActive
+                    ? Icons.visibility
+                    : Icons.visibility_off,
+              ),
+            ),
+            ListTile(
+              title: const Text('High Contrast'),
+              subtitle: Text(
+                accessibilitySettings.isHighContrastEnabled
+                    ? 'Enabled'
+                    : 'Disabled',
+              ),
+              leading: Icon(
+                accessibilitySettings.isHighContrastEnabled
+                    ? Icons.contrast
+                    : Icons.contrast_outlined,
+              ),
+            ),
+            ListTile(
+              title: const Text('Font Scale'),
+              subtitle: Text('${accessibilitySettings.fontScale}x'),
+              leading: const Icon(Icons.format_size),
+            ),
+            const SizedBox(height: 16),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                AccessibleButton(
+                  semanticLabel: 'Announce to screen readers',
+                  onPressed: () {
+                    final notifier = ref.read(
+                      accessibilitySettingsProvider.notifier,
+                    );
+                    notifier.announce('This is a screen reader announcement');
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Message announced to screen readers'),
+                      ),
+                    );
+                  },
+                  child: const Text('Announce Message'),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildUpdateFlow() {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text('Manage app updates with customizable flows:'),
+            const SizedBox(height: 16),
+            Consumer(
+              builder: (context, ref, _) {
+                final updateCheck = ref.watch(updateCheckProvider);
+
+                return ListTile(
+                  title: const Text('Update Status'),
+                  subtitle: Text(
+                    updateCheck.when(
+                      data: (result) => result.toString().split('.').last,
+                      loading: () => 'Checking...',
+                      error: (_, __) => 'Error checking for updates',
+                    ),
+                  ),
+                  leading: updateCheck.when(
+                    data: (result) {
+                      switch (result) {
+                        case UpdateCheckResult.upToDate:
+                          return const Icon(
+                            Icons.check_circle,
+                            color: Colors.green,
+                          );
+                        case UpdateCheckResult.updateAvailable:
+                          return const Icon(Icons.info, color: Colors.blue);
+                        case UpdateCheckResult.criticalUpdateRequired:
+                          return const Icon(Icons.warning, color: Colors.red);
+                        case UpdateCheckResult.checkFailed:
+                          return const Icon(
+                            Icons.error_outline,
+                            color: Colors.orange,
+                          );
+                      }
+                    },
+                    loading:
+                        () => const SizedBox(
+                          width: 24,
+                          height: 24,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        ),
+                    error:
+                        (_, __) => const Icon(Icons.error, color: Colors.red),
+                  ),
+                );
+              },
+            ),
+            const SizedBox(height: 16),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    final updateService = ref.read(updateServiceProvider);
+                    updateService.checkForUpdates().then((_) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Checking for updates...'),
+                        ),
+                      );
+                      ref.invalidate(updateCheckProvider);
+                    });
+                  },
+                  child: const Text('Check for Updates'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    final updateService = ref.read(updateServiceProvider);
+                    updateService.getUpdateInfo().then((updateInfo) {
+                      if (updateInfo != null && context.mounted) {
+                        showDialog(
+                          context: context,
+                          builder:
+                              (context) => AlertDialog(
+                                title: Text(
+                                  updateInfo.isCritical
+                                      ? 'Critical Update Available'
+                                      : 'Update Available',
+                                ),
+                                content: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'New version: ${updateInfo.latestVersion}',
+                                    ),
+                                    if (updateInfo.releaseNotes != null) ...[
+                                      const SizedBox(height: 8),
+                                      Text(updateInfo.releaseNotes!),
+                                    ],
+                                  ],
+                                ),
+                                actions: [
+                                  if (!updateInfo.isCritical)
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: const Text('Later'),
+                                    ),
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                      // Open the app store
+                                      updateService.openUpdateUrl();
+                                    },
+                                    child: const Text('Update Now'),
+                                  ),
+                                ],
+                              ),
+                        );
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('No update info available'),
+                          ),
+                        );
+                      }
+                    });
+                  },
+                  child: const Text('Show Update Dialog'),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildOfflineSync() {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text('Keep working even when offline:'),
+            const SizedBox(height: 16),
+            const OfflineStatusIndicator(),
+            const SizedBox(height: 16),
+            Consumer(
+              builder: (context, ref, _) {
+                final pendingChanges = ref.watch(pendingChangesProvider);
+
+                return pendingChanges.when(
+                  data: (changes) {
+                    if (changes.isEmpty) {
+                      return const Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Text('No pending changes'),
+                      );
+                    }
+
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Pending Changes: ${changes.length}',
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(height: 8),
+                        for (final change in changes)
+                          ListTile(
+                            dense: true,
+                            title: Text(
+                              '${change.entityType} ${change.operationType.toString().split('.').last}',
+                            ),
+                            subtitle: Text(
+                              'Status: ${change.status.toString().split('.').last}',
+                            ),
+                            leading: _getOperationIcon(change.operationType),
+                            trailing: _getStatusIcon(change.status),
+                          ),
+                      ],
+                    );
+                  },
+                  loading:
+                      () => const Center(child: CircularProgressIndicator()),
+                  error: (_, __) => const Text('Error loading changes'),
+                );
+              },
+            ),
+            const SizedBox(height: 16),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    ref
+                        .read(offlineSyncServiceProvider)
+                        .queueChange(
+                          entityType: 'testEntity',
+                          operationType: OfflineOperationType.create,
+                          data: {
+                            'name': 'Test Entity',
+                            'createdAt': DateTime.now().toIso8601String(),
+                          },
+                        )
+                        .then((_) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Test operation created'),
+                            ),
+                          );
+                          ref.invalidate(pendingChangesProvider);
+                        });
+                  },
+                  child: const Text('Create Test Change'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    ref.read(offlineSyncServiceProvider).syncChanges().then((
+                      _,
+                    ) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Sync triggered')),
+                      );
+                      ref.invalidate(pendingChangesProvider);
+                    });
+                  },
+                  child: const Text('Sync Now'),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _getOperationIcon(OfflineOperationType type) {
+    switch (type) {
+      case OfflineOperationType.create:
+        return const Icon(Icons.add_circle, color: Colors.green);
+      case OfflineOperationType.update:
+        return const Icon(Icons.edit, color: Colors.blue);
+      case OfflineOperationType.delete:
+        return const Icon(Icons.delete, color: Colors.red);
+      case OfflineOperationType.custom:
+        return const Icon(Icons.code, color: Colors.purple);
+    }
+  }
+
+  Widget _getStatusIcon(SyncStatus status) {
+    switch (status) {
+      case SyncStatus.pending:
+        return const Icon(Icons.pending, color: Colors.orange);
+      case SyncStatus.syncing:
+        return const SizedBox(
+          width: 16,
+          height: 16,
+          child: CircularProgressIndicator(strokeWidth: 2),
+        );
+      case SyncStatus.synced:
+        return const Icon(Icons.check_circle, color: Colors.green);
+      case SyncStatus.failed:
+        return const Icon(Icons.error, color: Colors.red);
+      case SyncStatus.conflict:
+        return const Icon(Icons.warning, color: Colors.deepOrange);
+      case SyncStatus.canceled:
+        return const Icon(Icons.cancel, color: Colors.grey);
+    }
+  }
+
+  Widget _buildAppReview() {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text('Get feedback and ratings from your users:'),
+            const SizedBox(height: 16),
+            Consumer(
+              builder: (context, ref, child) {
+                final shouldRequestReview = ref.watch(
+                  shouldRequestReviewProvider,
+                );
+                return ListTile(
+                  title: const Text('Review Status'),
+                  subtitle: Text(
+                    shouldRequestReview.when(
+                      data:
+                          (shouldRequest) =>
+                              shouldRequest
+                                  ? 'Ready to request review'
+                                  : 'Not ready for review yet',
+                      loading: () => 'Checking...',
+                      error: (_, __) => 'Error checking review status',
+                    ),
+                  ),
+                  leading: shouldRequestReview.when(
+                    data:
+                        (shouldRequest) =>
+                            shouldRequest
+                                ? const Icon(Icons.star, color: Colors.amber)
+                                : const Icon(Icons.star_border),
+                    loading:
+                        () => const SizedBox(
+                          width: 24,
+                          height: 24,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        ),
+                    error:
+                        (_, __) => const Icon(Icons.error, color: Colors.red),
+                  ),
+                );
+              },
+            ),
+            const SizedBox(height: 16),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    final reviewService = ref.read(appReviewServiceProvider);
+                    reviewService.recordSignificantAction().then((_) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Significant action recorded'),
+                        ),
+                      );
+                      ref.invalidate(shouldRequestReviewProvider);
+                    });
+                  },
+                  child: const Text('Record Action'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    final reviewService = ref.read(appReviewServiceProvider);
+                    reviewService.recordAppSession().then((_) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('App session recorded')),
+                      );
+                      ref.invalidate(shouldRequestReviewProvider);
+                    });
+                  },
+                  child: const Text('Record Session'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    final reviewService = ref.read(appReviewServiceProvider);
+                    reviewService
+                        .showFeedbackForm(
+                          context: context,
+                          title: 'Enjoying the App?',
+                          message:
+                              'We\'d love to hear your feedback! Please let us know what you think.',
+                        )
+                        .then((hasFeedback) {
+                          if (hasFeedback) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Thank you for your feedback!'),
+                              ),
+                            );
+                          }
+                        });
+                  },
+                  child: const Text('Show Feedback Form'),
                 ),
               ],
             ),

@@ -1,13 +1,94 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod_clean_architecture/core/analytics/analytics_event.dart';
 import 'package:flutter_riverpod_clean_architecture/core/analytics/analytics_service.dart';
+import 'package:flutter_riverpod_clean_architecture/core/analytics/firebase_analytics_service.dart';
+import 'package:flutter_riverpod_clean_architecture/core/feature_flags/feature_flag_providers.dart';
+
+/// A debug analytics service for development
+class DebugAnalyticsService implements AnalyticsService {
+  bool _isEnabled = true;
+
+  @override
+  Future<void> init() async {
+    debugPrint('📊 Debug Analytics initialized');
+  }
+
+  @override
+  void logEvent(AnalyticsEvent event) {
+    if (!_isEnabled) return;
+    debugPrint('📊 DEBUG ANALYTICS: ${event.name} - ${event.parameters}');
+  }
+
+  @override
+  void setUserProperties({
+    required String userId,
+    Map<String, dynamic>? properties,
+  }) {
+    if (!_isEnabled) return;
+    debugPrint('📊 DEBUG ANALYTICS: Set user ID: $userId');
+    if (properties != null) {
+      debugPrint('📊 DEBUG ANALYTICS: User properties: $properties');
+    }
+  }
+
+  @override
+  void resetUser() {
+    if (!_isEnabled) return;
+    debugPrint('📊 DEBUG ANALYTICS: Reset user');
+  }
+
+  @override
+  void enable() {
+    _isEnabled = true;
+    debugPrint('📊 DEBUG ANALYTICS: Enabled');
+  }
+
+  @override
+  void disable() {
+    _isEnabled = false;
+    debugPrint('📊 DEBUG ANALYTICS: Disabled');
+  }
+
+  @override
+  bool get isEnabled => _isEnabled;
+}
 
 /// Provider for the analytics service
 final analyticsServiceProvider = Provider<AnalyticsService>((ref) {
-  // In a real app, you would initialize all your analytics services here
-  // For example: FirebaseAnalyticsService(), MixpanelService(), etc.
-  return CompositeAnalyticsService([DebugAnalyticsService()]);
+  // Check if analytics are enabled via feature flag
+  final analyticsEnabled = ref.watch(
+    featureFlagProvider('enable_analytics', defaultValue: true),
+  );
+
+  // Create an appropriate analytics service implementation
+  final services = <AnalyticsService>[];
+
+  // Always add Firebase Analytics in production
+  if (!kDebugMode ||
+      ref.watch(
+        featureFlagProvider('force_firebase_analytics', defaultValue: false),
+      )) {
+    services.add(FirebaseAnalyticsService());
+  }
+
+  // Add debug analytics in debug mode
+  if (kDebugMode) {
+    services.add(DebugAnalyticsService());
+  }
+
+  // Create a composite service with all enabled analytics providers
+  final service = CompositeAnalyticsService(services);
+
+  // Enable/disable based on user preference
+  if (analyticsEnabled) {
+    service.enable();
+  } else {
+    service.disable();
+  }
+
+  return service;
 });
 
 /// Provider for accessing the analytics event logger

@@ -51,6 +51,13 @@ dependencies:
   cached_network_image: ^3.4.1
   shimmer: ^3.0.0
   url_launcher: ^6.3.1
+  package_info_plus: ^4.2.0
+  in_app_review: ^2.0.9
+  workmanager: ^0.5.2
+  flutter_tts: ^3.8.5
+  uuid: ^4.3.3
+  synchronized: ^3.1.0
+  local_auth: ^2.2.0
 
 dev_dependencies:
   flutter_test:

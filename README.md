@@ -28,6 +28,11 @@ A production-ready Flutter project template implementing Clean Architecture prin
 - **Comprehensive Utilities** — Rich set of extensions for DateTime, BuildContext, Widget, String, and more
 - **Error Handling** — Consistent error handling with custom Failure classes
 - **Dependency Injection** — Clean dependency management with Riverpod
+- **Accessibility** — Complete accessibility support with screen reader, high contrast, and dynamic text sizes
+- **Offline-First Architecture** — Keep working offline with queued changes and smart synchronization
+- **App Update Flow** — Force updates, in-app updates, and update notifications
+- **App Review System** — Smart rating prompts and feedback collection
+- **CI/CD Integration** — GitHub Actions workflows and Fastlane scripts for automated delivery
 - **Code Generation Tools** — Feature generator for rapid development
 - **Project Renaming Tools** — Easy app and package renaming across all platforms
 - **Example Implementations** — Ready-to-use screens demonstrating the architecture
@@ -41,8 +46,15 @@ Comprehensive documentation is available in the `/docs` folder:
 - [Utilities Guide](docs/UTILITIES_GUIDE.md) - How to use the utility extensions and helpers
 - [Localization Guide](docs/LOCALIZATION_GUIDE.md) - Complete guide to multi-language support
 - [Image Handling Guide](docs/IMAGE_HANDLING_GUIDE.md) - Advanced guide for image loading, processing, and effects
+- [Biometric Auth Guide](docs/BIOMETRIC_AUTH_GUIDE.md) - Implementing secure biometric authentication
+- [Feature Flags Guide](docs/FEATURE_FLAGS_GUIDE.md) - Using feature flags and remote configuration
+- [Analytics Guide](docs/ANALYTICS_GUIDE.md) - Tracking and analyzing user behavior
+- [Accessibility Guide](docs/ACCESSIBILITY_GUIDE.md) - Making your app accessible to all users
+- [Offline Architecture Guide](docs/OFFLINE_ARCHITECTURE_GUIDE.md) - Building offline-first apps
+- [CI/CD Guide](docs/CICD_GUIDE.md) - Setting up continuous integration and delivery
 - [Interactive Documentation](docs/index.html) - Browser-based interactive documentation with examples
 - [DateTime Extensions Guide](docs/datetime_extensions.html) - Complete reference for date and time utilities
+- [Advanced Features Summary](docs/ADVANCED_FEATURES_SUMMARY.md) - Overview of all advanced features
 
 ## 🏗️ Project Structure
 
@@ -591,9 +603,136 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 - **Linting**: Custom lint rules for code quality
 - **Documentation**: Comprehensive guides and examples
 
-## 📚 Further Resources
+## � Advanced Features
+
+### Accessibility
+
+Make your app inclusive and usable by everyone:
+
+```dart
+// Access accessibility settings
+final accessibilitySettings = ref.watch(accessibilitySettingsProvider);
+
+// Check if screen reader is active
+if (accessibilitySettings.isScreenReaderActive) {
+  // Provide additional context for screen readers
+}
+
+// Announce messages to screen reader
+final notifier = ref.read(accessibilitySettingsProvider.notifier);
+notifier.announce('Item added to cart successfully');
+
+// Use accessible widgets
+AccessibleButton(
+  onPressed: () => doSomething(),
+  semanticLabel: 'Save changes',
+  child: Text('Save'),
+)
+
+// Extend regular widgets with accessibility
+myButton.withMinimumTouchTargetSize()
+myImage.withSemanticLabel('Profile picture')
+```
+
+See the [Accessibility Guide](/docs/ACCESSIBILITY_GUIDE.md) for more details.
+
+### Offline-First Architecture
+
+Keep your app working seamlessly with or without an internet connection:
+
+```dart
+// Queue changes when offline
+await offlineSyncService.queueChange(
+  entityType: 'task',
+  operationType: OfflineOperationType.create,
+  data: {
+    'title': 'Buy groceries',
+    'completed': false,
+  },
+);
+
+// Watch for pending changes
+final pendingChanges = ref.watch(pendingChangesProvider);
+pendingChanges.when(
+  data: (changes) => Text('Pending changes: ${changes.length}'),
+  loading: () => CircularProgressIndicator(),
+  error: (_, __) => Text('Error'),
+);
+
+// Show sync status
+OfflineStatusIndicator()
+```
+
+See the [Offline Architecture Guide](/docs/OFFLINE_ARCHITECTURE_GUIDE.md) for more details.
+
+### App Update Flow
+
+Manage app updates with customizable flows:
+
+```dart
+// Check for updates
+final updateController = ref.read(updateControllerProvider.notifier);
+await updateController.checkForUpdates();
+
+// Show update dialog
+if (result == UpdateCheckResult.updateAvailable) {
+  final updateInfo = await updateController.getUpdateInfo();
+  showDialog(
+    context: context,
+    builder: (context) => UpdateDialog(
+      updateInfo: updateInfo!,
+      isCritical: false,
+    ),
+  );
+}
+
+// Force critical updates
+if (result == UpdateCheckResult.criticalUpdateRequired) {
+  // Prevent app usage until updated
+}
+```
+
+### App Review System
+
+Get feedback and ratings from your users:
+
+```dart
+final reviewService = ref.read(appReviewServiceProvider);
+
+// Record significant actions that might trigger a review
+await reviewService.recordSignificantAction();
+
+// Show feedback form before store review
+final hasFeedback = await reviewService.showFeedbackForm(
+  context: context,
+  title: "Enjoying the App?",
+  message: "We'd love to hear your feedback!",
+);
+
+// Request store review
+if (shouldRequestReview) {
+  await reviewService.requestReview();
+}
+```
+
+### CI/CD Integration
+
+Automated build, test, and deployment workflows:
+
+```bash
+# Build for development
+fastlane android build env:development
+
+# Deploy to TestFlight
+fastlane ios deploy env:production
+```
+
+See the [CI/CD Guide](/docs/CICD_GUIDE.md) for more details.
+
+## �📚 Further Resources
 
 - [Flutter Documentation](https://docs.flutter.dev/)
 - [Riverpod Documentation](https://riverpod.dev/)
 - [Clean Architecture Guide](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html)
 - [Effective Dart Style Guide](https://dart.dev/guides/language/effective-dart)
+- [Advanced Features Summary](/docs/ADVANCED_FEATURES_SUMMARY.md)

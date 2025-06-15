@@ -1,13 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod_clean_architecture/core/analytics/analytics_providers.dart';
 import 'package:flutter_riverpod_clean_architecture/core/auth/biometric_service.dart';
 import 'package:flutter_riverpod_clean_architecture/core/auth/debug_biometric_service.dart';
+import 'package:flutter_riverpod_clean_architecture/core/auth/local_biometric_service.dart';
+import 'package:flutter_riverpod_clean_architecture/core/feature_flags/feature_flag_providers.dart';
 
 /// Provider for the biometric authentication service
 final biometricServiceProvider = Provider<BiometricService>((ref) {
-  // In a real app, you would use a real biometric service implementation
-  final service = DebugBiometricService();
+  // Check if we're in debug mode or if a feature flag is set
+  final useDebugService =
+      kDebugMode &&
+      ref.watch(
+        featureFlagProvider('use_debug_biometrics', defaultValue: false),
+      );
+
+  // Create the appropriate service implementation
+  final service =
+      useDebugService ? DebugBiometricService() : LocalBiometricService();
 
   // Log biometric events to analytics
   final analytics = ref.watch(analyticsProvider);
