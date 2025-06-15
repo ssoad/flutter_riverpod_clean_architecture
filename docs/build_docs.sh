@@ -7,7 +7,7 @@ mkdir -p docs/_site
 mkdir -p docs/_layouts
 
 # Install required Python packages
-pip install markdown pyyaml beautifulsoup4
+pip install markdown pyyaml beautifulsoup4 lxml
 
 # Run the conversion script
 python docs/convert_docs.py

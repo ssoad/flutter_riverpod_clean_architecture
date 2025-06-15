@@ -1,11 +1,19 @@
 import os
 import re
 import sys
-import markdown
+import traceback
 from pathlib import Path
 import shutil
-import yaml
-from bs4 import BeautifulSoup
+
+# Try importing required packages
+try:
+    import markdown
+    import yaml
+    from bs4 import BeautifulSoup
+except ImportError:
+    print("Error: Required packages not found. Please install them using:")
+    print("pip install markdown pyyaml beautifulsoup4")
+    sys.exit(1)
 
 # Configuration
 INPUT_DIR = 'docs'
@@ -88,10 +96,17 @@ def convert_markdown_to_html(markdown_file, output_file):
     
     # Apply active link highlighting
     output_filename = os.path.basename(output_file)
-    page_content = page_content.replace(
-        f"class=\"sidebar-nav-link {% if page.url == '/{output_filename}' %}active{% endif %}\"",
-        f"class=\"sidebar-nav-link active\""
-    )
+    
+    # Get the link to the current file in the sidebar
+    current_link = f'/flutter_riverpod_clean_architecture/{output_filename}'
+    
+    # Replace that link's class to include 'active'
+    soup = BeautifulSoup(page_content, 'html.parser')
+    for anchor in soup.select(f'a[href="{current_link}"]'):
+        anchor['class'] = anchor.get('class', []) + ['active']
+    
+    # Update page content with the modified soup
+    page_content = str(soup)
     
     # Write the HTML file
     os.makedirs(os.path.dirname(output_file), exist_ok=True)
@@ -140,7 +155,19 @@ def copy_static_files():
 
 # Main execution
 if __name__ == "__main__":
-    print(f"Starting conversion from {INPUT_DIR} to {OUTPUT_DIR}")
-    process_markdown_files()
-    copy_static_files()
-    print("Conversion complete!")
+    try:
+        print(f"Starting conversion from {INPUT_DIR} to {OUTPUT_DIR}")
+        
+        # Check if the layout file exists
+        if not os.path.exists(os.path.join(LAYOUT_DIR, 'default.html')):
+            print(f"Error: Layout file not found at {os.path.join(LAYOUT_DIR, 'default.html')}")
+            sys.exit(1)
+        
+        process_markdown_files()
+        copy_static_files()
+        print("Conversion complete!")
+    except Exception as e:
+        print(f"Error during conversion: {e}")
+        print("Stack trace:")
+        traceback.print_exc()
+        sys.exit(1)
