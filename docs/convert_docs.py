@@ -16,10 +16,11 @@ except ImportError:
     sys.exit(1)
 
 # Configuration
-INPUT_DIR = '.'
-OUTPUT_DIR = './_site'
-LAYOUT_DIR = './_layouts'
-CONFIG_FILE = './_config.yml'
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+INPUT_DIR = SCRIPT_DIR
+OUTPUT_DIR = os.path.join(SCRIPT_DIR, '_site')
+LAYOUT_DIR = os.path.join(SCRIPT_DIR, '_layouts')
+CONFIG_FILE = os.path.join(SCRIPT_DIR, '_config.yml')
 
 # Make sure the output directory exists
 os.makedirs(OUTPUT_DIR, exist_ok=True)

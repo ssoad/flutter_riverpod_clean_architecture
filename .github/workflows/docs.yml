@@ -24,9 +24,9 @@ jobs:
           python -m pip install --upgrade pip
           pip install markdown pyyaml beautifulsoup4 lxml
 
-      - name: Convert Markdown to HTML
+      - name: Build Documentation Site
         run: |
-          python docs/convert_docs.py
+          python docs/build_site.py
           
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
