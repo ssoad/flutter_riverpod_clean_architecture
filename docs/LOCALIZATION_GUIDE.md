@@ -90,7 +90,7 @@ For messages that change based on count values:
 final itemText = context.tr('itemCount').replaceAll('{count}', items.length.toString());
 
 // ARB definition: 
-// "itemCount": "{count, plural, =0{No items} =1{1 item} other{{count} items}}"
+// "itemCount": "{count, plural, =0{No items} =1{1 item} other{% raw %}{{count}}{% endraw %} items}"
 ```
 
 ### Date and Currency Formatting

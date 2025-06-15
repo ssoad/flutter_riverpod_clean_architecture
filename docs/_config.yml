@@ -1,0 +1,4 @@
+theme: jekyll-theme-primer
+title: Flutter Riverpod Clean Architecture
+description: Documentation for the Flutter Riverpod Clean Architecture project
+baseurl: "/flutter_riverpod_clean_architecture"
