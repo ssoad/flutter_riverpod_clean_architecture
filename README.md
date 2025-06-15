@@ -71,14 +71,16 @@ flutter run
 
 ## 🛠️ Development Tools
 
-The template includes several utility scripts to streamline development:
+The template includes powerful command-line tools to streamline your development workflow:
 
-- **App Renaming** — Update app name and package ids across platforms
-- **Feature Generator** — Scaffold new features with clean architecture  
-- **Language Generator** — Add and manage translations
-- **Test Generator** — Create test scaffolds for features
+| | | |
+|:--:|:--:|:--:|
+| ![App Renamer](https://img.shields.io/badge/-%F0%9F%93%B1%20App%20Renamer-6366f1?style=for-the-badge&logoColor=white) | ![Feature Generator](https://img.shields.io/badge/-%E2%9A%A1%20Feature%20Generator-f43f5e?style=for-the-badge&logoColor=white) | ![Language Generator](https://img.shields.io/badge/-%F0%9F%8C%90%20Language%20Generator-22c55e?style=for-the-badge&logoColor=white) |
+| Update app name and package IDs across all platforms | Scaffold new features with clean architecture | Add and manage translations |
+| ![Test Generator](https://img.shields.io/badge/-%F0%9F%A7%AA%20Test%20Generator-d946ef?style=for-the-badge&logoColor=white) | ![Feature Creator](https://img.shields.io/badge/-%F0%9F%9B%A0%EF%B8%8F%20Feature%20Creator-ec4899?style=for-the-badge&logoColor=white) | ![CI/CD Tools](https://img.shields.io/badge/-%F0%9F%94%84%20CI/CD%20Tools-0ea5e9?style=for-the-badge&logoColor=white) |
+| Create test scaffolds for features | Create new features with boilerplate code | Automate build and deployment |
 
-[Development Tools Documentation](docs/TOOLS.md)
+[Complete Development Tools Documentation](https://ssoad.github.io/flutter_riverpod_clean_architecture/tools.html)
 
 ## 🧪 Testing
 
@@ -401,169 +403,13 @@ final truncated = longString.truncate(20);
 
 ### Locale-Aware Router
 
-Navigate with locale support using GoRouter:
+For more advanced features, check out the [Advanced Features Summary](https://ssoad.github.io/flutter_riverpod_clean_architecture/advanced_features_summary.html).
 
-```dart
-// Navigate with the current locale
-context.go('/products');
-
-// Navigate with a specific locale
-context.goWithLocale('/products', const Locale('es'));
-
-// Get localized routes
-final path = LocaleAwareRouter.getLocalizedPath('/settings');
-```
-
-
-
-## 🤝 Contributing
-
-Contributions are welcome! Please read our [Contributing Guidelines](docs/CONTRIBUTING.md) for more information.
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## � Resources
+## 📚 Further Resources
 
 - [Flutter Documentation](https://docs.flutter.dev/)
 - [Riverpod Documentation](https://riverpod.dev/)
 - [Clean Architecture Guide](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html)
 - [Effective Dart Style Guide](https://dart.dev/guides/language/effective-dart)
-- **Feature Generation**: Scaffold new features with clean architecture structure
-- **Linting**: Custom lint rules for code quality
-- **Documentation**: Comprehensive guides and examples
-
-## � Advanced Features
-
-### Accessibility
-
-Make your app inclusive and usable by everyone:
-
-```dart
-// Access accessibility settings
-final accessibilitySettings = ref.watch(accessibilitySettingsProvider);
-
-// Check if screen reader is active
-if (accessibilitySettings.isScreenReaderActive) {
-  // Provide additional context for screen readers
-}
-
-// Announce messages to screen reader
-final notifier = ref.read(accessibilitySettingsProvider.notifier);
-notifier.announce('Item added to cart successfully');
-
-// Use accessible widgets
-AccessibleButton(
-  onPressed: () => doSomething(),
-  semanticLabel: 'Save changes',
-  child: Text('Save'),
-)
-
-// Extend regular widgets with accessibility
-myButton.withMinimumTouchTargetSize()
-myImage.withSemanticLabel('Profile picture')
-```
-
-See the [Accessibility Guide](/docs/ACCESSIBILITY_GUIDE.md) for more details.
-
-### Offline-First Architecture
-
-Keep your app working seamlessly with or without an internet connection:
-
-```dart
-// Queue changes when offline
-await offlineSyncService.queueChange(
-  entityType: 'task',
-  operationType: OfflineOperationType.create,
-  data: {
-    'title': 'Buy groceries',
-    'completed': false,
-  },
-);
-
-// Watch for pending changes
-final pendingChanges = ref.watch(pendingChangesProvider);
-pendingChanges.when(
-  data: (changes) => Text('Pending changes: ${changes.length}'),
-  loading: () => CircularProgressIndicator(),
-  error: (_, __) => Text('Error'),
-);
-
-// Show sync status
-OfflineStatusIndicator()
-```
-
-See the [Offline Architecture Guide](/docs/OFFLINE_ARCHITECTURE_GUIDE.md) for more details.
-
-### App Update Flow
-
-Manage app updates with customizable flows:
-
-```dart
-// Check for updates
-final updateController = ref.read(updateControllerProvider.notifier);
-await updateController.checkForUpdates();
-
-// Show update dialog
-if (result == UpdateCheckResult.updateAvailable) {
-  final updateInfo = await updateController.getUpdateInfo();
-  showDialog(
-    context: context,
-    builder: (context) => UpdateDialog(
-      updateInfo: updateInfo!,
-      isCritical: false,
-    ),
-  );
-}
-
-// Force critical updates
-if (result == UpdateCheckResult.criticalUpdateRequired) {
-  // Prevent app usage until updated
-}
-```
-
-### App Review System
-
-Get feedback and ratings from your users:
-
-```dart
-final reviewService = ref.read(appReviewServiceProvider);
-
-// Record significant actions that might trigger a review
-await reviewService.recordSignificantAction();
-
-// Show feedback form before store review
-final hasFeedback = await reviewService.showFeedbackForm(
-  context: context,
-  title: "Enjoying the App?",
-  message: "We'd love to hear your feedback!",
-);
-
-// Request store review
-if (shouldRequestReview) {
-  await reviewService.requestReview();
-}
-```
-
-### CI/CD Integration
-
-Automated build, test, and deployment workflows:
-
-```bash
-# Build for development
-fastlane android build env:development
-
-# Deploy to TestFlight
-fastlane ios deploy env:production
-```
-
-See the [CI/CD Guide](/docs/CICD_GUIDE.md) for more details.
-
-## �📚 Further Resources
-
-- [Flutter Documentation](https://docs.flutter.dev/)
-- [Riverpod Documentation](https://riverpod.dev/)
-- [Clean Architecture Guide](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html)
-- [Effective Dart Style Guide](https://dart.dev/guides/language/effective-dart)
+- [Advanced Features Summary](https://ssoad.github.io/flutter_riverpod_clean_architecture/advanced_features_summary.html) - Detailed technical features
 - [Advanced Features Summary](/docs/ADVANCED_FEATURES_SUMMARY.md)
