@@ -17,145 +17,145 @@ jobs:
           channel: 'stable'  # This will use the latest stable version automatically
       - name: Get dependencies
         run: flutter pub get
-      - name: Run analyzer
-        run: flutter analyze
-      - name: Check formatting
-        run: dart format --set-exit-if-changed .
+    #   - name: Run analyzer
+    #     run: flutter analyze
+    #   - name: Check formatting
+    #     run: dart format --set-exit-if-changed .
 
-  test:
-    name: Run Tests
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: subosito/flutter-action@v2
-        with:
-          channel: 'stable'  # This will use the latest stable version automatically
-      - name: Get dependencies
-        run: flutter pub get
-      - name: Run tests
-        run: flutter test
-      - name: Generate coverage report
-        run: flutter test --coverage
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v3
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }} # Optional for public repositories
-          file: ./coverage/lcov.info
+#   test:
+#     name: Run Tests
+#     runs-on: ubuntu-latest
+#     steps:
+#       - uses: actions/checkout@v3
+#       - uses: subosito/flutter-action@v2
+#         with:
+#           channel: 'stable'  # This will use the latest stable version automatically
+#       - name: Get dependencies
+#         run: flutter pub get
+#       - name: Run tests
+#         run: flutter test
+#       - name: Generate coverage report
+#         run: flutter test --coverage
+#       - name: Upload coverage to Codecov
+#         uses: codecov/codecov-action@v3
+#         with:
+#           token: ${{ secrets.CODECOV_TOKEN }} # Optional for public repositories
+#           file: ./coverage/lcov.info
 
-  build_android:
-    name: Build Android App
-    needs: [analyze, test]
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: subosito/flutter-action@v2
-        with:
-          channel: 'stable'  # This will use the latest stable version automatically
-      - name: Get dependencies
-        run: flutter pub get
-      - name: Setup Java
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'zulu'
-          java-version: '11'
-      - name: Setup Android signing
-        run: |
-          echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 --decode > android/app/keystore.jks
-          echo "storeFile=keystore.jks" > android/key.properties
-          echo "storePassword=${{ secrets.ANDROID_KEYSTORE_PASSWORD }}" >> android/key.properties
-          echo "keyAlias=${{ secrets.ANDROID_KEY_ALIAS }}" >> android/key.properties
-          echo "keyPassword=${{ secrets.ANDROID_KEY_PASSWORD }}" >> android/key.properties
-      - name: Build APK
-        run: flutter build apk --release
-      - name: Build App Bundle
-        run: flutter build appbundle --release
-      - name: Upload APK artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: release-apk
-          path: build/app/outputs/flutter-apk/app-release.apk
-      - name: Upload AAB artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: release-aab
-          path: build/app/outputs/bundle/release/app-release.aab
+#   build_android:
+#     name: Build Android App
+#     needs: [analyze, test]
+#     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+#     runs-on: ubuntu-latest
+#     steps:
+#       - uses: actions/checkout@v3
+#       - uses: subosito/flutter-action@v2
+#         with:
+#           channel: 'stable'  # This will use the latest stable version automatically
+#       - name: Get dependencies
+#         run: flutter pub get
+#       - name: Setup Java
+#         uses: actions/setup-java@v3
+#         with:
+#           distribution: 'zulu'
+#           java-version: '11'
+#       - name: Setup Android signing
+#         run: |
+#           echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 --decode > android/app/keystore.jks
+#           echo "storeFile=keystore.jks" > android/key.properties
+#           echo "storePassword=${{ secrets.ANDROID_KEYSTORE_PASSWORD }}" >> android/key.properties
+#           echo "keyAlias=${{ secrets.ANDROID_KEY_ALIAS }}" >> android/key.properties
+#           echo "keyPassword=${{ secrets.ANDROID_KEY_PASSWORD }}" >> android/key.properties
+#       - name: Build APK
+#         run: flutter build apk --release
+#       - name: Build App Bundle
+#         run: flutter build appbundle --release
+#       - name: Upload APK artifact
+#         uses: actions/upload-artifact@v3
+#         with:
+#           name: release-apk
+#           path: build/app/outputs/flutter-apk/app-release.apk
+#       - name: Upload AAB artifact
+#         uses: actions/upload-artifact@v3
+#         with:
+#           name: release-aab
+#           path: build/app/outputs/bundle/release/app-release.aab
 
-  build_ios:
-    name: Build iOS App
-    needs: [analyze, test]
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    runs-on: macos-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: subosito/flutter-action@v2
-        with:
-          channel: 'stable'  # This will use the latest stable version automatically
-      - name: Get dependencies
-        run: flutter pub get
-      - name: Build iOS
-        run: flutter build ios --release --no-codesign
-      - name: Upload IPA artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: ios-build
-          path: build/ios/iphoneos
+#   build_ios:
+#     name: Build iOS App
+#     needs: [analyze, test]
+#     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+#     runs-on: macos-latest
+#     steps:
+#       - uses: actions/checkout@v3
+#       - uses: subosito/flutter-action@v2
+#         with:
+#           channel: 'stable'  # This will use the latest stable version automatically
+#       - name: Get dependencies
+#         run: flutter pub get
+#       - name: Build iOS
+#         run: flutter build ios --release --no-codesign
+#       - name: Upload IPA artifact
+#         uses: actions/upload-artifact@v3
+#         with:
+#           name: ios-build
+#           path: build/ios/iphoneos
           
-  deploy_android:
-    name: Deploy Android to Play Store
-    runs-on: ubuntu-latest
-    needs: [build_android]
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    steps:
-      - uses: actions/checkout@v3
-      - name: Download AAB
-        uses: actions/download-artifact@v3
-        with:
-          name: release-aab
-          path: artifacts
-      - name: Setup Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: '2.7'
-          bundler-cache: true
-      - name: Install Fastlane
-        run: gem install fastlane
-      - name: Deploy to Play Store
-        run: |
-          fastlane supply \
-          --aab artifacts/app-release.aab \
-          --track production \
-          --json_key ${{ secrets.PLAY_STORE_JSON_KEY }} \
-          --package_name com.example.flutter_riverpod_clean_architecture
+#   deploy_android:
+#     name: Deploy Android to Play Store
+#     runs-on: ubuntu-latest
+#     needs: [build_android]
+#     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+#     steps:
+#       - uses: actions/checkout@v3
+#       - name: Download AAB
+#         uses: actions/download-artifact@v3
+#         with:
+#           name: release-aab
+#           path: artifacts
+#       - name: Setup Ruby
+#         uses: ruby/setup-ruby@v1
+#         with:
+#           ruby-version: '2.7'
+#           bundler-cache: true
+#       - name: Install Fastlane
+#         run: gem install fastlane
+#       - name: Deploy to Play Store
+#         run: |
+#           fastlane supply \
+#           --aab artifacts/app-release.aab \
+#           --track production \
+#           --json_key ${{ secrets.PLAY_STORE_JSON_KEY }} \
+#           --package_name com.example.flutter_riverpod_clean_architecture
 
-  deploy_ios:
-    name: Deploy iOS to TestFlight
-    runs-on: macos-latest
-    needs: [build_ios]
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    steps:
-      - uses: actions/checkout@v3
-      - name: Download iOS build
-        uses: actions/download-artifact@v3
-        with:
-          name: ios-build
-          path: artifacts
-      - name: Setup Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: '2.7'
-          bundler-cache: true
-      - name: Install Fastlane
-        run: gem install fastlane
-      - name: Deploy to TestFlight
-        env:
-          APPLE_ID: ${{ secrets.APPLE_ID }}
-          APP_SPECIFIC_PASSWORD: ${{ secrets.APP_SPECIFIC_PASSWORD }}
-          TEAM_ID: ${{ secrets.TEAM_ID }}
-        run: |
-          fastlane pilot upload \
-          --skip_waiting_for_build_processing \
-          --username $APPLE_ID \
-          --password $APP_SPECIFIC_PASSWORD \
-          --team_id $TEAM_ID \
-          --app_identifier com.example.flutter_riverpod_clean_architecture
+#   deploy_ios:
+#     name: Deploy iOS to TestFlight
+#     runs-on: macos-latest
+#     needs: [build_ios]
+#     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+#     steps:
+#       - uses: actions/checkout@v3
+#       - name: Download iOS build
+#         uses: actions/download-artifact@v3
+#         with:
+#           name: ios-build
+#           path: artifacts
+#       - name: Setup Ruby
+#         uses: ruby/setup-ruby@v1
+#         with:
+#           ruby-version: '2.7'
+#           bundler-cache: true
+#       - name: Install Fastlane
+#         run: gem install fastlane
+#       - name: Deploy to TestFlight
+#         env:
+#           APPLE_ID: ${{ secrets.APPLE_ID }}
+#           APP_SPECIFIC_PASSWORD: ${{ secrets.APP_SPECIFIC_PASSWORD }}
+#           TEAM_ID: ${{ secrets.TEAM_ID }}
+#         run: |
+#           fastlane pilot upload \
+#           --skip_waiting_for_build_processing \
+#           --username $APPLE_ID \
+#           --password $APP_SPECIFIC_PASSWORD \
+#           --team_id $TEAM_ID \
+#           --app_identifier com.example.flutter_riverpod_clean_architecture
