@@ -462,52 +462,87 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 
-<h2 style="font-size: 3.2em; text-align: center; margin: 80px 0 30px 0; color: var(--faq-heading); font-weight: 800; position: relative;">
-  <span style="display: block; height: 6px; width: 80px; background: var(--faq-heading); margin: 0 auto 15px auto; border-radius: 3px;"></span>
-  FAQ
+<h2 style="font-size: 3.2em; text-align: center; margin: 80px 0 30px 0; font-weight: 800; position: relative; background-image: linear-gradient(135deg, var(--faq-heading), #4DB6AC); -webkit-background-clip: text; background-clip: text; color: transparent; text-shadow: 0px 2px 10px rgba(0,0,0,0.08);">
+  <span style="display: block; height: 6px; width: 80px; background: linear-gradient(to right, var(--faq-heading), #4DB6AC); margin: 0 auto 18px auto; border-radius: 20px; box-shadow: 0 2px 12px rgba(19,185,253,0.2);"></span>
+  Frequently Asked Questions
 </h2>
 
-<div style="max-width: 900px; margin: 0 auto 60px auto;">
-  <details style="margin-bottom: 24px; border-radius: 16px; border: 1px solid var(--faq-border); background: var(--faq-bg); overflow: hidden; box-shadow: 0 6px 20px rgba(0,0,0,0.05); transition: all 0.3s ease; position: relative;">
-    <summary style="padding: 22px 26px; font-size: 1.2em; font-weight: 600; cursor: pointer; position: relative; display: flex; justify-content: space-between; align-items: center; color: var(--faq-title); background: linear-gradient(to right, rgba(1,117,194,0.04), rgba(19,185,253,0.01));">
-      Can I use this template for commercial projects?
-      <span style="margin-left: 10px; transform: rotate(0deg); transition: transform 0.3s; font-size: 1.2em; opacity: 0.7;">⌄</span>
-    </summary>
-    <div style="padding: 0 26px 22px 26px; border-top: 1px solid var(--faq-content-border); background: linear-gradient(to bottom right, rgba(1,117,194,0.02), transparent);">
-      <p style="color: var(--faq-text); line-height: 1.7; font-size: 1.05em; margin-top: 16px;">Yes, this template is licensed under MIT License which allows you to use it freely in both personal and commercial projects. Attribution is appreciated but not required.</p>
-    </div>
-  </details>
+<div style="max-width: 950px; margin: 0 auto 80px auto; position: relative; z-index: 1;">
+  <!-- Decorative elements -->
+  <div style="position: absolute; width: 300px; height: 300px; background: radial-gradient(circle, rgba(19,185,253,0.08) 0%, transparent 70%); border-radius: 50%; top: -40px; left: -100px; z-index: -1;"></div>
+  <div style="position: absolute; width: 250px; height: 250px; background: radial-gradient(circle, rgba(76,175,80,0.08) 0%, transparent 70%); border-radius: 50%; bottom: 40px; right: -60px; z-index: -1;"></div>
   
-  <details style="margin-bottom: 24px; border-radius: 16px; border: 1px solid var(--faq-border); background: var(--faq-bg); overflow: hidden; box-shadow: 0 6px 20px rgba(0,0,0,0.05); transition: all 0.3s ease; position: relative;">
-    <summary style="padding: 22px 26px; font-size: 1.2em; font-weight: 600; cursor: pointer; position: relative; display: flex; justify-content: space-between; align-items: center; color: var(--faq-title); background: linear-gradient(to right, rgba(103,58,183,0.04), rgba(149,117,205,0.01));">
-      How does this template handle state management?
-      <span style="margin-left: 10px; transform: rotate(0deg); transition: transform 0.3s; font-size: 1.2em; opacity: 0.7;">⌄</span>
-    </summary>
-    <div style="padding: 0 26px 22px 26px; border-top: 1px solid var(--faq-content-border); background: linear-gradient(to bottom right, rgba(103,58,183,0.02), transparent);">
-      <p style="color: var(--faq-text); line-height: 1.7; font-size: 1.05em; margin-top: 16px;">This template uses Riverpod 2.0+ as the primary state management solution. Riverpod provides a reactive state management pattern that's both powerful and testable. The template implements a consistent pattern for managing state across different features, including combining local and remote data sources.</p>
-    </div>
-  </details>
-  
-  <details style="margin-bottom: 24px; border-radius: 16px; border: 1px solid var(--faq-border); background: var(--faq-bg); overflow: hidden; box-shadow: 0 6px 20px rgba(0,0,0,0.05); transition: all 0.3s ease; position: relative;">
-    <summary style="padding: 22px 26px; font-size: 1.2em; font-weight: 600; cursor: pointer; position: relative; display: flex; justify-content: space-between; align-items: center; color: var(--faq-title); background: linear-gradient(to right, rgba(76,175,80,0.04), rgba(129,199,132,0.01));">
-      What Flutter versions are supported?
-      <span style="margin-left: 10px; transform: rotate(0deg); transition: transform 0.3s; font-size: 1.2em; opacity: 0.7;">⌄</span>
-    </summary>
-    <div style="padding: 0 26px 22px 26px; border-top: 1px solid var(--faq-content-border); background: linear-gradient(to bottom right, rgba(76,175,80,0.02), transparent);">
-      <p style="color: var(--faq-text); line-height: 1.7; font-size: 1.05em; margin-top: 16px;">The template supports Flutter 3.7+ and Dart 3.0+. It's regularly updated to be compatible with the latest stable Flutter releases and takes advantage of newer language features like pattern matching and records.</p>
-    </div>
-  </details>
-  
-  <details style="margin-bottom: 24px; border-radius: 16px; border: 1px solid var(--faq-border); background: var(--faq-bg); overflow: hidden; box-shadow: 0 6px 20px rgba(0,0,0,0.05); transition: all 0.3s ease; position: relative;">
-    <summary style="padding: 22px 26px; font-size: 1.2em; font-weight: 600; cursor: pointer; position: relative; display: flex; justify-content: space-between; align-items: center; color: var(--faq-title); background: linear-gradient(to right, rgba(255,152,0,0.04), rgba(255,183,77,0.01));">
-      How do I contribute to this project?
-      <span style="margin-left: 10px; transform: rotate(0deg); transition: transform 0.3s; font-size: 1.2em; opacity: 0.7;">⌄</span>
-    </summary>
-    <div style="padding: 0 26px 22px 26px; border-top: 1px solid var(--faq-content-border); background: linear-gradient(to bottom right, rgba(255,152,0,0.02), transparent);">
-      <p style="color: var(--faq-text); line-height: 1.7; font-size: 1.05em; margin-top: 16px;">Contributions are welcome! Check out our <a href="./contributing.html" style="color: var(--faq-link); text-decoration: none; font-weight: 500; border-bottom: 1px dashed var(--faq-link); transition: all 0.2s ease; padding-bottom: 2px;">Contribution Guide</a> for details on how to submit issues, feature requests, and pull requests. You can also help by improving documentation, adding examples, or fixing bugs.</p>
-    </div>
-  </details>
+  <div class="faq-container" style="display: flex; flex-wrap: wrap; gap: 28px; position: relative;">
+    <details style="margin-bottom: 8px; border-radius: 20px; border: 1px solid var(--faq-border); background: var(--faq-bg); overflow: hidden; box-shadow: 0 8px 30px rgba(0,0,0,0.06); transition: all 0.4s ease; position: relative; width: 100%; backdrop-filter: blur(10px);" open>
+      <summary style="padding: 24px 30px; font-size: 1.25em; font-weight: 700; cursor: pointer; position: relative; display: flex; justify-content: space-between; align-items: center; color: var(--faq-title); border-left: 5px solid #0175C2; background: linear-gradient(to right, rgba(1,117,194,0.05), rgba(19,185,253,0.02));">
+        Can I use this template for commercial projects?
+        <span class="faq-icon" style="display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; background: linear-gradient(135deg, #0175C2, #13B9FD); border-radius: 50%; color: white; font-size: 1.2em; box-shadow: 0 4px 10px rgba(1,117,194,0.25); transition: all 0.3s ease;">⌄</span>
+      </summary>
+      <div style="padding: 5px 30px 26px 30px; border-top: 1px solid var(--faq-content-border); background: linear-gradient(to bottom right, rgba(1,117,194,0.02), transparent);">
+        <p style="color: var(--faq-text); line-height: 1.8; font-size: 1.1em; margin-top: 16px;">Yes, this template is licensed under MIT License which allows you to use it freely in both personal and commercial projects. Attribution is appreciated but not required.</p>
+      </div>
+    </details>
+    
+    <details style="margin-bottom: 8px; border-radius: 20px; border: 1px solid var(--faq-border); background: var(--faq-bg); overflow: hidden; box-shadow: 0 8px 30px rgba(0,0,0,0.06); transition: all 0.4s ease; position: relative; width: 100%; backdrop-filter: blur(10px);">
+      <summary style="padding: 24px 30px; font-size: 1.25em; font-weight: 700; cursor: pointer; position: relative; display: flex; justify-content: space-between; align-items: center; color: var(--faq-title); border-left: 5px solid #673AB7; background: linear-gradient(to right, rgba(103,58,183,0.05), rgba(149,117,205,0.02));">
+        How does this template handle state management?
+        <span class="faq-icon" style="display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; background: linear-gradient(135deg, #673AB7, #9575CD); border-radius: 50%; color: white; font-size: 1.2em; box-shadow: 0 4px 10px rgba(103,58,183,0.25); transition: all 0.3s ease;">⌄</span>
+      </summary>
+      <div style="padding: 5px 30px 26px 30px; border-top: 1px solid var(--faq-content-border); background: linear-gradient(to bottom right, rgba(103,58,183,0.02), transparent);">
+        <p style="color: var(--faq-text); line-height: 1.8; font-size: 1.1em; margin-top: 16px;">This template uses Riverpod 2.0+ as the primary state management solution. Riverpod provides a reactive state management pattern that's both powerful and testable. The template implements a consistent pattern for managing state across different features, including combining local and remote data sources.</p>
+      </div>
+    </details>
+    
+    <details style="margin-bottom: 8px; border-radius: 20px; border: 1px solid var(--faq-border); background: var(--faq-bg); overflow: hidden; box-shadow: 0 8px 30px rgba(0,0,0,0.06); transition: all 0.4s ease; position: relative; width: 100%; backdrop-filter: blur(10px);">
+      <summary style="padding: 24px 30px; font-size: 1.25em; font-weight: 700; cursor: pointer; position: relative; display: flex; justify-content: space-between; align-items: center; color: var(--faq-title); border-left: 5px solid #4CAF50; background: linear-gradient(to right, rgba(76,175,80,0.05), rgba(129,199,132,0.02));">
+        What Flutter versions are supported?
+        <span class="faq-icon" style="display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; background: linear-gradient(135deg, #4CAF50, #81C784); border-radius: 50%; color: white; font-size: 1.2em; box-shadow: 0 4px 10px rgba(76,175,80,0.25); transition: all 0.3s ease;">⌄</span>
+      </summary>
+      <div style="padding: 5px 30px 26px 30px; border-top: 1px solid var(--faq-content-border); background: linear-gradient(to bottom right, rgba(76,175,80,0.02), transparent);">
+        <p style="color: var(--faq-text); line-height: 1.8; font-size: 1.1em; margin-top: 16px;">The template supports Flutter 3.7+ and Dart 3.0+. It's regularly updated to be compatible with the latest stable Flutter releases and takes advantage of newer language features like pattern matching and records.</p>
+      </div>
+    </details>
+    
+    <details style="margin-bottom: 8px; border-radius: 20px; border: 1px solid var(--faq-border); background: var(--faq-bg); overflow: hidden; box-shadow: 0 8px 30px rgba(0,0,0,0.06); transition: all 0.4s ease; position: relative; width: 100%; backdrop-filter: blur(10px);">
+      <summary style="padding: 24px 30px; font-size: 1.25em; font-weight: 700; cursor: pointer; position: relative; display: flex; justify-content: space-between; align-items: center; color: var(--faq-title); border-left: 5px solid #FF9800; background: linear-gradient(to right, rgba(255,152,0,0.05), rgba(255,183,77,0.02));">
+        How do I contribute to this project?
+        <span class="faq-icon" style="display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; background: linear-gradient(135deg, #FF9800, #FFB74D); border-radius: 50%; color: white; font-size: 1.2em; box-shadow: 0 4px 10px rgba(255,152,0,0.25); transition: all 0.3s ease;">⌄</span>
+      </summary>
+      <div style="padding: 5px 30px 26px 30px; border-top: 1px solid var(--faq-content-border); background: linear-gradient(to bottom right, rgba(255,152,0,0.02), transparent);">
+        <p style="color: var(--faq-text); line-height: 1.8; font-size: 1.1em; margin-top: 16px;">Contributions are welcome! Check out our <a href="./contributing.html" style="color: var(--faq-link); text-decoration: none; font-weight: 600; transition: all 0.2s ease; padding-bottom: 2px; border-bottom: 2px solid rgba(19,185,253,0.3); box-shadow: 0 1px 0 rgba(19,185,253,0.1);">Contribution Guide</a> for details on how to submit issues, feature requests, and pull requests. You can also help by improving documentation, adding examples, or fixing bugs.</p>
+      </div>
+    </details>
+  </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  // Handle FAQ accordions
+  document.querySelectorAll('details').forEach(detail => {
+    const summary = detail.querySelector('summary');
+    const icon = summary.querySelector('.faq-icon');
+    
+    detail.addEventListener('toggle', () => {
+      if (detail.open) {
+        icon.style.transform = 'rotate(180deg)';
+        detail.style.boxShadow = '0 15px 40px rgba(0,0,0,0.12)';
+      } else {
+        icon.style.transform = 'rotate(0)';
+        detail.style.boxShadow = '0 8px 30px rgba(0,0,0,0.06)';
+      }
+    });
+    
+    // Add hover effects
+    summary.addEventListener('mouseenter', () => {
+      detail.style.transform = 'translateY(-2px)';
+    });
+    
+    summary.addEventListener('mouseleave', () => {
+      detail.style.transform = 'translateY(0)';
+    });
+  });
+});
+</script>
 
 <h2 style="font-size: 3.2em; text-align: center; margin: 80px 0 30px 0; color: #0175C2; font-weight: 800; position: relative;">
   <span style="display: block; height: 6px; width: 80px; background: #0175C2; margin: 0 auto 15px auto; border-radius: 3px;"></span>
