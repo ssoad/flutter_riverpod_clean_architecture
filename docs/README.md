@@ -12,6 +12,7 @@
     <h1 style="font-size: 4.2em; margin: 0; font-weight: 900; letter-spacing: 2px; color: white; text-shadow: 0 4px 16px rgba(0,0,0,0.18); background: linear-gradient(to right, #fff, #e6f7ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Flutter Riverpod</h1>
     <h2 style="color: white; font-size: 2.2em; margin: 18px 0 0 0; font-weight: 700; text-shadow: 0 2px 8px rgba(0,0,0,0.13);">Clean Architecture Template</h2>
     <p style="font-size: 1.5em; max-width: 800px; margin: 38px auto 0 auto; line-height: 1.6; color: white; font-weight: 300; text-shadow: 0 2px 4px rgba(0,0,0,0.10); text-align: center;">A <b style="font-weight: 600; text-decoration: underline; text-decoration-color: rgba(255,255,255,0.3);">production-ready</b> Flutter template for scalable, maintainable, and testable apps. Powered by Riverpod, Clean Architecture, and modern best practices.</p>
+    <div style="background: linear-gradient(90deg, rgba(255,255,255,0.9), rgba(255,255,255,0.7)); border-radius: 6px; padding: 8px 20px; color: #0175C2; font-weight: 700; margin: 25px auto 0; display: inline-block; box-shadow: 0 4px 15px rgba(0,0,0,0.15); transform: rotate(-1deg); font-size: 1.2em; animation: pulse 2s infinite ease-in-out;">⚡️ Build Apps Faster Than Ever! ⚡️</div>
     <div style="margin: 40px 0 0 0; display: flex; gap: 18px; flex-wrap: wrap; justify-content: center;">
       <span style="display: inline-block; background: rgba(255,255,255,0.22); border-radius: 30px; font-size: 1.1em; color: white; font-weight: 600; padding: 10px 22px; box-shadow: 0 5px 15px rgba(0,0,0,0.10);">⚡ Flutter 3.7+</span>
       <span style="display: inline-block; background: rgba(255,255,255,0.22); border-radius: 30px; font-size: 1.1em; color: white; font-weight: 600; padding: 10px 22px; box-shadow: 0 5px 15px rgba(0,0,0,0.10);">💎 Dart 3.0+</span>
@@ -291,6 +292,12 @@
   50% { width: 100%; left: 0; }
   51% { left: 100%; }
   100% { width: 100%; left: 0; }
+}
+
+@keyframes pulse {
+  0% { transform: scale(1) rotate(-1deg); }
+  50% { transform: scale(1.05) rotate(-1deg); }
+  100% { transform: scale(1) rotate(-1deg); }
 }
 
 /* Default light mode styles */
