@@ -2,14 +2,13 @@
 
 # This script converts markdown files to HTML and generates a complete documentation site
 
-# Create directories if they don't exist
+# Create output directory if it doesn't exist
 mkdir -p docs/_site
-mkdir -p docs/_layouts
 
-# Install required Python packages
-pip install markdown pyyaml beautifulsoup4 lxml
+# Install required Python packages if not already installed
+pip install markdown pyyaml beautifulsoup4 lxml || pip3 install markdown pyyaml beautifulsoup4 lxml
 
-# Run the conversion script
-python docs/convert_docs.py
+# Run the improved site generator script
+python3 docs/build_site.py || python docs/build_site.py
 
 echo "Documentation site built successfully in docs/_site directory"

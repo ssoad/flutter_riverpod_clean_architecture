@@ -11,3 +11,6 @@ pubspec.lock
 .vscode/
 .idea/
 build/
+docs/_site/
+# Generated files
+# Flutter/Dart/Pub related

@@ -16,10 +16,10 @@ except ImportError:
     sys.exit(1)
 
 # Configuration
-INPUT_DIR = 'docs'
-OUTPUT_DIR = 'docs/_site'
-LAYOUT_DIR = 'docs/_layouts'
-CONFIG_FILE = 'docs/_config.yml'
+INPUT_DIR = '.'
+OUTPUT_DIR = './_site'
+LAYOUT_DIR = './_layouts'
+CONFIG_FILE = './_config.yml'
 
 # Make sure the output directory exists
 os.makedirs(OUTPUT_DIR, exist_ok=True)
@@ -136,6 +136,77 @@ def process_markdown_files():
                 output_file = os.path.join(OUTPUT_DIR, f"{output_filename}.html")
                 convert_markdown_to_html(markdown_file, output_file)
 
+# Process HTML files with front matter
+def process_html_files():
+    for root, _, files in os.walk(INPUT_DIR):
+        for file in files:
+            if file.endswith('.html') and file not in ['index.html', 'default.html']:
+                # Skip files in _layouts directory or already processed files
+                if '/_layouts/' in root or '/_site/' in root:
+                    continue
+                    
+                # Copy the HTML files
+                html_file = os.path.join(root, file)
+                rel_path = os.path.relpath(html_file, INPUT_DIR)
+                dest_file = os.path.join(OUTPUT_DIR, rel_path)
+                
+                shutil.copy2(html_file, dest_file)
+                print(f"Copied HTML file: {rel_path}")
+
+# Special handling for index.html with front matter
+def process_index_html():
+    index_file = os.path.join(INPUT_DIR, 'index.html')
+    if not os.path.exists(index_file):
+        print("Warning: index.html not found")
+        return
+        
+    print(f"Processing index.html with front matter")
+    
+    with open(index_file, 'r') as f:
+        content = f.read()
+    
+    # Check for front matter (YAML between --- lines)
+    front_matter = {}
+    content_to_convert = content
+    
+    front_matter_match = re.match(r'^---\s*\n(.*?)\n---\s*\n(.*)', content, re.DOTALL)
+    if front_matter_match:
+        try:
+            front_matter_content = front_matter_match.group(1)
+            content_to_convert = front_matter_match.group(2)
+            front_matter = yaml.safe_load(front_matter_content)
+        except Exception as e:
+            print(f"Warning: Error parsing front matter in index.html: {e}")
+    
+    # Get title from front matter
+    page_title = front_matter.get('title', 'Home')
+    
+    # Load the layout template
+    with open(os.path.join(LAYOUT_DIR, 'default.html'), 'r') as f:
+        layout_template = f.read()
+    
+    # Replace content placeholder in layout
+    page_content = layout_template.replace('{{ content }}', content_to_convert)
+    
+    # Replace title placeholder
+    page_content = page_content.replace('{{ page.title }}', page_title)
+    
+    # Process sidebar active link
+    soup = BeautifulSoup(page_content, 'html.parser')
+    for anchor in soup.select('a[href="/flutter_riverpod_clean_architecture/index.html"]'):
+        anchor['class'] = anchor.get('class', []) + ['active']
+    
+    # Update page content with the modified soup
+    page_content = str(soup)
+    
+    # Write the final index.html
+    output_file = os.path.join(OUTPUT_DIR, 'index.html')
+    os.makedirs(os.path.dirname(output_file), exist_ok=True)
+    with open(output_file, 'w') as f:
+        f.write(page_content)
+    
+    print("Processed index.html successfully")
+
 # Copy static files (CSS, JS, images, etc.) - keeping directory structure
 def copy_static_files():
     for root, _, files in os.walk(INPUT_DIR):
@@ -164,6 +235,8 @@ if __name__ == "__main__":
             sys.exit(1)
         
         process_markdown_files()
+        process_html_files()
+        process_index_html()
         copy_static_files()
         print("Conversion complete!")
     except Exception as e:

@@ -11,220 +11,102 @@ A production-ready Flutter project template implementing Clean Architecture prin
   <img src="https://flutter.dev/assets/images/shared/brand/flutter/logo/flutter-lockup.png" alt="Flutter" height="100"/>
 </p>
 
-## 🌟 Features
+## 🌟 Key Features
 
-- **Clean Architecture** — Separation of concerns with domain, data, and presentation layers
-- **Riverpod State Management** — Powerful and testable state management solution
-- **Multi-language Support** — Full internationalization with easy language switching and localized assets
-- **Locale-Aware Navigation** — Router integration with locale-based navigation support
-- **Analytics Integration** — Flexible analytics system for tracking user behavior and app performance
-- **Push Notifications** — Complete notification handling with deep linking and background processing
-- **Biometric Authentication** — Secure fingerprint and face recognition support
-- **Feature Flags** — A/B testing and staged rollouts with remote configuration
-- **Advanced Image Handling** — Lazy loading, caching, SVG support, image effects, and animated placeholders
-- **Structured Logging** — Comprehensive logging system with levels, tags, and performance tracking
-- **Advanced Caching System** — Memory and disk caching with TTL, encryption, and type-safe APIs
-- **Dynamic Theming** — Customizable themes with light/dark mode support and persistence
-- **Comprehensive Utilities** — Rich set of extensions for DateTime, BuildContext, Widget, String, and more
-- **Error Handling** — Consistent error handling with custom Failure classes
-- **Dependency Injection** — Clean dependency management with Riverpod
-- **Accessibility** — Complete accessibility support with screen reader, high contrast, and dynamic text sizes
-- **Offline-First Architecture** — Keep working offline with queued changes and smart synchronization
-- **App Update Flow** — Force updates, in-app updates, and update notifications
-- **App Review System** — Smart rating prompts and feedback collection
-- **CI/CD Integration** — GitHub Actions workflows and Fastlane scripts for automated delivery
-- **Code Generation Tools** — Feature generator for rapid development
-- **Project Renaming Tools** — Easy app and package renaming across all platforms
-- **Example Implementations** — Ready-to-use screens demonstrating the architecture
-- **Extensive Documentation** — Detailed guides for architecture, utilities, and extensions
+- **Clean Architecture** — Domain, data, and presentation layers separation
+- **Riverpod State Management** — Powerful, testable state management
+- **Multi-language Support** — Full internationalization with language switching
+- **Advanced Caching** — Memory and disk caching with type-safety
+- **Biometric Authentication** — Secure fingerprint and face recognition
+- **Feature Flags** — A/B testing and staged rollouts
+- **Analytics Integration** — Flexible event tracking
+- **Push Notifications** — Deep linking and background handling
+- **Accessibility** — Screen reader and dynamic text support
+- **Offline-First** — Work seamlessly with or without connection
+- **CI/CD Ready** — Automated workflows with GitHub Actions
 
-## 📖 Documentation
+[See All Features](docs/FEATURES.md)
 
-Comprehensive documentation is available in the `/docs` folder:
+## � Documentation
 
-- [Architecture Guide](docs/ARCHITECTURE_GUIDE.md) - Detailed explanation of the project structure and principles
-- [Utilities Guide](docs/UTILITIES_GUIDE.md) - How to use the utility extensions and helpers
-- [Localization Guide](docs/LOCALIZATION_GUIDE.md) - Complete guide to multi-language support
-- [Image Handling Guide](docs/IMAGE_HANDLING_GUIDE.md) - Advanced guide for image loading, processing, and effects
-- [Biometric Auth Guide](docs/BIOMETRIC_AUTH_GUIDE.md) - Implementing secure biometric authentication
-- [Feature Flags Guide](docs/FEATURE_FLAGS_GUIDE.md) - Using feature flags and remote configuration
-- [Analytics Guide](docs/ANALYTICS_GUIDE.md) - Tracking and analyzing user behavior
-- [Accessibility Guide](docs/ACCESSIBILITY_GUIDE.md) - Making your app accessible to all users
-- [Offline Architecture Guide](docs/OFFLINE_ARCHITECTURE_GUIDE.md) - Building offline-first apps
-- [CI/CD Guide](docs/CICD_GUIDE.md) - Setting up continuous integration and delivery
-- [Interactive Documentation](docs/index.html) - Browser-based interactive documentation with examples
-- [DateTime Extensions Guide](docs/datetime_extensions.html) - Complete reference for date and time utilities
-- [Advanced Features Summary](docs/ADVANCED_FEATURES_SUMMARY.md) - Overview of all advanced features
+- [Architecture Guide](https://ssoad.github.io/flutter_riverpod_clean_architecture/architecture.html) - Project structure and principles
+- [Utility Tools](docs/TOOLS.md) - CLI tools for development
+- [Feature Documentation](docs/FEATURES.md) - Core features explained
+- [Code Examples](docs/EXAMPLES.md) - Usage examples
+- [Online Documentation](https://ssoad.github.io/flutter_riverpod_clean_architecture/) - Complete reference
 
 ## 🏗️ Project Structure
 
-The project follows a feature-first organization with a core module for shared functionality:
-
 ```plaintext
 lib/
-├── core/            # Core functionality used across features
-│   ├── cli/         # Command-line utilities
-│   ├── constants/   # App-wide constants
-│   ├── docs/        # Documentation helpers
-│   ├── error/       # Error handling
-│   ├── generators/  # Code generation helpers
-│   ├── localization/ # Internationalization
-│   ├── network/     # Network services
-│   ├── providers/   # Core providers
-│   ├── router/      # Routing with locale support
-│   ├── storage/     # Local storage & caching
-│   ├── theme/       # Theming
-│   ├── ui/          # Shared UI components
-│   └── utils/       # Utility functions and extensions
-├── examples/        # Example implementations
-│   ├── cache_example.dart
-│   ├── language_selector.dart
-│   ├── localization_demo.dart
-│   ├── localization_assets_demo.dart
-│   └── theme_showcase.dart
-├── features/        # Feature modules
-│   ├── auth/        # Authentication feature
-│   ├── home/        # Home screen feature
-│   ├── settings/    # App settings feature
-│   └── ui_showcase/ # UI component showcase
-├── gen/             # Generated code
-├── l10n/            # Localization files
-│   └── arb/         # ARB translation files for multiple languages
-└── main.dart        # App entry point
+├── core/                       # Core shared functionality
+├── features/                   # Feature modules
+│   └── feature_name/           # Individual feature
+│       ├── data/               # Data layer (repositories, sources)
+│       ├── domain/             # Domain layer (entities, use cases)
+│       └── presentation/       # UI layer (screens, providers)
+├── examples/                   # Example implementations
+└── main.dart                   # Application entry point
 ```
 
-Each feature follows the Clean Architecture pattern with three layers:
+[Full Architecture Overview](docs/ARCHITECTURE.md)
 
-```plaintext
-feature/
-├── data/            # Data layer
-│   ├── datasources/ # Remote and local data sources
-│   ├── models/      # Data models
-│   └── repositories/ # Repository implementations
-├── domain/          # Domain layer
-│   ├── entities/    # Business objects
-│   ├── repositories/ # Repository interfaces
-│   └── usecases/    # Business logic
-└── presentation/    # Presentation layer
-    ├── providers/   # State management
-    ├── screens/     # UI screens
-    └── widgets/     # UI components
-```
-
-## 🚀 Getting Started
-
-### Prerequisites
-
-- Flutter SDK (version 3.7.0 or higher)
-- Dart SDK (version 3.0.0 or higher)
-- An IDE with Flutter support (VS Code, Android Studio, or IntelliJ)
-
-### Installation
-
-1. Clone the repository:
-
-   ```bash
-   git clone https://github.com/yourusername/flutter_riverpod_clean_architecture.git
-   ```
-
-2. Navigate to the project directory:
-
-   ```bash
-   cd flutter_riverpod_clean_architecture
-   ```
-
-3. Install dependencies:
-
-   ```bash
-   flutter pub get
-   ```
-
-4. Run the app:
-
-   ```bash
-   flutter run
-   ```
-
-## 🛠️ Utility Scripts
-
-The project includes several utility scripts that help streamline development:
-
-### App Renaming
-
-Easily rebrand your app across all platforms with a single command:
+## 🚀 Quick Start
 
 ```bash
-./rename_app.sh --app-name "Your App Name" --package-name com.yourcompany.appname
+# Clone the repository
+git clone https://github.com/ssoad/flutter_riverpod_clean_architecture.git
+
+# Navigate to the project directory
+cd flutter_riverpod_clean_architecture
+
+# Install dependencies
+flutter pub get
+
+# Run the app
+flutter run
 ```
 
-This script updates:
+[Detailed Getting Started Guide](docs/GETTING_STARTED.md)
 
-- App display name in Android, iOS, macOS, Windows, Linux, and Web
-- Package/bundle identifiers in all platforms
-- File structures and import references
-- Build configurations for all supported platforms
+## 🛠️ Development Tools
 
-### Language Generation
+The template includes several utility scripts to streamline development:
 
-Add new languages or update translations with the localization helper:
+- **App Renaming** — Update app name and package ids across platforms
+- **Feature Generator** — Scaffold new features with clean architecture  
+- **Language Generator** — Add and manage translations
+- **Test Generator** — Create test scaffolds for features
+
+[Development Tools Documentation](docs/TOOLS.md)
+
+## 🧪 Testing
 
 ```bash
-./generate_language.sh --add fr,es,de  # Add French, Spanish, and German
-./generate_language.sh --sync           # Synchronize all ARB files with the base English file
-./generate_language.sh --gen            # Generate Dart code from ARB files
+# Run all tests
+flutter test
+
+# Run tests for a specific feature
+flutter test test/features/auth
+
+# Generate coverage report
+flutter test --coverage && genhtml coverage/lcov.info -o coverage/html
 ```
 
-### Feature Generation
+## 🤝 Contributing
 
-Quickly scaffold new features with all the necessary files:
+Contributions are welcome! Please read our [Contributing Guidelines](docs/CONTRIBUTING.md) for more information.
 
-```bash
-./create_feature.sh feature_name        # Create a new feature structure
-```
+## 📄 License
 
-## 📝 Core Features
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-### Analytics Integration
+## 📚 Resources
 
-Track user interactions and app performance with a flexible analytics system:
-
-```dart
-// Access analytics
-final analytics = ref.watch(analyticsProvider);
-
-// Log screen views
-analytics.logScreenView('HomeScreen', parameters: {'referrer': 'deeplink'});
-
-// Log user actions
-analytics.logUserAction(
-  action: 'button_tap',
-  category: 'engagement',
-  label: 'sign_up_button',
-);
-
-// Track errors
-analytics.logError(
-  errorType: 'network_error',
-  message: 'Failed to fetch user data',
-  isFatal: false,
-);
-
-// Measure performance
-analytics.logPerformance(
-  name: 'image_processing',
-  value: 340.5,
-  unit: 'ms',
-);
-
-// Use automatic screen tracking
-return AnalyticsScreenView(
-  screenName: 'ProductDetailsScreen',
-  parameters: {'product_id': product.id},
-  child: Scaffold(/* ... */),
-);
-```
-
-### Push Notifications
+- [Flutter Documentation](https://docs.flutter.dev/)
+- [Riverpod Documentation](https://riverpod.dev/)
+- [Clean Architecture Guide](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html)
+- [Effective Dart Style Guide](https://dart.dev/guides/language/effective-dart)
 
 Complete notification handling with deep linking and background processing:
 
@@ -532,73 +414,22 @@ context.goWithLocale('/products', const Locale('es'));
 final path = LocaleAwareRouter.getLocalizedPath('/settings');
 ```
 
-## 🧪 Testing
 
-```bash
-# Run all tests
-flutter test
-
-# Run tests for a specific feature
-flutter test test/features/auth
-
-# Generate coverage report
-flutter test --coverage && genhtml coverage/lcov.info -o coverage/html
-```
-
-The project follows a comprehensive testing strategy:
-
-- Unit tests for business logic and utilities
-- Widget tests for UI components
-- Integration tests for feature workflows
-- Golden tests for visual regression
 
 ## 🤝 Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-1. Fork the repository
-
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-
-4. Push to the branch (`git push origin feature/amazing-feature`)
-
-5. Open a Pull Request
+Contributions are welcome! Please read our [Contributing Guidelines](docs/CONTRIBUTING.md) for more information.
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 🔍 Core Modules
+## � Resources
 
-- **Analytics**: Comprehensive event tracking with privacy controls
-- **Authentication**: Secure biometric authentication with session management
-- **Feature Flags**: Runtime feature toggling with A/B testing support
-- **Images**: Advanced image handling with processing, caching, SVG support, visual effects, and animated placeholders
-- **Localization**: Multi-language support with context extensions and asset localization
-- **Logging**: Structured logging with levels, tags, and performance tracking
-- **Notifications**: Complete push notification system with deep linking
-- **Error Handling**: Custom Failure class hierarchy for consistent error handling
-- **Network**: Type-safe API client with automatic error handling and retry mechanisms
-- **Storage**: Secure storage for sensitive data with encryption support
-- **Router**: Go Router integration with locale-aware navigation
-- **Constants**: App-wide constants for consistent configuration
-- **Providers**: Core providers for app-wide state management
-- **UI Components**: Reusable widgets that follow the app's design system
-
-### Utility Extensions
-
-- **BuildContext Extensions**: Easy access to theme, localization, navigation, and screen properties
-- **DateTime Extensions**: Formatting, comparison, manipulation, and human-readable representations
-- **String Extensions**: Validation, formatting, and transformation utilities
-- **Widget Extensions**: Padding, margin, gesture, and conditional rendering helpers
-- **Iterable Extensions**: Collection manipulation and transformation utilities
-
-### Development Tools
-
-- **App Renaming**: Cross-platform app and package name renaming script
-- **Localization Management**: Tools for adding and synchronizing translations
+- [Flutter Documentation](https://docs.flutter.dev/)
+- [Riverpod Documentation](https://riverpod.dev/)
+- [Clean Architecture Guide](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html)
+- [Effective Dart Style Guide](https://dart.dev/guides/language/effective-dart)
 - **Feature Generation**: Scaffold new features with clean architecture structure
 - **Linting**: Custom lint rules for code quality
 - **Documentation**: Comprehensive guides and examples
