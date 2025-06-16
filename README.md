@@ -82,6 +82,63 @@ The template includes powerful command-line tools to streamline your development
 
 [Complete Development Tools Documentation](https://ssoad.github.io/flutter_riverpod_clean_architecture/tools.html)
 
+### Feature Generator
+
+Generate complete feature modules with all Clean Architecture layers:
+
+```bash
+# Create a new feature with all layers
+./generate_feature.sh --name feature_name
+
+# Create a feature without UI layer
+./generate_feature.sh --name data_service --no-ui
+
+# Create a minimal feature
+./generate_feature.sh --name analytics_tracker --no-ui --no-tests --no-docs
+```
+
+The Feature Generator creates a fully structured feature with:
+
+- **Data layer**: Models, remote/local data sources, repository implementation
+- **Domain layer**: Entities, repository interfaces, use cases
+- **Presentation layer**: UI screens, widgets, Riverpod providers
+- **Tests**: Unit tests for each layer
+- **Documentation**: Feature usage guide
+
+You can also use the programmatic API in your own tools:
+
+```dart
+final generator = FeatureGenerator(
+  featureName: 'user_profile',
+  withUi: true,
+  withTests: true,
+  withDocs: true
+);
+await generator.generate();
+```
+
+### Test Generator
+
+Automate testing workflows with coverage reporting:
+
+```bash
+# Run all tests with coverage report
+./test_generator.sh
+
+# Run tests for a specific feature
+./test_generator.sh --target test/features/auth/
+
+# Run tests without coverage
+./test_generator.sh --no-coverage
+```
+
+The test generator:
+
+- Runs Flutter tests with proper configuration
+- Generates HTML coverage reports
+- Opens reports in your default browser
+- Provides CLI options for customizing test runs
+
 ## 🧪 Testing
 
 ```bash
