@@ -69,6 +69,734 @@ flutter run
 
 [Detailed Getting Started Guide](docs/GETTING_STARTED.md)
 
+## 🧑‍💻 Adding New Features
+
+This template provides two approaches to creating new features: automated generation with our powerful CLI tools or manual setup following Clean Architecture principles.
+
+### Method 1: Using the Feature Generator Tool (Recommended)
+
+The fastest way to create a new feature is using our built-in feature generator:
+
+```bash
+./generate_feature.sh --name user_profile
+```
+
+This will automatically:
+
+1. Create the complete folder structure following Clean Architecture
+2. Generate data, domain, and presentation layer templates
+3. Add Riverpod providers with proper dependency injection
+4. Create test file templates for each component
+5. Add basic documentation for the feature
+
+#### Feature Generator Options
+
+```bash
+# Basic usage - creates a complete feature with all layers
+./generate_feature.sh --name user_profile
+
+# Create a feature without UI (for background services)
+./generate_feature.sh --name analytics_service --no-ui
+
+# Create a feature without repository pattern (simplified structure)
+./generate_feature.sh --name theme_switcher --no-repository
+
+# Create a UI-only feature (for shared components)
+./generate_feature.sh --name custom_button --ui-only
+
+# Create a service-only feature (for utility services)
+./generate_feature.sh --name logger --service-only
+
+# Create data-only feature without tests
+./generate_feature.sh --name local_storage --no-ui --no-tests
+
+# Minimal feature without UI, tests or docs (for utilities)
+./generate_feature.sh --name formatter --no-ui --no-tests --no-docs
+
+# See all available options
+./generate_feature.sh --help
+```
+
+#### Generated Structure
+
+The feature generator creates different structures based on the options you choose:
+
+##### Full Clean Architecture Structure (Default)
+
+```plaintext
+lib/features/feature_name/
+├── data/
+│   ├── datasources/
+│   │   ├── feature_name_remote_datasource.dart
+│   │   └── feature_name_local_datasource.dart
+│   ├── models/
+│   │   └── feature_name_model.dart
+│   └── repositories/
+│       └── feature_name_repository_impl.dart
+├── domain/
+│   ├── entities/
+│   │   └── feature_name_entity.dart
+│   ├── repositories/
+│   │   └── feature_name_repository.dart
+│   └── usecases/
+│       ├── get_all_feature_names.dart
+│       └── get_feature_name_by_id.dart
+├── presentation/ (optional with --no-ui flag)
+│   ├── providers/
+│   │   └── feature_name_ui_providers.dart
+│   ├── screens/
+│   │   ├── feature_name_list_screen.dart
+│   │   └── feature_name_detail_screen.dart
+│   └── widgets/
+│       └── feature_name_list_item.dart
+└── providers/
+    └── feature_name_providers.dart
+```
+
+##### No-Repository Structure (with --no-repository flag)
+
+```plaintext
+lib/features/feature_name/
+├── models/
+│   └── feature_name_model.dart
+├── presentation/ (optional with --no-ui flag)
+│   ├── providers/
+│   │   └── feature_name_ui_providers.dart
+│   ├── screens/
+│   │   └── feature_name_screen.dart
+│   └── widgets/
+│       └── feature_name_widget.dart
+└── providers/
+    └── feature_name_providers.dart
+```
+
+##### UI-Only Structure (with --ui-only flag)
+
+```plaintext
+lib/features/feature_name/
+├── models/
+│   └── feature_name_model.dart
+├── presentation/
+│   ├── providers/
+│   │   └── feature_name_ui_providers.dart
+│   └── widgets/
+│       └── feature_name_widget.dart
+└── providers/
+    └── feature_name_providers.dart
+```
+
+##### Service-Only Structure (with --service-only flag)
+
+```plaintext
+lib/features/feature_name/
+├── models/
+│   └── feature_name_model.dart
+├── services/
+│   └── feature_name_service.dart
+└── providers/
+    └── feature_name_providers.dart
+```
+
+#### Using the Dart Feature Generator
+
+For programmatic usage in your own tools or scripts, you can also use the included Dart class:
+
+```dart
+// Import the generator
+import 'package:flutter_riverpod_clean_architecture/core/cli/feature_generator.dart';
+
+// Create and run the generator
+final generator = FeatureGenerator(
+  featureName: 'user_profile',
+  withUi: true,     // Include presentation layer
+  withTests: true,  // Generate test files
+  withDocs: true    // Create documentation
+);
+
+// Generate all files and folders
+await generator.generate();
+```
+
+### Method 2: Manual Feature Creation
+
+If you prefer to create features manually, follow this structure:
+
+1. **Create the feature directory structure**:
+
+```plaintext
+lib/features/feature_name/
+├── data/
+│   ├── datasources/       # Remote and local data sources
+│   ├── models/            # DTOs and model classes
+│   └── repositories/      # Repository implementations
+├── domain/
+│   ├── entities/          # Business entities
+│   ├── repositories/      # Repository interfaces
+│   └── usecases/          # Business use cases
+├── presentation/
+│   ├── providers/         # UI-specific providers
+│   ├── screens/           # Page/screen widgets
+│   └── widgets/           # Reusable UI components
+└── providers/             # Core feature providers
+```
+
+Then implement each component:
+
+**Step 1:** Define your entities in `domain/entities/` - these are your core business models.
+
+**Step 2:** Create repository interfaces in `domain/repositories/` that define how data will be accessed.
+
+**Step 3:** Implement use cases in `domain/usecases/` for each business operation.
+
+**Step 4:** Create data models in `data/models/` that extend your entities with data layer functionality.
+
+**Step 5:** Implement repositories in `data/repositories/` that fulfill your repository interfaces.
+
+**Step 6:** Create Riverpod providers in `providers/feature_providers.dart`:
+
+```dart
+// Data source providers
+final userRemoteDataSourceProvider = Provider<UserRemoteDataSource>((ref) => 
+  UserRemoteDataSourceImpl(client: ref.read(httpClientProvider)));
+
+// Repository providers
+final userRepositoryProvider = Provider<UserRepository>((ref) => 
+  UserRepositoryImpl(
+    remoteDataSource: ref.read(userRemoteDataSourceProvider),
+    localDataSource: ref.read(userLocalDataSourceProvider),
+  ));
+
+// Use case providers
+final getUserProfileProvider = Provider((ref) => 
+  GetUserProfile(ref.read(userRepositoryProvider)));
+
+// State providers
+final userProfileProvider = FutureProvider<UserEntity>((ref) async {
+  final usecase = ref.read(getUserProfileProvider);
+  final result = await usecase(NoParams());
+  
+  return result.fold(
+    (failure) => throw Exception(failure.toString()),
+    (user) => user,
+  );
+});
+```
+
+**Step 7:** Create UI components in the presentation layer that consume your providers.
+
+**Step 8:** Write tests for each layer in the corresponding test directory.
+
+### Feature Organization Best Practices
+
+- Keep feature code isolated from other features
+- Use dependency injection via Riverpod providers
+- Follow the unidirectional data flow: UI → Use Case → Repository → Data Source
+- Write tests for each layer, especially use cases and repositories
+- Document feature usage and key integration points
+
+### Example: Complete User Profile Feature
+
+Here's a comprehensive example of implementing a user profile feature using Clean Architecture:
+
+#### 1. Domain Layer
+
+```dart
+// domain/entities/user_entity.dart
+class UserEntity extends Equatable {
+  final String id;
+  final String name;
+  final String email;
+  final String? profileImage;
+  final DateTime lastActive;
+  
+  const UserEntity({
+    required this.id,
+    required this.name,
+    required this.email,
+    this.profileImage,
+    required this.lastActive,
+  });
+  
+  @override
+  List<Object?> get props => [id, name, email, profileImage, lastActive];
+}
+
+// domain/repositories/user_repository.dart
+abstract class UserRepository {
+  /// Get the current user's profile
+  Future<Either<Failure, UserEntity>> getUserProfile();
+  
+  /// Update the user's profile information
+  Future<Either<Failure, void>> updateUserProfile(UserEntity user);
+  
+  /// Update just the profile image
+  Future<Either<Failure, String>> updateProfileImage(File imageFile);
+}
+
+// domain/usecases/get_user_profile.dart
+class GetUserProfile implements UseCase<UserEntity, NoParams> {
+  final UserRepository repository;
+  
+  GetUserProfile(this.repository);
+  
+  @override
+  Future<Either<Failure, UserEntity>> call(NoParams params) {
+    return repository.getUserProfile();
+  }
+}
+
+// domain/usecases/update_user_profile.dart
+class UpdateUserProfile implements UseCase<void, UpdateUserParams> {
+  final UserRepository repository;
+  
+  UpdateUserProfile(this.repository);
+  
+  @override
+  Future<Either<Failure, void>> call(UpdateUserParams params) {
+    return repository.updateUserProfile(params.user);
+  }
+}
+
+class UpdateUserParams extends Equatable {
+  final UserEntity user;
+  
+  const UpdateUserParams({required this.user});
+  
+  @override
+  List<Object> get props => [user];
+}
+```
+
+#### 2. Data Layer
+
+```dart
+// data/models/user_model.dart
+class UserModel extends UserEntity {
+  UserModel({
+    required String id,
+    required String name,
+    required String email,
+    String? profileImage,
+    required DateTime lastActive,
+  }) : super(
+          id: id,
+          name: name,
+          email: email,
+          profileImage: profileImage,
+          lastActive: lastActive,
+        );
+
+  factory UserModel.fromJson(Map<String, dynamic> json) {
+    return UserModel(
+      id: json['id'],
+      name: json['name'],
+      email: json['email'],
+      profileImage: json['profile_image'],
+      lastActive: DateTime.parse(json['last_active']),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+      'email': email,
+      'profile_image': profileImage,
+      'last_active': lastActive.toIso8601String(),
+    };
+  }
+  
+  // Convert entity to model
+  factory UserModel.fromEntity(UserEntity entity) {
+    return UserModel(
+      id: entity.id,
+      name: entity.name,
+      email: entity.email,
+      profileImage: entity.profileImage,
+      lastActive: entity.lastActive,
+    );
+  }
+}
+
+// data/datasources/user_remote_datasource.dart
+class UserRemoteDataSourceImpl implements UserRemoteDataSource {
+  final http.Client client;
+  final AuthService authService;
+  
+  UserRemoteDataSourceImpl({
+    required this.client,
+    required this.authService,
+  });
+  
+  @override
+  Future<UserModel> getUserProfile() async {
+    final token = await authService.getToken();
+    
+    final response = await client.get(
+      Uri.parse('${ApiConfig.baseUrl}/user/profile'),
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
+    );
+    
+    if (response.statusCode == 200) {
+      return UserModel.fromJson(json.decode(response.body));
+    } else {
+      throw ServerException(
+        message: 'Failed to load profile',
+        statusCode: response.statusCode,
+      );
+    }
+  }
+  
+  @override
+  Future<void> updateUserProfile(UserModel userModel) async {
+    final token = await authService.getToken();
+    
+    final response = await client.put(
+      Uri.parse('${ApiConfig.baseUrl}/user/profile'),
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
+      body: json.encode(userModel.toJson()),
+    );
+    
+    if (response.statusCode != 200) {
+      throw ServerException(
+        message: 'Failed to update profile',
+        statusCode: response.statusCode,
+      );
+    }
+  }
+}
+
+// data/repositories/user_repository_impl.dart
+class UserRepositoryImpl implements UserRepository {
+  final UserRemoteDataSource remoteDataSource;
+  final UserLocalDataSource localDataSource;
+  final NetworkInfo networkInfo;
+  
+  UserRepositoryImpl({
+    required this.remoteDataSource,
+    required this.localDataSource,
+    required this.networkInfo,
+  });
+  
+  @override
+  Future<Either<Failure, UserEntity>> getUserProfile() async {
+    if (await networkInfo.isConnected) {
+      try {
+        final remoteUser = await remoteDataSource.getUserProfile();
+        localDataSource.cacheUserProfile(remoteUser);
+        return Right(remoteUser);
+      } on ServerException catch (e) {
+        return Left(ServerFailure(message: e.message));
+      }
+    } else {
+      try {
+        final localUser = await localDataSource.getCachedUserProfile();
+        return Right(localUser);
+      } on CacheException {
+        return Left(CacheFailure(message: 'No cached profile available'));
+      }
+    }
+  }
+  
+  @override
+  Future<Either<Failure, void>> updateUserProfile(UserEntity user) async {
+    if (await networkInfo.isConnected) {
+      try {
+        final userModel = UserModel.fromEntity(user);
+        await remoteDataSource.updateUserProfile(userModel);
+        await localDataSource.cacheUserProfile(userModel);
+        return const Right(null);
+      } on ServerException catch (e) {
+        return Left(ServerFailure(message: e.message));
+      }
+    } else {
+      return Left(NetworkFailure(message: 'No internet connection'));
+    }
+  }
+}
+```
+
+#### 3. Providers and State Management
+
+```dart
+// providers/user_providers.dart
+final userRemoteDataSourceProvider = Provider<UserRemoteDataSource>((ref) {
+  final client = ref.read(httpClientProvider);
+  final authService = ref.read(authServiceProvider);
+  return UserRemoteDataSourceImpl(
+    client: client,
+    authService: authService,
+  );
+});
+
+final userLocalDataSourceProvider = Provider<UserLocalDataSource>((ref) {
+  final storage = ref.read(secureStorageProvider);
+  return UserLocalDataSourceImpl(storage: storage);
+});
+
+final userRepositoryProvider = Provider<UserRepository>((ref) {
+  return UserRepositoryImpl(
+    remoteDataSource: ref.read(userRemoteDataSourceProvider),
+    localDataSource: ref.read(userLocalDataSourceProvider),
+    networkInfo: ref.read(networkInfoProvider),
+  );
+});
+
+final getUserProfileProvider = Provider<GetUserProfile>((ref) {
+  return GetUserProfile(ref.read(userRepositoryProvider));
+});
+
+final updateUserProfileProvider = Provider<UpdateUserProfile>((ref) {
+  return UpdateUserProfile(ref.read(userRepositoryProvider));
+});
+
+// State provider for the user profile
+final userProfileProvider = FutureProvider<UserEntity>((ref) async {
+  final usecase = ref.read(getUserProfileProvider);
+  final result = await usecase(NoParams());
+  
+  return result.fold(
+    (failure) => throw Exception(failure.message),
+    (user) => user,
+  );
+});
+
+// State provider for profile editing
+final userProfileEditingProvider = StateNotifierProvider<UserProfileNotifier, AsyncValue<UserEntity?>>((ref) {
+  return UserProfileNotifier(ref);
+});
+
+class UserProfileNotifier extends StateNotifier<AsyncValue<UserEntity?>> {
+  final Ref ref;
+  
+  UserProfileNotifier(this.ref) : super(const AsyncValue.loading()) {
+    _initUser();
+  }
+  
+  Future<void> _initUser() async {
+    final currentUser = await ref.read(userProfileProvider.future);
+    state = AsyncValue.data(currentUser);
+  }
+  
+  Future<void> updateProfile({
+    String? name,
+    String? email,
+  }) async {
+    if (state.value == null) return;
+    
+    state = const AsyncValue.loading();
+    
+    final updatedUser = UserEntity(
+      id: state.value!.id,
+      name: name ?? state.value!.name,
+      email: email ?? state.value!.email,
+      profileImage: state.value!.profileImage,
+      lastActive: DateTime.now(),
+    );
+    
+    final result = await ref.read(updateUserProfileProvider).call(
+      UpdateUserParams(user: updatedUser)
+    );
+    
+    state = result.fold(
+      (failure) => AsyncValue.error(failure, StackTrace.current),
+      (_) => AsyncValue.data(updatedUser),
+    );
+    
+    // Invalidate the main user provider to fetch fresh data
+    ref.invalidate(userProfileProvider);
+  }
+}
+```
+
+#### 4. Presentation Layer
+
+```dart
+// presentation/screens/profile_screen.dart
+class ProfileScreen extends ConsumerWidget {
+  const ProfileScreen({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final userAsync = ref.watch(userProfileProvider);
+    
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Profile'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.edit),
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (_) => const EditProfileScreen(),
+              ),
+            ),
+          )
+        ],
+      ),
+      body: userAsync.when(
+        data: (user) => ProfileContent(user: user),
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (error, _) => Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text('Error: $error'),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: () => ref.refresh(userProfileProvider),
+                child: const Text('Retry'),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class ProfileContent extends StatelessWidget {
+  final UserEntity user;
+  
+  const ProfileContent({Key? key, required this.user}) : super(key: key);
+  
+  @override
+  Widget build(BuildContext context) {
+    return ListView(
+      padding: const EdgeInsets.all(16),
+      children: [
+        Center(
+          child: ProfileAvatar(
+            imageUrl: user.profileImage,
+            name: user.name,
+            radius: 50,
+          ),
+        ),
+        const SizedBox(height: 24),
+        ProfileInfoCard(
+          title: 'Personal Information',
+          items: [
+            ProfileInfoItem(label: 'Name', value: user.name),
+            ProfileInfoItem(label: 'Email', value: user.email),
+            ProfileInfoItem(
+              label: 'Last Active', 
+              value: DateFormat('MMM d, yyyy').format(user.lastActive),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+// presentation/screens/edit_profile_screen.dart
+class EditProfileScreen extends ConsumerStatefulWidget {
+  const EditProfileScreen({Key? key}) : super(key: key);
+  
+  @override
+  _EditProfileScreenState createState() => _EditProfileScreenState();
+}
+
+class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
+  late TextEditingController _nameController;
+  late TextEditingController _emailController;
+  
+  @override
+  void initState() {
+    super.initState();
+    _nameController = TextEditingController();
+    _emailController = TextEditingController();
+    
+    // Initialize with current values
+    final currentUser = ref.read(userProfileProvider).value;
+    if (currentUser != null) {
+      _nameController.text = currentUser.name;
+      _emailController.text = currentUser.email;
+    }
+  }
+  
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _emailController.dispose();
+    super.dispose();
+  }
+  
+  @override
+  Widget build(BuildContext context) {
+    final editingState = ref.watch(userProfileEditingProvider);
+    
+    ref.listen<AsyncValue<UserEntity?>>(
+      userProfileEditingProvider, 
+      (_, next) {
+        if (next.hasError) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Error: ${next.error}')),
+          );
+        } else if (!next.isLoading && !next.hasError) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Profile updated!')),
+          );
+          Navigator.of(context).pop();
+        }
+      }
+    );
+    
+    return Scaffold(
+      appBar: AppBar(title: const Text('Edit Profile')),
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          children: [
+            TextField(
+              controller: _nameController,
+              decoration: const InputDecoration(labelText: 'Name'),
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: _emailController,
+              decoration: const InputDecoration(labelText: 'Email'),
+              keyboardType: TextInputType.emailAddress,
+            ),
+            const SizedBox(height: 24),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: editingState.isLoading
+                    ? null
+                    : () => _saveChanges(),
+                child: editingState.isLoading
+                    ? const SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : const Text('Save Changes'),
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+  
+  void _saveChanges() {
+    ref.read(userProfileEditingProvider.notifier).updateProfile(
+      name: _nameController.text,
+      email: _emailController.text,
+    );
+  }
+}
+```
+
+</details>
+
 ## 🛠️ Development Tools
 
 The template includes powerful command-line tools to streamline your development workflow:
@@ -117,6 +845,21 @@ final generator = FeatureGenerator(
 await generator.generate();
 ```
 
+#### How the Feature Generator Works
+
+Behind the scenes, the feature generator:
+
+1. Creates the directory structure for data, domain, and presentation layers
+2. Generates properly formatted entity, repository, and model classes
+3. Sets up the Riverpod provider dependency chain for dependency injection
+4. Creates boilerplate for remote and local data sources
+5. Implements use cases with Either/Failure error handling
+6. Adds UI screens with proper state management (if UI enabled)
+7. Generates test files with proper mock setup (if tests enabled)
+8. Creates markdown documentation with usage examples (if docs enabled)
+
+All generated code follows the project's coding standards and naming conventions, ensuring consistency across features.
+
 ### Test Generator
 
 Automate testing workflows with coverage reporting:
@@ -130,7 +873,19 @@ Automate testing workflows with coverage reporting:
 
 # Run tests without coverage
 ./test_generator.sh --no-coverage
+
+# Run tests without generating a report
+./test_generator.sh --no-report
 ```
+
+#### Test Generator Options
+
+| Option | Description |
+|--------|-------------|
+| `--target <path>` | Run tests only in the specified path |
+| `--no-coverage` | Run tests without collecting coverage data |
+| `--no-report` | Don't generate HTML coverage report |
+| `--help` | Display help information |
 
 The test generator:
 
@@ -139,334 +894,173 @@ The test generator:
 - Opens reports in your default browser
 - Provides CLI options for customizing test runs
 
-## 🧪 Testing
+## 🔄 Effective Feature Development Workflow
+
+This template is designed to provide a smooth, productive workflow for developing new features. Here's an optimal approach for adding functionality to your app:
+
+### 1. Generate the Feature Scaffold
+
+Start by generating a new feature with all necessary layers:
 
 ```bash
-# Run all tests
-flutter test
+./generate_feature.sh --name product_catalog
+```
 
-# Run tests for a specific feature
-flutter test test/features/auth
+This creates all required files and folders with proper organization.
+
+### 2. Define the Core Business Logic
+
+Next, work on the domain layer to define what your feature needs to accomplish:
+
+1. Update the entity in `domain/entities/product_catalog_entity.dart`
+2. Define repository methods in `domain/repositories/product_catalog_repository.dart`
+3. Create use cases for each business operation
+
+Focus on defining the contract before implementation, thinking in terms of business requirements.
+
+### 3. Implement Data Sources
+
+Now implement where your data comes from:
+
+1. Update the data model in `data/models/product_catalog_model.dart`
+2. Implement the remote data source for API communication
+3. Implement the local data source for caching/persistence
+4. Complete the repository implementation that orchestrates the data sources
+
+### 4. Connect the UI
+
+With the data flow working, build your user interface:
+
+1. Create the necessary screen layouts in the presentation layer
+2. Connect screens to providers for reactive state updates
+3. Implement error handling and loading states
+4. Add any specific UI providers needed for presentation state
+
+### 5. Write Tests
+
+Use the test generator to create and run tests for your feature:
+
+```bash
+# Run tests for your specific feature
+./test_generator.sh --target test/features/product_catalog/
 
 # Generate coverage report
-flutter test --coverage && genhtml coverage/lcov.info -o coverage/html
+./test_generator.sh
 ```
 
-## 🤝 Contributing
+By following this workflow, you maintain a clear separation of concerns while ensuring your features are fully tested and align with Clean Architecture principles.
 
-Contributions are welcome! Please read our [Contributing Guidelines](docs/CONTRIBUTING.md) for more information.
+## 🔧 CLI Tools Reference
 
-## 📄 License
+The template includes several command-line tools to accelerate development. Here's a quick reference:
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+| Tool | Description | Usage |
+|------|-------------|-------|
+| `generate_feature.sh` | Creates a new feature with Clean Architecture structure | `./generate_feature.sh --name feature_name [options]` |
+| `test_generator.sh` | Runs tests with coverage reporting | `./test_generator.sh [--target path] [options]` |
+| `generate_language.sh` | Adds translations for internationalization | `./generate_language.sh --lang es [options]` |
+| `rename_app.sh` | Updates app name and bundle identifiers | `./rename_app.sh --name "New App Name" --bundle com.company.app` |
+| `create_feature.sh` | Alternative feature creator with different options | `./create_feature.sh feature_name` |
 
-## 📚 Resources
+To learn more about each tool's options, run any script with the `--help` flag:
 
-- [Flutter Documentation](https://docs.flutter.dev/)
-- [Riverpod Documentation](https://riverpod.dev/)
-- [Clean Architecture Guide](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html)
-- [Effective Dart Style Guide](https://dart.dev/guides/language/effective-dart)
-
-Complete notification handling with deep linking and background processing:
-
-```dart
-// Access notification service
-final service = ref.watch(notificationServiceProvider);
-
-// Request permission
-final status = await service.requestPermission();
-
-// Show a local notification
-await service.showLocalNotification(
-  id: 'msg-123',
-  title: 'New message',
-  body: 'You received a new message from John',
-  action: '/chat/john',
-  channel: 'messages',
-);
-
-// Subscribe to topics
-await service.subscribeToTopic('news');
-
-// Handle notification taps through the deep link handler
-final deepLinkHandler = ref.watch(notificationDeepLinkHandlerProvider);
-final pendingDeepLink = deepLinkHandler.pendingDeepLink;
-if (pendingDeepLink != null) {
-  router.push(pendingDeepLink);
-  deepLinkHandler.clearPendingDeepLink();
-}
+```bash
+./generate_feature.sh --help
 ```
 
-### Biometric Authentication
+These tools follow consistent conventions to make development easier and faster while maintaining architectural integrity.
 
-Secure fingerprint and face recognition for protecting sensitive operations:
+### Creating Features Without Repositories
+
+Not all features require the full repository pattern, especially for simpler UI components, utilities, or service wrappers. The current generator script creates the full Clean Architecture structure, but you can:
+
+#### Creating Simplified Features Manually
+
+#### Manual Simple Feature Creation
+
+For very simple features like UI components or utilities, you can create a more direct structure:
+
+```plaintext
+lib/features/feature_name/
+├── models/              # Simple data models if needed
+├── providers/           # State providers
+└── presentation/
+    ├── screens/         # UI screens
+    └── widgets/         # UI components
+```
+
+#### Example: Simple Theme Switcher Feature
 
 ```dart
-// Access biometric authentication
-final biometricAuth = ref.watch(biometricAuthControllerProvider);
-
-// Check if biometrics are available
-final isAvailable = await ref.watch(biometricsAvailableProvider.future);
-
-// Authenticate the user
-if (isAvailable) {
-  final result = await biometricAuth.authenticate(
-    reason: 'Please authenticate to access your account',
-    authReason: AuthReason.appAccess,
+// lib/features/theme_switcher/models/theme_config.dart
+class ThemeConfig {
+  final String name;
+  final Color primaryColor;
+  final Color accentColor;
+  final bool isDark;
+  
+  const ThemeConfig({
+    required this.name,
+    required this.primaryColor,
+    required this.accentColor,
+    required this.isDark,
+  });
+  
+  // Create predefined themes
+  static const light = ThemeConfig(
+    name: 'Light',
+    primaryColor: Colors.blue,
+    accentColor: Colors.blueAccent,
+    isDark: false,
   );
   
-  if (result == BiometricResult.success) {
-    // User authenticated successfully
-    navigator.push('/secure_area');
+  static const dark = ThemeConfig(
+    name: 'Dark',
+    primaryColor: Colors.indigo,
+    accentColor: Colors.indigoAccent,
+    isDark: true,
+  );
+}
+
+// lib/features/theme_switcher/providers/theme_providers.dart
+final availableThemesProvider = Provider<List<ThemeConfig>>((ref) {
+  return [ThemeConfig.light, ThemeConfig.dark];
+});
+
+final currentThemeProvider = StateNotifierProvider<ThemeNotifier, ThemeConfig>((ref) {
+  return ThemeNotifier();
+});
+
+class ThemeNotifier extends StateNotifier<ThemeConfig> {
+  ThemeNotifier() : super(ThemeConfig.light);
+  
+  void setTheme(ThemeConfig theme) {
+    state = theme;
+    // Save preference if needed
+  }
+  
+  void toggleTheme() {
+    state = state.isDark ? ThemeConfig.light : ThemeConfig.dark;
   }
 }
 
-// Check if session has expired
-if (biometricAuth.isAuthenticationNeeded(timeout: Duration(minutes: 5))) {
-  // Re-authenticate the user
-}
-```
-
-### Feature Flags
-
-Runtime feature toggling for A/B testing and staged rollouts:
-
-```dart
-// Access feature flag service
-final service = ref.watch(featureFlagServiceProvider);
-
-// Check if a feature is enabled
-if (service.isFeatureEnabled('premium_features')) {
-  // Show premium features
-}
-
-// Get a configuration value
-final apiTimeout = service.getInt('api_timeout_ms', defaultValue: 30000);
-
-// Using the provider helpers
-final isDarkModeEnabled = ref.watch(featureFlagProvider('enable_dark_mode', defaultValue: true));
-final primaryColor = ref.watch(colorConfigProvider('primary_color', defaultValue: Colors.blue));
-
-// Use the feature flag widget
-return FeatureFlag(
-  featureKey: 'experimental_ui',
-  child: NewExperimentalWidget(),
-  fallback: ClassicWidget(),
-);
-```
-
-### Advanced Image Handling
-
-Optimized image loading with caching, SVG support, effects, and beautiful placeholders:
-
-```dart
-// Process images
-final processor = ref.watch(imageProcessorProvider);
-final thumbnail = await processor.generateThumbnail(
-  imageData: imageBytes,
-  maxDimension: 200,
-  quality: 80,
-);
-
-// Advanced image widget with shimmer placeholders
-return AdvancedImage(
-  imageUrl: 'https://example.com/image.jpg',
-  width: 300,
-  height: 200,
-  fit: BoxFit.cover,
-  placeholder: ShimmerPlaceholder(
-    borderRadius: BorderRadius.circular(8),
-  ),
-  useThumbnailPreview: true,
-  fadeInDuration: Duration(milliseconds: 300),
-);
-
-// SVG rendering with coloring
-SvgImage.asset(
-  'assets/images/icon.svg',
-  width: 48,
-  height: 48,
-  color: Theme.of(context).primaryColor,
-);
-
-// Apply visual effects to images
-ImageTransformer(
-  effect: ImageEffectConfig(
-    effectType: ImageEffectType.sepia,
-    intensity: 0.7,
-  ),
-  child: Image.network('https://example.com/photo.jpg'),
-);
-```
-
-### Structured Logging
-
-Comprehensive logging with levels, tags, and performance tracking:
-
-```dart
-// Access the logger
-final logger = ref.watch(loggerProvider);
-
-// Log with different levels
-logger.d('Debug message');
-logger.i('User logged in', data: {'user_id': userId});
-logger.w('Resource is running low', data: {'memory': '85%'});
-logger.e('Operation failed', error: exception, stackTrace: stackTrace);
-
-// Create a tagged logger for a specific component
-final apiLogger = ref.watch(taggedLoggerProvider('API'));
-apiLogger.i('Request started', data: {'endpoint': '/users'});
-
-// Track performance
-final result = logger.timeSync('Sort operation', () {
-  return sortItems(largeList);
-});
-
-final response = await logger.timeAsync('API request', () async {
-  return await api.fetchData();
-});
-
-// Use logger mixin in a class
-class UserRepository with LoggerMixin {
-  Future<User> fetchUser(String id) async {
-    logInfo('Fetching user', data: {'id': id});
-    try {
-      // ... implementation
-    } catch (e, stack) {
-      logError('Failed to fetch user', error: e, stackTrace: stack);
-      rethrow;
-    }
+// lib/features/theme_switcher/presentation/widgets/theme_toggle_button.dart
+class ThemeToggleButton extends ConsumerWidget {
+  const ThemeToggleButton({Key? key}) : super(key: key);
+  
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isDark = ref.watch(currentThemeProvider).isDark;
+    
+    return IconButton(
+      icon: Icon(isDark ? Icons.light_mode : Icons.dark_mode),
+      onPressed: () {
+        ref.read(currentThemeProvider.notifier).toggleTheme();
+      },
+      tooltip: isDark ? 'Switch to light mode' : 'Switch to dark mode',
+    );
   }
 }
 ```
 
-### Multi-language Support
 
-Built-in internationalization with easy language switching:
-
-```dart
-// Access translated text
-Text(context.tr('common.welcome_message'));
-
-// With parameters
-Text(context.tr('user.greeting', {'name': userData.displayName}));
-
-// Format dates based on current locale
-Text(context.formatDate(DateTime.now(), 'medium'));
-
-// Format currency based on current locale
-Text(context.formatCurrency(19.99));
-
-// Change language
-ref.read(localeProvider.notifier).setLocale(const Locale('es'));
-
-// Access language-specific assets
-Image.asset(LocalizedAssetService.getLocalizedImagePath('logo.png'));
-```
-
-**Key features:**
-
-- Support for multiple languages (English, Spanish, French, German, Japanese, Bengali)
-- Automatic locale detection
-- Parameter interpolation and pluralization
-- Date and currency formatting based on locale
-- Persistence of language selection
-- Language-specific assets with fallback mechanism
-- Locale-aware navigation
-
-### Advanced Caching System
-
-The project implements a robust two-level caching system with both memory and disk storage options:
-
-```dart
-// Memory cache configuration
-final userMemoryCacheProvider = memoryCacheManagerProvider<UserEntity>();
-
-// Disk cache with type-safe parameters
-final userDiskCacheParams = DiskCacheParams<UserEntity>(
-  config: CacheConfig(
-    maxItems: 100, 
-    expiryDuration: Duration(hours: 24),
-    encryption: true
-  ),
-  fromJson: (json) => UserModel.fromJson(json).toEntity(),
-  toJson: (user) => UserModel.fromEntity(user).toJson(),
-);
-
-final userDiskCacheProvider = diskCacheManagerProvider<UserEntity>(userDiskCacheParams);
-
-// Using the cache
-final cacheManager = ref.watch(userDiskCacheProvider);
-await cacheManager.setItem('user_1', userEntity);
-final cachedUser = await cacheManager.getItem('user_1');
-```
-
-**Key features:**
-
-- Type-safe generics for storing any data type
-- TTL (Time-To-Live) control for cache expiration
-- Optional encryption for sensitive data
-- Memory cache for ultra-fast access
-- Disk persistence for data that needs to survive app restarts
-
-### Dynamic Theming
-
-The theme system allows for complete customization of app appearance:
-
-```dart
-// Access the theme configuration
-final themeConfig = ref.watch(themeConfigProvider);
-final themeMode = ref.watch(themeModeProvider);
-
-// Use in MaterialApp
-return MaterialApp(
-  theme: themeConfig.lightTheme,
-  darkTheme: themeConfig.darkTheme,
-  themeMode: themeMode,
-);
-
-// Update theme settings
-ref.read(themeConfigProvider.notifier).updatePrimaryColor(Colors.indigo);
-ref.read(themeConfigProvider.notifier).updateBorderRadius(8.0);
-ref.read(themeModeProvider.notifier).state = ThemeMode.dark;
-```
-
-**Key features:**
-
-- Dynamic color palette generation from a primary color
-- Runtime theme updates that persist across app restarts
-- Independent light and dark theme configuration
-- Customizable text styles, shape themes, and component appearances
-
-### Comprehensive Extensions
-
-Utility extensions that simplify common tasks:
-
-```dart
-// DateTime extensions
-final formattedDate = dateTime.formatAs('MMMM d, yyyy');
-final timeAgo = dateTime.timeAgo; // "2 hours ago"
-final isToday = dateTime.isToday;
-
-// BuildContext extensions
-context.showSnackBar('Operation successful');
-final screenSize = context.screenSize;
-final isTablet = context.isTablet;
-
-// String extensions
-final slug = "Product Title".toSlug(); // "product-title"
-final truncated = longString.truncate(20);
-```
-
-### Locale-Aware Router
-
-For more advanced features, check out the [Advanced Features Summary](https://ssoad.github.io/flutter_riverpod_clean_architecture/advanced_features_summary.html).
-
-## 📚 Further Resources
-
-- [Flutter Documentation](https://docs.flutter.dev/)
-- [Riverpod Documentation](https://riverpod.dev/)
-- [Clean Architecture Guide](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html)
-- [Effective Dart Style Guide](https://dart.dev/guides/language/effective-dart)
-- [Advanced Features Summary](https://ssoad.github.io/flutter_riverpod_clean_architecture/advanced_features_summary.html) - Detailed technical features
-- [Advanced Features Summary](/docs/ADVANCED_FEATURES_SUMMARY.md)

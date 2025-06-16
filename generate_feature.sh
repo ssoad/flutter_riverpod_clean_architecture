@@ -20,6 +20,8 @@ FEATURE_NAME=""
 WITH_UI="yes"
 WITH_TESTS="yes"
 WITH_DOCS="yes"
+WITH_REPOSITORY="yes"
+FEATURE_TYPE="full" # Options: full, ui-only, service-only
 
 # Function to display usage information
 usage() {
@@ -27,11 +29,17 @@ usage() {
     echo -e "\nOptions:"
     echo -e "  --name <feature_name>    Name of the feature (required, use snake_case)"
     echo -e "  --no-ui                  Generate without UI/presentation layer"
+    echo -e "  --no-repository          Generate without repository pattern (simplified structure)"
+    echo -e "  --ui-only                Generate UI components only (models, widgets, and providers)"
+    echo -e "  --service-only           Generate service only (models, service, and providers)"
     echo -e "  --no-tests               Skip test files generation"
     echo -e "  --no-docs                Skip documentation generation"
     echo -e "  --help                   Display this help message"
-    echo -e "\nExample:"
-    echo -e "  $0 --name user_profile"
+    echo -e "\nExamples:"
+    echo -e "  $0 --name user_profile               # Full Clean Architecture"
+    echo -e "  $0 --name theme_switcher --no-repository  # Without repository pattern"
+    echo -e "  $0 --name button --ui-only           # UI component only"
+    echo -e "  $0 --name logger --service-only      # Service only"
     exit 1
 }
 
@@ -43,6 +51,21 @@ while [[ $# -gt 0 ]]; do
             shift 2
             ;;
         --no-ui)
+            WITH_UI="no"
+            shift
+            ;;
+        --no-repository)
+            WITH_REPOSITORY="no"
+            shift
+            ;;
+        --ui-only)
+            FEATURE_TYPE="ui-only"
+            WITH_REPOSITORY="no"
+            shift
+            ;;
+        --service-only)
+            FEATURE_TYPE="service-only"
+            WITH_REPOSITORY="no"
             WITH_UI="no"
             shift
             ;;
@@ -90,33 +113,85 @@ fi
 # Create directories
 echo -e "\n${BLUE}Creating directory structure...${NC}"
 
-# Data layer
-mkdir -p "$BASE_DIR/data/datasources"
-mkdir -p "$BASE_DIR/data/models"
-mkdir -p "$BASE_DIR/data/repositories"
-
-# Domain layer
-mkdir -p "$BASE_DIR/domain/entities"
-mkdir -p "$BASE_DIR/domain/repositories"
-mkdir -p "$BASE_DIR/domain/usecases"
-
-# Presentation layer (if enabled)
-if [ "$WITH_UI" = "yes" ]; then
-    mkdir -p "$BASE_DIR/presentation/providers"
-    mkdir -p "$BASE_DIR/presentation/screens"
+# Feature type specific setup
+if [ "$FEATURE_TYPE" = "ui-only" ]; then
+    echo -e "${YELLOW}Creating UI-only feature structure...${NC}"
+    
+    # Models folder for data structures
+    mkdir -p "$BASE_DIR/models"
+    
+    # Presentation layer for UI components
     mkdir -p "$BASE_DIR/presentation/widgets"
-fi
-
-# Providers folder
-mkdir -p "$BASE_DIR/providers"
-
-# Test directories (if enabled)
-if [ "$WITH_TESTS" = "yes" ]; then
-    mkdir -p "test/features/$FEATURE_NAME/data"
-    mkdir -p "test/features/$FEATURE_NAME/domain"
-    if [ "$WITH_UI" = "yes" ]; then
+    mkdir -p "$BASE_DIR/presentation/providers"
+    
+    # Providers folder
+    mkdir -p "$BASE_DIR/providers"
+    
+    # Test directories (if enabled)
+    if [ "$WITH_TESTS" = "yes" ]; then
+        mkdir -p "test/features/$FEATURE_NAME/models"
         mkdir -p "test/features/$FEATURE_NAME/presentation"
     fi
+elif [ "$FEATURE_TYPE" = "service-only" ]; then
+    echo -e "${YELLOW}Creating service-only feature structure...${NC}"
+    
+    # Models folder for data structures
+    mkdir -p "$BASE_DIR/models"
+    
+    # Services folder
+    mkdir -p "$BASE_DIR/services"
+    
+    # Providers folder
+    mkdir -p "$BASE_DIR/providers"
+    
+    # Test directories (if enabled)
+    if [ "$WITH_TESTS" = "yes" ]; then
+        mkdir -p "test/features/$FEATURE_NAME/models"
+        mkdir -p "test/features/$FEATURE_NAME/services"
+    fi
+else
+    # Standard feature with or without repository
+    if [ "$WITH_REPOSITORY" = "yes" ]; then
+        # Full Clean Architecture structure
+        
+        # Data layer
+        mkdir -p "$BASE_DIR/data/datasources"
+        mkdir -p "$BASE_DIR/data/models"
+        mkdir -p "$BASE_DIR/data/repositories"
+        
+        # Domain layer
+        mkdir -p "$BASE_DIR/domain/entities"
+        mkdir -p "$BASE_DIR/domain/repositories"
+        mkdir -p "$BASE_DIR/domain/usecases"
+        
+        # Test directories (if enabled)
+        if [ "$WITH_TESTS" = "yes" ]; then
+            mkdir -p "test/features/$FEATURE_NAME/data"
+            mkdir -p "test/features/$FEATURE_NAME/domain"
+        fi
+    else
+        # No repository structure
+        mkdir -p "$BASE_DIR/models"
+        
+        # Test directories (if enabled)
+        if [ "$WITH_TESTS" = "yes" ]; then
+            mkdir -p "test/features/$FEATURE_NAME/models"
+        fi
+    fi
+    
+    # Presentation layer (if enabled)
+    if [ "$WITH_UI" = "yes" ]; then
+        mkdir -p "$BASE_DIR/presentation/providers"
+        mkdir -p "$BASE_DIR/presentation/screens"
+        mkdir -p "$BASE_DIR/presentation/widgets"
+        
+        if [ "$WITH_TESTS" = "yes" ]; then
+            mkdir -p "test/features/$FEATURE_NAME/presentation"
+        fi
+    fi
+    
+    # Providers folder
+    mkdir -p "$BASE_DIR/providers"
 fi
 
 # Documentation (if enabled)
@@ -124,11 +199,65 @@ if [ "$WITH_DOCS" = "yes" ]; then
     mkdir -p "docs/features"
 fi
 
-# Create files
-echo -e "\n${BLUE}Creating scaffold files...${NC}"
+# Create files based on feature type
+if [ "$FEATURE_TYPE" = "ui-only" ]; then
+    generate_ui_only_files
+elif [ "$FEATURE_TYPE" = "service-only" ]; then
+    generate_service_only_files
+elif [ "$WITH_REPOSITORY" = "no" ]; then
+    generate_no_repository_files
+    
+    # Add UI files if needed
+    if [ "$WITH_UI" = "yes" ]; then
+        # Create presentation files here
+        # Simplified from the standard UI files
+        echo -e "\n${BLUE}Creating presentation files...${NC}"
+        
+        # Screen file
+        cat > "$BASE_DIR/presentation/screens/${FEATURE_NAME}_screen.dart" << EOF
+// ${PASCAL_CASE} Screen
 
-# Data layer files
-cat > "$BASE_DIR/data/models/${FEATURE_NAME}_model.dart" << EOF
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../../providers/${FEATURE_NAME}_providers.dart';
+
+class ${PASCAL_CASE}Screen extends ConsumerWidget {
+  const ${PASCAL_CASE}Screen({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final dataAsync = ref.watch(${CAMEL_CASE}DataProvider);
+    
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('${PASCAL_CASE}'),
+      ),
+      body: dataAsync.when(
+        data: (items) => ListView.builder(
+          itemCount: items.length,
+          itemBuilder: (context, index) => ListTile(
+            title: Text('Item \${items[index].id}'),
+            onTap: () {
+              ref.read(selected${PASCAL_CASE}IdProvider.notifier).state = items[index].id;
+            },
+          ),
+        ),
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (error, _) => Center(
+          child: Text('Error: \$error'),
+        ),
+      ),
+    );
+  }
+}
+EOF
+    fi
+else
+    echo -e "\n${BLUE}Creating scaffold files...${NC}"
+    
+    # Data layer files
+    cat > "$BASE_DIR/data/models/${FEATURE_NAME}_model.dart" << EOF
 // ${PASCAL_CASE} Model
 // Implements the ${PASCAL_CASE}Entity with additional data layer functionality
 
@@ -725,7 +854,190 @@ fi
 if [ "$WITH_DOCS" = "yes" ]; then
   mkdir -p "docs/features"
   
-  cat > "docs/features/${FEATURE_NAME}_guide.md" << EOF
+  # Choose documentation template based on feature type
+  if [ "$FEATURE_TYPE" = "ui-only" ]; then
+    cat > "docs/features/${FEATURE_NAME}_guide.md" << EOF
+# ${PASCAL_CASE} UI Component Guide
+
+This document provides an overview of the \`${FEATURE_NAME}\` UI component.
+
+## Overview
+
+The ${PASCAL_CASE} component provides a reusable UI element for displaying and interacting with ${CAMEL_CASE} data.
+
+## Architecture
+
+This is a UI-only feature designed for maximum reusability:
+
+- **Models**: Simple data structures for component configuration
+- **Presentation**: Reusable widgets and UI-specific providers
+- **Providers**: State management for the component
+
+## Components
+
+### Models
+
+- \`${FEATURE_NAME}_model.dart\`: Data model for the ${CAMEL_CASE} component
+
+### Presentation
+
+- \`${FEATURE_NAME}_widget.dart\`: The main reusable UI component
+- \`${FEATURE_NAME}_ui_providers.dart\`: UI-specific state providers
+
+### Providers
+
+- \`${FEATURE_NAME}_providers.dart\`: Riverpod providers for the component
+
+## Usage
+
+### Adding the ${PASCAL_CASE} Widget to a Screen
+
+```dart
+import 'package:flutter/material.dart';
+import 'package:your_app/features/${FEATURE_NAME}/presentation/widgets/${FEATURE_NAME}_widget.dart';
+
+class SomeScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: ${PASCAL_CASE}Widget(
+        id: 'component-1',
+        label: 'My ${PASCAL_CASE}',
+        onPressed: () {
+          // Handle interaction
+        },
+      ),
+    );
+  }
+}
+```
+
+## Implementation Notes
+
+- The component uses Riverpod for internal state management
+- Designed to be easily configurable and adaptable
+EOF
+
+  elif [ "$FEATURE_TYPE" = "service-only" ]; then
+    cat > "docs/features/${FEATURE_NAME}_guide.md" << EOF
+# ${PASCAL_CASE} Service Guide
+
+This document provides an overview of the \`${FEATURE_NAME}\` service.
+
+## Overview
+
+The ${PASCAL_CASE} service provides functionality to handle ${CAMEL_CASE}-related operations.
+
+## Architecture
+
+This is a service-only feature:
+
+- **Models**: Configuration and data models for the service
+- **Services**: Core service implementation
+- **Providers**: Dependency injection and state management
+
+## Components
+
+### Models
+
+- \`${FEATURE_NAME}_model.dart\`: Configuration model for the ${CAMEL_CASE} service
+
+### Services
+
+- \`${FEATURE_NAME}_service.dart\`: Main service implementation
+
+### Providers
+
+- \`${FEATURE_NAME}_providers.dart\`: Riverpod providers for the service
+
+## Usage
+
+### Using the ${PASCAL_CASE} Service
+
+```dart
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:your_app/features/${FEATURE_NAME}/providers/${FEATURE_NAME}_providers.dart';
+
+class SomeConsumerWidget extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    // Access the service
+    final service = ref.watch(${CAMEL_CASE}ServiceProvider);
+    
+    // Use the service
+    return ElevatedButton(
+      onPressed: () async {
+        final result = await service.performOperation(input: 'test');
+        print('Operation result: \$result');
+      },
+      child: Text('Perform Operation'),
+    );
+  }
+}
+```
+
+## Implementation Notes
+
+- The service is initialized lazily through Riverpod providers
+- Configuration can be customized through the config provider
+EOF
+
+  elif [ "$WITH_REPOSITORY" = "no" ]; then
+    cat > "docs/features/${FEATURE_NAME}_guide.md" << EOF
+# ${PASCAL_CASE} Feature Guide
+
+This document provides an overview of the \`${FEATURE_NAME}\` feature.
+
+## Overview
+
+The ${PASCAL_CASE} feature provides functionality to manage and display ${CAMEL_CASE} data.
+
+## Architecture
+
+This feature uses a simplified architecture without the repository pattern:
+
+- **Models**: Data models for the feature
+- **Providers**: Direct data access and state management
+- **Presentation** (if applicable): User interface components
+
+## Components
+
+### Models
+
+- \`${FEATURE_NAME}_model.dart\`: Data model representing ${CAMEL_CASE}s
+
+### Providers
+
+- \`${FEATURE_NAME}_providers.dart\`: Riverpod providers for state management and data access
+
+### Presentation Layer (if included)
+
+- \`${FEATURE_NAME}_screen.dart\`: Main screen for the feature
+- Additional UI components as needed
+
+## Usage
+
+```dart
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:your_app/features/${FEATURE_NAME}/providers/${FEATURE_NAME}_providers.dart';
+
+// Access data
+final items = ref.watch(${CAMEL_CASE}DataProvider);
+
+// Update state
+ref.read(${CAMEL_CASE}NotifierProvider.notifier).loadItems();
+```
+
+## Implementation Notes
+
+- The feature uses Riverpod for state management
+- Data is accessed directly through providers without a repository layer
+- Simplified architecture for less complex features
+EOF
+
+  else
+    # Standard Clean Architecture documentation
+    cat > "docs/features/${FEATURE_NAME}_guide.md" << EOF
 # ${PASCAL_CASE} Feature Guide
 
 This document provides an overview of the \`${FEATURE_NAME}\` feature.
@@ -789,6 +1101,7 @@ The feature follows Clean Architecture principles with the following layers:
 - Error handling follows the Either pattern from dartz
 - Repository pattern is used to abstract data sources
 EOF
+  fi
 fi
 
 # Make dart feature generator file
@@ -925,13 +1238,30 @@ EOF
 # Make feature script executable
 chmod +x "generate_feature.sh"
 
-echo -e "\n${GREEN}✅ Feature generation tools created successfully!${NC}"
-echo -e "\nYou can now create a new feature using:"
+# Print success message based on feature type
+if [ "$FEATURE_TYPE" = "ui-only" ]; then
+    echo -e "\n${GREEN}✅ UI Component feature '${FEATURE_NAME}' created successfully!${NC}"
+    echo -e "Created component structure in ${CYAN}lib/features/${FEATURE_NAME}/${NC}"
+elif [ "$FEATURE_TYPE" = "service-only" ]; then
+    echo -e "\n${GREEN}✅ Service feature '${FEATURE_NAME}' created successfully!${NC}"
+    echo -e "Created service structure in ${CYAN}lib/features/${FEATURE_NAME}/${NC}"
+elif [ "$WITH_REPOSITORY" = "no" ]; then
+    echo -e "\n${GREEN}✅ Simplified feature '${FEATURE_NAME}' created successfully!${NC}"
+    echo -e "Created feature structure (without repository pattern) in ${CYAN}lib/features/${FEATURE_NAME}/${NC}"
+else
+    echo -e "\n${GREEN}✅ Clean Architecture feature '${FEATURE_NAME}' created successfully!${NC}"
+    echo -e "Created complete feature structure in ${CYAN}lib/features/${FEATURE_NAME}/${NC}"
+fi
+
+echo -e "\nYou can create more features using:"
 echo -e "  ${YELLOW}./generate_feature.sh --name your_feature_name${NC}"
 echo -e "\nOptions:"
-echo -e "  ${YELLOW}--no-ui${NC}     Skip UI/presentation layer"
-echo -e "  ${YELLOW}--no-tests${NC}  Skip test files generation"
-echo -e "  ${YELLOW}--no-docs${NC}   Skip documentation generation"
+echo -e "  ${YELLOW}--no-ui${NC}            Skip UI/presentation layer"
+echo -e "  ${YELLOW}--no-repository${NC}    Skip repository pattern (simplified structure)"
+echo -e "  ${YELLOW}--ui-only${NC}          Create UI component only"
+echo -e "  ${YELLOW}--service-only${NC}     Create service only"
+echo -e "  ${YELLOW}--no-tests${NC}         Skip test files generation"
+echo -e "  ${YELLOW}--no-docs${NC}          Skip documentation generation"
 echo
 
 exit 0
