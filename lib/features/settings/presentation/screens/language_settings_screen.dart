@@ -5,7 +5,7 @@ import 'package:flutter_riverpod_clean_architecture/l10n/l10n.dart';
 
 /// Screen for language selection settings
 class LanguageSettingsScreen extends ConsumerWidget {
-  const LanguageSettingsScreen({Key? key}) : super(key: key);
+  const LanguageSettingsScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

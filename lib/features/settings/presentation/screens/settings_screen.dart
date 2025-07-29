@@ -6,7 +6,7 @@ import 'package:flutter_riverpod_clean_architecture/l10n/l10n.dart';
 
 /// Settings screen with various app configuration options
 class SettingsScreen extends ConsumerWidget {
-  const SettingsScreen({Key? key}) : super(key: key);
+  const SettingsScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
