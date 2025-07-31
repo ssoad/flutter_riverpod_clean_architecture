@@ -4,6 +4,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod_clean_architecture/core/accessibility/accessibility_providers.dart';
 import 'package:flutter_riverpod_clean_architecture/core/constants/app_constants.dart';
 import 'package:flutter_riverpod_clean_architecture/core/providers/localization_providers.dart';
+import 'package:flutter_riverpod_clean_architecture/core/providers/storage_providers.dart';
 import 'package:flutter_riverpod_clean_architecture/core/router/app_router.dart';
 import 'package:flutter_riverpod_clean_architecture/core/theme/app_theme.dart';
 import 'package:flutter_riverpod_clean_architecture/core/updates/update_providers.dart';
@@ -34,11 +35,6 @@ void main() async {
     ),
   );
 }
-
-// Provider for SharedPreferences
-final sharedPreferencesProvider = Provider<SharedPreferences>((ref) {
-  throw UnimplementedError();
-});
 
 // Provider to manage theme mode
 final themeModeProvider = StateProvider<ThemeMode>((ref) {

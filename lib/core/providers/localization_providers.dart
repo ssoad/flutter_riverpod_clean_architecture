@@ -1,16 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod_clean_architecture/l10n/app_localizations_delegate.dart';
+import 'package:flutter_riverpod_clean_architecture/core/providers/storage_providers.dart';
 import 'package:flutter_riverpod_clean_architecture/l10n/l10n.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// Key for storing selected language code in SharedPreferences
 const _languageCodeKey = 'selected_language_code';
 
-/// Provider for accessing SharedPreferences
-final sharedPreferencesProvider = Provider<SharedPreferences>((ref) {
-  throw UnimplementedError();
-});
 
 /// Provider for persisting and retrieving the user's locale preference
 final savedLocaleProvider = Provider<Locale>((ref) {
