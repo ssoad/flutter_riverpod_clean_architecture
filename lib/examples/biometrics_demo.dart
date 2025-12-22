@@ -6,13 +6,13 @@ import 'package:flutter_riverpod_clean_architecture/core/analytics/analytics_pro
 
 /// A widget that demonstrates the biometric authentication capabilities
 class BiometricsDemo extends ConsumerWidget {
-  const BiometricsDemo({Key? key}) : super(key: key);
+  const BiometricsDemo({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final biometricService = ref.watch(biometricServiceProvider);
     final analytics = ref.watch(analyticsProvider);
-    final biometricController = ref.watch(biometricAuthControllerProvider);
+    final biometricState = ref.watch(biometricAuthControllerProvider);
 
     return Card(
       child: Padding(
@@ -55,20 +55,19 @@ class BiometricsDemo extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Authentication Status: ${biometricController.isAuthenticated ? "Authenticated" : "Not Authenticated"}',
+                      'Authentication Status: ${biometricState.isAuthenticated ? "Authenticated" : "Not Authenticated"}',
                       style: TextStyle(
-                        color:
-                            biometricController.isAuthenticated
-                                ? Colors.green
-                                : Colors.red,
+                        color: biometricState.isAuthenticated
+                            ? Colors.green
+                            : Colors.red,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    if (biometricController.lastAuthTime != null)
+                    if (biometricState.lastAuthTime != null)
                       Padding(
                         padding: const EdgeInsets.only(top: 4.0),
                         child: Text(
-                          'Last authenticated: ${biometricController.lastAuthTime!.toLocal()}',
+                          'Last authenticated: ${biometricState.lastAuthTime!.toLocal()}',
                           style: const TextStyle(fontSize: 12),
                         ),
                       ),
@@ -132,7 +131,10 @@ class BiometricsDemo extends ConsumerWidget {
                                 category: 'security',
                               );
 
-                              final result = await biometricController
+                              final result = await ref
+                                  .read(
+                                    biometricAuthControllerProvider.notifier,
+                                  )
                                   .authenticate(
                                     reason:
                                         'Authenticate to access secure features',
@@ -147,8 +149,8 @@ class BiometricsDemo extends ConsumerWidget {
                                     ),
                                     backgroundColor:
                                         result == BiometricResult.success
-                                            ? Colors.green
-                                            : Colors.red,
+                                        ? Colors.green
+                                        : Colors.red,
                                   ),
                                 );
                               }
@@ -169,7 +171,10 @@ class BiometricsDemo extends ConsumerWidget {
                                 category: 'payment',
                               );
 
-                              final result = await biometricController
+                              final result = await ref
+                                  .read(
+                                    biometricAuthControllerProvider.notifier,
+                                  )
                                   .authenticate(
                                     reason:
                                         'Authenticate to complete your payment',
@@ -185,8 +190,8 @@ class BiometricsDemo extends ConsumerWidget {
                                     ),
                                     backgroundColor:
                                         result == BiometricResult.success
-                                            ? Colors.green
-                                            : Colors.red,
+                                        ? Colors.green
+                                        : Colors.red,
                                   ),
                                 );
                               }
@@ -195,14 +200,16 @@ class BiometricsDemo extends ConsumerWidget {
                         ),
                       ],
                     ),
-                    if (biometricController.isAuthenticated)
+                    if (biometricState.isAuthenticated)
                       Padding(
                         padding: const EdgeInsets.only(top: 8.0),
                         child: TextButton.icon(
                           icon: const Icon(Icons.logout),
                           label: const Text('Log Out'),
                           onPressed: () {
-                            biometricController.logout();
+                            ref
+                                .read(biometricAuthControllerProvider.notifier)
+                                .logout();
                           },
                         ),
                       ),

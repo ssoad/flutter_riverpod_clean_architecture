@@ -37,9 +37,17 @@ void main() async {
 }
 
 // Provider to manage theme mode
-final themeModeProvider = StateProvider<ThemeMode>((ref) {
-  return ThemeMode.system;
-});
+// Provider to manage theme mode
+class ThemeModeNotifier extends Notifier<ThemeMode> {
+  @override
+  ThemeMode build() => ThemeMode.system;
+
+  void set(ThemeMode mode) => state = mode;
+}
+
+final themeModeProvider = NotifierProvider<ThemeModeNotifier, ThemeMode>(
+  ThemeModeNotifier.new,
+);
 
 class MyApp extends ConsumerWidget {
   const MyApp({super.key});

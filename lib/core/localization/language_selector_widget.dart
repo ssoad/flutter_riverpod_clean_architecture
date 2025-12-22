@@ -6,8 +6,7 @@ import 'package:flutter_riverpod_clean_architecture/l10n/l10n.dart';
 
 /// A widget that allows the user to select a language from the supported locales
 class LanguageSelectorWidget extends ConsumerWidget {
-  const LanguageSelectorWidget({Key? key, this.onLanguageSelected})
-    : super(key: key);
+  const LanguageSelectorWidget({super.key, this.onLanguageSelected});
 
   /// Optional callback when a language is selected
   final void Function(Locale)? onLanguageSelected;
@@ -69,7 +68,7 @@ class LanguageSelectorWidget extends ConsumerWidget {
 
 /// A dialog that allows the user to select a language
 class LanguageSelectorDialog extends StatelessWidget {
-  const LanguageSelectorDialog({Key? key}) : super(key: key);
+  const LanguageSelectorDialog({super.key});
 
   /// Show the language selector dialog
   static Future<Locale?> show(BuildContext context) async {
@@ -106,7 +105,7 @@ class LanguageSelectorDialog extends StatelessWidget {
 
 /// A popup menu button for selecting a language
 class LanguagePopupMenuButton extends ConsumerWidget {
-  const LanguagePopupMenuButton({Key? key}) : super(key: key);
+  const LanguagePopupMenuButton({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

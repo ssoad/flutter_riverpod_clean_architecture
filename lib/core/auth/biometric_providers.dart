@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod_clean_architecture/core/analytics/analytics_providers.dart';
@@ -17,8 +16,9 @@ final biometricServiceProvider = Provider<BiometricService>((ref) {
       );
 
   // Create the appropriate service implementation
-  final service =
-      useDebugService ? DebugBiometricService() : LocalBiometricService();
+  final service = useDebugService
+      ? DebugBiometricService()
+      : LocalBiometricService();
 
   // Log biometric events to analytics
   final analytics = ref.watch(analyticsProvider);
@@ -96,24 +96,46 @@ final availableBiometricsProvider = FutureProvider<List<BiometricType>>((
 });
 
 /// Controller for managing authentication state
-class BiometricAuthController extends ChangeNotifier {
-  final BiometricService _service;
-  final Analytics _analytics;
+/// State for biometric authentication
+class BiometricAuthState {
+  final bool isAuthenticated;
+  final BiometricResult? lastResult;
+  final DateTime? lastAuthTime;
 
-  bool _isAuthenticated = false;
-  BiometricResult? _lastResult;
-  DateTime? _lastAuthTime;
+  const BiometricAuthState({
+    this.isAuthenticated = false,
+    this.lastResult,
+    this.lastAuthTime,
+  });
 
-  BiometricAuthController(this._service, this._analytics);
+  BiometricAuthState copyWith({
+    bool? isAuthenticated,
+    BiometricResult? lastResult,
+    DateTime? lastAuthTime,
+  }) {
+    return BiometricAuthState(
+      isAuthenticated: isAuthenticated ?? this.isAuthenticated,
+      lastResult: lastResult ?? this.lastResult,
+      lastAuthTime: lastAuthTime ?? this.lastAuthTime,
+    );
+  }
+}
+
+/// Controller for managing authentication state
+class BiometricAuthController extends Notifier<BiometricAuthState> {
+  @override
+  BiometricAuthState build() {
+    return const BiometricAuthState();
+  }
 
   /// Whether the user is currently authenticated
-  bool get isAuthenticated => _isAuthenticated;
+  bool get isAuthenticated => state.isAuthenticated;
 
   /// The result of the last authentication attempt
-  BiometricResult? get lastResult => _lastResult;
+  BiometricResult? get lastResult => state.lastResult;
 
   /// When the user was last authenticated
-  DateTime? get lastAuthTime => _lastAuthTime;
+  DateTime? get lastAuthTime => state.lastAuthTime;
 
   /// Authenticate the user with biometrics
   Future<BiometricResult> authenticate({
@@ -123,7 +145,10 @@ class BiometricAuthController extends ChangeNotifier {
     String? dialogTitle,
     String? cancelButtonText,
   }) async {
-    _lastResult = await _service.authenticate(
+    final service = ref.read(biometricServiceProvider);
+    final analytics = ref.read(analyticsProvider);
+
+    final result = await service.authenticate(
       localizedReason: reason,
       reason: authReason,
       sensitiveTransaction: sensitiveTransaction,
@@ -131,43 +156,46 @@ class BiometricAuthController extends ChangeNotifier {
       cancelButtonText: cancelButtonText,
     );
 
-    if (_lastResult == BiometricResult.success) {
-      _isAuthenticated = true;
-      _lastAuthTime = DateTime.now();
+    BiometricAuthState newState = state.copyWith(lastResult: result);
 
-      _analytics.logUserAction(
+    if (result == BiometricResult.success) {
+      newState = newState.copyWith(
+        isAuthenticated: true,
+        lastAuthTime: DateTime.now(),
+      );
+
+      analytics.logUserAction(
         action: 'user_authenticated',
         category: 'authentication',
         label: authReason.toString(),
       );
     }
 
-    notifyListeners();
-    return _lastResult!;
+    state = newState;
+    return result;
   }
 
   /// Clear the authenticated state
   void logout() {
-    _isAuthenticated = false;
-    _lastAuthTime = null;
+    final analytics = ref.read(analyticsProvider);
 
-    _analytics.logUserAction(
+    state = const BiometricAuthState();
+
+    analytics.logUserAction(
       action: 'user_logged_out',
       category: 'authentication',
     );
-
-    notifyListeners();
   }
 
   /// Check if authentication is needed (based on timeout)
   bool isAuthenticationNeeded({Duration? timeout}) {
-    if (!_isAuthenticated) return true;
+    if (!state.isAuthenticated) return true;
 
-    if (timeout != null && _lastAuthTime != null) {
+    if (timeout != null && state.lastAuthTime != null) {
       final now = DateTime.now();
-      final sessionExpiry = _lastAuthTime!.add(timeout);
+      final sessionExpiry = state.lastAuthTime!.add(timeout);
       if (now.isAfter(sessionExpiry)) {
-        _isAuthenticated = false;
+        state = state.copyWith(isAuthenticated: false);
         return true;
       }
     }
@@ -178,8 +206,6 @@ class BiometricAuthController extends ChangeNotifier {
 
 /// Provider for the biometric auth controller
 final biometricAuthControllerProvider =
-    ChangeNotifierProvider<BiometricAuthController>((ref) {
-      final service = ref.watch(biometricServiceProvider);
-      final analytics = ref.watch(analyticsProvider);
-      return BiometricAuthController(service, analytics);
-    });
+    NotifierProvider<BiometricAuthController, BiometricAuthState>(
+      BiometricAuthController.new,
+    );

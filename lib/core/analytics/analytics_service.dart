@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod_clean_architecture/core/analytics/analytics_event.dart';
 
 /// Interface for analytics service implementations

@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 
 /// Base class for all analytics events in the app
 abstract class AnalyticsEvent {

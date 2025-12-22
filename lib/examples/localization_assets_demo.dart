@@ -9,7 +9,7 @@ import 'package:intl/intl.dart';
 /// Demo screen to showcase localization features
 /// Includes language-specific assets demo
 class LocalizationAssetsDemo extends ConsumerWidget {
-  const LocalizationAssetsDemo({Key? key}) : super(key: key);
+  const LocalizationAssetsDemo({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -108,7 +108,7 @@ class LocalizationAssetsDemo extends ConsumerWidget {
             Container(
               padding: const EdgeInsets.all(16.0),
               decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.surfaceVariant,
+                color: Theme.of(context).colorScheme.surfaceContainerHighest,
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Row(

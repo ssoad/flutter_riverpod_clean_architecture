@@ -23,7 +23,7 @@ import '../core/feature_flags/local_feature_flag_service.dart';
 
 /// A screen that showcases the advanced features of the architecture template
 class AdvancedFeaturesShowcase extends ConsumerStatefulWidget {
-  const AdvancedFeaturesShowcase({Key? key}) : super(key: key);
+  const AdvancedFeaturesShowcase({super.key});
 
   @override
   ConsumerState<AdvancedFeaturesShowcase> createState() =>
@@ -443,7 +443,7 @@ class _AdvancedFeaturesShowcaseState
                 max: 1.0,
                 divisions: 10,
                 label:
-                    '${(_effectsIntensity[_selectedEffect] ?? 0.0).toStringAsFixed(1)}',
+                    (_effectsIntensity[_selectedEffect] ?? 0.0).toStringAsFixed(1),
                 onChanged: (value) {
                   setState(() {
                     _effectsIntensity[_selectedEffect] = value;

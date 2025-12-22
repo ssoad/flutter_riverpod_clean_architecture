@@ -128,7 +128,7 @@ class ImageTransformer extends StatelessWidget {
             Positioned.fill(
               child: ColorFiltered(
                 colorFilter: ColorFilter.mode(
-                  effect.overlayColor!.withOpacity(effect.intensity),
+                  effect.overlayColor!.withValues(alpha: effect.intensity),
                   BlendMode.srcOver,
                 ),
                 child: Container(color: Colors.white),

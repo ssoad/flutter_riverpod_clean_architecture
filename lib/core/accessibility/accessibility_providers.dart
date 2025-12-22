@@ -18,45 +18,47 @@ final accessibilityServiceProvider = Provider<AccessibilityService>((ref) {
 });
 
 /// Provider for the current accessibility settings
+/// Provider for the current accessibility settings
 final accessibilitySettingsProvider =
-    StateNotifierProvider<AccessibilitySettingsNotifier, AccessibilitySettings>(
-      (ref) {
-        final service = ref.watch(accessibilityServiceProvider);
-        return AccessibilitySettingsNotifier(service);
-      },
+    NotifierProvider<AccessibilitySettingsNotifier, AccessibilitySettings>(
+      AccessibilitySettingsNotifier.new,
     );
 
 /// Notifier for accessibility settings
-class AccessibilitySettingsNotifier
-    extends StateNotifier<AccessibilitySettings> {
-  final AccessibilityService _service;
+class AccessibilitySettingsNotifier extends Notifier<AccessibilitySettings> {
   Function? _unregisterCallback;
 
-  AccessibilitySettingsNotifier(this._service)
-    : super(_service.getCurrentSettings()) {
-    _unregisterCallback = _service.registerForSettingsChanges(
+  @override
+  AccessibilitySettings build() {
+    final service = ref.watch(accessibilityServiceProvider);
+
+    // Register for changes
+    _unregisterCallback = service.registerForSettingsChanges(
       _onSettingsChanged,
     );
+
+    // Unregister on dispose
+    ref.onDispose(() {
+      _unregisterCallback?.call();
+    });
+
+    return service.getCurrentSettings();
   }
 
   void _onSettingsChanged(AccessibilitySettings settings) {
     state = settings;
   }
 
-  @override
-  void dispose() {
-    _unregisterCallback?.call();
-    super.dispose();
-  }
-
   /// Announce a message for screen reader users
   Future<void> announce(String message) async {
-    await _service.announce(message);
+    final service = ref.read(accessibilityServiceProvider);
+    await service.announce(message);
   }
 
   /// Get a semantic label for an element
   String getSemanticLabel(String key, [Map<String, String>? args]) {
-    return _service.getSemanticLabel(key, args);
+    final service = ref.read(accessibilityServiceProvider);
+    return service.getSemanticLabel(key, args);
   }
 }
 
@@ -66,7 +68,7 @@ class AccessibilityWrapper extends ConsumerWidget {
   final Widget child;
 
   /// Create an accessibility wrapper
-  const AccessibilityWrapper({Key? key, required this.child}) : super(key: key);
+  const AccessibilityWrapper({super.key, required this.child});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -75,11 +77,10 @@ class AccessibilityWrapper extends ConsumerWidget {
     return MediaQuery(
       data: MediaQuery.of(context).copyWith(
         // Apply font scaling if needed
-        textScaleFactor: settings.fontScale,
-        // Reduce animations if needed
         disableAnimations: settings.isReduceMotionEnabled,
         // Set high contrast if needed
         highContrast: settings.isHighContrastEnabled,
+        textScaler: TextScaler.linear(settings.fontScale),
         // Set bold text if needed
         boldText: settings.isBoldTextEnabled,
       ),

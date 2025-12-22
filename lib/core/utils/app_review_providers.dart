@@ -48,7 +48,7 @@ class SmartReviewPrompt extends ConsumerWidget {
   final Widget child;
 
   /// Create a smart review prompt
-  const SmartReviewPrompt({Key? key, required this.child}) : super(key: key);
+  const SmartReviewPrompt({super.key, required this.child});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

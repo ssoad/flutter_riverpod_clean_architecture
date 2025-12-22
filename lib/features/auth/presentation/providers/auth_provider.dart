@@ -34,25 +34,18 @@ class AuthState {
 }
 
 // Auth notifier
-class AuthNotifier extends StateNotifier<AuthState> {
-  final LoginUseCase _loginUseCase;
-  final LogoutUseCase _logoutUseCase;
-  final RegisterUseCase _registerUseCase;
-
-  AuthNotifier({
-    required LoginUseCase loginUseCase,
-    required LogoutUseCase logoutUseCase,
-    required RegisterUseCase registerUseCase,
-  })  : _loginUseCase = loginUseCase,
-        _logoutUseCase = logoutUseCase,
-        _registerUseCase = registerUseCase,
-        super(const AuthState());
+// Auth notifier
+class AuthNotifier extends Notifier<AuthState> {
+  @override
+  AuthState build() {
+    return const AuthState();
+  }
 
   // Check auth status
   Future<void> checkAuthStatus() async {
     // Here you would typically check if there's a valid token stored
     // and validate it with your API if necessary
-    
+
     // For now, we'll just return false
     state = state.copyWith(isAuthenticated: false, user: null);
   }
@@ -60,12 +53,12 @@ class AuthNotifier extends StateNotifier<AuthState> {
   // Login
   Future<void> login({required String email, required String password}) async {
     state = state.copyWith(isLoading: true, errorMessage: null);
-    
-    final result = await _loginUseCase.execute(
-      email: email,
-      password: password,
-    );
-    
+
+    final loginUseCase = ref.read(loginUseCaseProvider);
+    final result = await loginUseCase.execute(email: email, password: password);
+
+    if (!ref.exists(authProvider)) return;
+
     result.fold(
       (failure) => state = state.copyWith(
         isLoading: false,
@@ -88,13 +81,16 @@ class AuthNotifier extends StateNotifier<AuthState> {
     required String password,
   }) async {
     state = state.copyWith(isLoading: true, errorMessage: null);
-    
-    final result = await _registerUseCase.execute(
+
+    final registerUseCase = ref.read(registerUseCaseProvider);
+    final result = await registerUseCase.execute(
       name: name,
       email: email,
       password: password,
     );
-    
+
+    if (!ref.exists(authProvider)) return;
+
     result.fold(
       (failure) => state = state.copyWith(
         isLoading: false,
@@ -113,9 +109,12 @@ class AuthNotifier extends StateNotifier<AuthState> {
   // Logout
   Future<void> logout() async {
     state = state.copyWith(isLoading: true, errorMessage: null);
-    
-    final result = await _logoutUseCase.execute();
-    
+
+    final logoutUseCase = ref.read(logoutUseCaseProvider);
+    final result = await logoutUseCase.execute();
+
+    if (!ref.exists(authProvider)) return;
+
     result.fold(
       (failure) => state = state.copyWith(
         isLoading: false,
@@ -132,14 +131,6 @@ class AuthNotifier extends StateNotifier<AuthState> {
 }
 
 // Auth provider
-final authProvider = StateNotifierProvider<AuthNotifier, AuthState>((ref) {
-  final loginUseCase = ref.watch(loginUseCaseProvider);
-  final logoutUseCase = ref.watch(logoutUseCaseProvider);
-  final registerUseCase = ref.watch(registerUseCaseProvider);
-  
-  return AuthNotifier(
-    loginUseCase: loginUseCase,
-    logoutUseCase: logoutUseCase,
-    registerUseCase: registerUseCase,
-  );
-});
+final authProvider = NotifierProvider<AuthNotifier, AuthState>(
+  AuthNotifier.new,
+);

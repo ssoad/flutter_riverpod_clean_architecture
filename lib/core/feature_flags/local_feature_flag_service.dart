@@ -144,6 +144,7 @@ class LocalFeatureFlagService extends FeatureFlagService {
   }
 
   /// Dispose resources
+  @override
   void dispose() {
     _simulatedFetchTimer?.cancel();
     _listeners.clear();

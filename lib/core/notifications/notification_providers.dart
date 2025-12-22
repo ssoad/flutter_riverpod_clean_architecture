@@ -1,4 +1,3 @@
-import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod_clean_architecture/core/analytics/analytics_providers.dart';
 import 'package:flutter_riverpod_clean_architecture/core/notifications/debug_notification_service.dart';
@@ -45,9 +44,7 @@ final notificationServiceProvider = Provider<NotificationService>((ref) {
 
   // Dispose the service when the provider is disposed
   ref.onDispose(() {
-    if (service is DebugNotificationService) {
-      service.dispose();
-    }
+    service.dispose();
   });
 
   return service;
@@ -62,34 +59,39 @@ final notificationsEnabledProvider = FutureProvider<bool>((ref) async {
 });
 
 /// Controller for handling deep links from notifications
-class NotificationDeepLinkHandler extends ChangeNotifier {
-  final NotificationService _service;
-  String? _pendingDeepLink;
+/// Controller for handling deep links from notifications
+class NotificationDeepLinkHandler extends Notifier<String?> {
+  @override
+  String? build() {
+    final service = ref.watch(notificationServiceProvider);
 
-  NotificationDeepLinkHandler(this._service) {
-    _service.notificationTapStream.listen(_handleNotificationTap);
+    // Listen to stream, but we need to be careful not to create side effects in build
+    // Typically in Notifier, we setup subscriptions in build or use a StreamProvider.
+    // Here we'll subscribe and update state.
+    final sub = service.notificationTapStream.listen(_handleNotificationTap);
+
+    ref.onDispose(sub.cancel);
+
+    return null;
   }
 
   /// Get the pending deep link, if any
-  String? get pendingDeepLink => _pendingDeepLink;
+  String? get pendingDeepLink => state;
 
   /// Clear the pending deep link
   void clearPendingDeepLink() {
-    _pendingDeepLink = null;
-    notifyListeners();
+    state = null;
   }
 
   void _handleNotificationTap(NotificationMessage notification) {
     if (notification.action != null) {
-      _pendingDeepLink = notification.action;
-      notifyListeners();
+      state = notification.action;
     }
   }
 }
 
 /// Provider for the notification deep link handler
 final notificationDeepLinkHandlerProvider =
-    ChangeNotifierProvider<NotificationDeepLinkHandler>((ref) {
-      final service = ref.watch(notificationServiceProvider);
-      return NotificationDeepLinkHandler(service);
-    });
+    NotifierProvider<NotificationDeepLinkHandler, String?>(
+      NotificationDeepLinkHandler.new,
+    );

@@ -131,12 +131,12 @@ class FeatureFlag extends ConsumerWidget {
   final Widget? fallback;
 
   const FeatureFlag({
-    Key? key,
+    super.key,
     required this.featureKey,
     this.defaultValue = false,
     required this.child,
     this.fallback,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

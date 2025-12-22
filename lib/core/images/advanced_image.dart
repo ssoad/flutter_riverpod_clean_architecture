@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
@@ -89,7 +88,7 @@ class AdvancedImage extends ConsumerStatefulWidget {
   final Color? placeholderColor;
 
   const AdvancedImage({
-    Key? key,
+    super.key,
     required this.imageUrl,
     this.width,
     this.height,
@@ -99,7 +98,7 @@ class AdvancedImage extends ConsumerStatefulWidget {
     this.useThumbnailPreview = true,
     this.fadeInDuration = const Duration(milliseconds: 300),
     this.placeholderColor,
-  }) : super(key: key);
+  });
 
   @override
   ConsumerState<AdvancedImage> createState() => _AdvancedImageState();
@@ -186,7 +185,7 @@ class _AdvancedImageState extends ConsumerState<AdvancedImage> {
           ),
           Positioned.fill(
             child: Container(
-              color: Colors.white.withOpacity(0.5),
+              color: Colors.white.withValues(alpha: 0.5),
               child: const Center(child: CircularProgressIndicator()),
             ),
           ),
@@ -206,7 +205,7 @@ class _AdvancedImageState extends ConsumerState<AdvancedImage> {
             Container(
               width: widget.width,
               height: widget.height,
-              color: Colors.red.withOpacity(0.1),
+              color: Colors.red.withValues(alpha: 0.1),
               child: const Center(
                 child: Icon(Icons.broken_image, color: Colors.red),
               ),

@@ -11,7 +11,7 @@ class HomeScreen extends ConsumerWidget {
     // Watch auth state to get current user
     final authState = ref.watch(authProvider);
     final user = authState.user;
-    
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Home'),
@@ -37,11 +37,11 @@ class HomeScreen extends ConsumerWidget {
                   ],
                 ),
               );
-              
+
               // Logout if user confirmed
               if (shouldLogout == true) {
                 await ref.read(authProvider.notifier).logout();
-                
+
                 if (ref.read(authProvider).errorMessage != null) {
                   if (context.mounted) {
                     AppUtils.showSnackBar(
@@ -74,7 +74,9 @@ class HomeScreen extends ConsumerWidget {
                         children: [
                           CircleAvatar(
                             radius: 30,
-                            backgroundColor: Theme.of(context).colorScheme.primary,
+                            backgroundColor: Theme.of(
+                              context,
+                            ).colorScheme.primary,
                             child: Text(
                               user.name.isNotEmpty
                                   ? user.name.substring(0, 1).toUpperCase()
@@ -102,7 +104,11 @@ class HomeScreen extends ConsumerWidget {
                                 Text(
                                   user.email,
                                   style: TextStyle(
-                                    color: Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.7),
+                                    color: Theme.of(context)
+                                        .textTheme
+                                        .bodyMedium
+                                        ?.color
+                                        ?.withValues(alpha: 0.7),
                                   ),
                                 ),
                               ],
@@ -118,17 +124,14 @@ class HomeScreen extends ConsumerWidget {
                       ),
                     ),
                   ),
-                  
+
                   // Features section
                   const Text(
                     'Features',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 16),
-                  
+
                   // Feature tiles
                   GridView.count(
                     shrinkWrap: true,
@@ -168,16 +171,13 @@ class HomeScreen extends ConsumerWidget {
                       ),
                     ],
                   ),
-                  
+
                   const SizedBox(height: 24),
-                  
+
                   // Information section
                   const Text(
                     'About this app',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 8),
                   const Card(
@@ -200,9 +200,7 @@ class HomeScreen extends ConsumerWidget {
                           SizedBox(height: 16),
                           Text(
                             'Technologies used:',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                            ),
+                            style: TextStyle(fontWeight: FontWeight.bold),
                           ),
                           SizedBox(height: 8),
                           Wrap(
@@ -228,14 +226,8 @@ class HomeScreen extends ConsumerWidget {
         currentIndex: 0,
         type: BottomNavigationBarType.fixed,
         items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.explore),
-            label: 'Explore',
-          ),
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+          BottomNavigationBarItem(icon: Icon(Icons.explore), label: 'Explore'),
           BottomNavigationBarItem(
             icon: Icon(Icons.notifications),
             label: 'Notifications',
@@ -275,11 +267,7 @@ class HomeScreen extends ConsumerWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(
-                icon,
-                size: 40,
-                color: color,
-              ),
+              Icon(icon, size: 40, color: color),
               const SizedBox(height: 8),
               Text(
                 title,

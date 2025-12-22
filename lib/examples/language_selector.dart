@@ -7,7 +7,7 @@ import 'package:flutter_riverpod_clean_architecture/l10n/l10n.dart';
 
 /// A screen that demonstrates how to use the language selector widget
 class LanguageSelectorExample extends ConsumerWidget {
-  const LanguageSelectorExample({Key? key}) : super(key: key);
+  const LanguageSelectorExample({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -79,7 +79,7 @@ class LanguageSelectorExample extends ConsumerWidget {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      '${context.tr('lastUpdated').replaceAll('{date}', context.formatDate(DateTime.now()))}',
+                      context.tr('lastUpdated').replaceAll('{date}', context.formatDate(DateTime.now())),
                       style: Theme.of(context).textTheme.bodyMedium,
                     ),
                   ],

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/semantics.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod_clean_architecture/core/accessibility/accessibility_providers.dart';
 import 'package:flutter_riverpod_clean_architecture/core/constants/app_constants.dart';
@@ -81,11 +80,11 @@ class AccessibleButton extends ConsumerWidget {
 
   /// Create an accessible button
   const AccessibleButton({
-    Key? key,
+    super.key,
     required this.child,
     required this.semanticLabel,
     this.onPressed,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -130,14 +129,14 @@ class AccessibleTextField extends StatelessWidget {
 
   /// Create an accessible text field
   const AccessibleTextField({
-    Key? key,
+    super.key,
     this.controller,
     required this.semanticLabel,
     this.hintText,
     this.errorText,
     this.onChanged,
     this.obscureText = false,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -174,11 +173,11 @@ class AccessibleSwitch extends StatelessWidget {
 
   /// Create an accessible switch
   const AccessibleSwitch({
-    Key? key,
+    super.key,
     required this.semanticLabel,
     required this.value,
     required this.onChanged,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

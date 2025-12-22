@@ -6,7 +6,7 @@ import 'package:flutter_riverpod_clean_architecture/l10n/l10n.dart';
 import 'package:intl/intl.dart';
 
 class LocalizationDemo extends ConsumerWidget {
-  const LocalizationDemo({Key? key}) : super(key: key);
+  const LocalizationDemo({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

@@ -44,17 +44,7 @@ class _LocalizationRouterObserverWithRef extends NavigatorObserver {
   _LocalizationRouterObserverWithRef(this.ref);
   final Ref ref;
 
-  @override
-  void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) {
-    super.didPush(route, previousRoute);
-    // Handle locale-specific route initialization
-  }
 
-  @override
-  void didReplace({Route<dynamic>? newRoute, Route<dynamic>? oldRoute}) {
-    super.didReplace(newRoute: newRoute, oldRoute: oldRoute);
-    // Handle locale-specific route replacement
-  }
 }
 
 /// Extension for locale-aware navigation

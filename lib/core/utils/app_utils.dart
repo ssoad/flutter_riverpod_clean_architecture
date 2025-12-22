@@ -20,7 +20,10 @@ class AppUtils {
   }
 
   // Date and time formatting
-  static String formatDateTime(DateTime dateTime, {String format = 'yyyy-MM-dd HH:mm'}) {
+  static String formatDateTime(
+    DateTime dateTime, {
+    String format = 'yyyy-MM-dd HH:mm',
+  }) {
     return DateFormat(format).format(dateTime);
   }
 
@@ -79,15 +82,12 @@ class AppUtils {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
               decoration: BoxDecoration(
-                color: Colors.black.withOpacity(0.7),
+                color: Colors.black.withValues(alpha: 0.7),
                 borderRadius: BorderRadius.circular(24),
               ),
               child: Text(
                 message,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 14,
-                ),
+                style: const TextStyle(color: Colors.white, fontSize: 14),
               ),
             ),
           ),
@@ -109,8 +109,9 @@ class AppUtils {
 
   // Password validation (at least 8 chars, 1 uppercase, 1 lowercase, 1 number)
   static bool isValidPassword(String password) {
-    final passwordRegExp =
-        RegExp(r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$');
+    final passwordRegExp = RegExp(
+      r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$',
+    );
     return passwordRegExp.hasMatch(password);
   }
 
@@ -123,7 +124,8 @@ class AppUtils {
   // URL validation
   static bool isValidUrl(String url) {
     final urlRegExp = RegExp(
-        r'^(https?:\/\/)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)$');
+      r'^(https?:\/\/)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)$',
+    );
     return urlRegExp.hasMatch(url);
   }
 
@@ -152,7 +154,11 @@ class AppUtils {
   }
 
   // Format currency
-  static String formatCurrency(double amount, {String symbol = '\$', String locale = 'en_US'}) {
+  static String formatCurrency(
+    double amount, {
+    String symbol = '\$',
+    String locale = 'en_US',
+  }) {
     return NumberFormat.currency(symbol: symbol, locale: locale).format(amount);
   }
 }

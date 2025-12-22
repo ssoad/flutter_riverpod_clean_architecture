@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod_clean_architecture/core/feature_flags/feature_flag_service.dart';
 
@@ -227,6 +226,7 @@ class RemoteFeatureFlagService extends FeatureFlagService {
   }
 
   /// Dispose resources
+  @override
   void dispose() {
     _fetchTimer?.cancel();
     _listeners.clear();

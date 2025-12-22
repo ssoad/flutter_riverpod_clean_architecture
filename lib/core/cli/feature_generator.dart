@@ -3,6 +3,7 @@
 /// This Dart file can be used programmatically to generate new features
 /// It mirrors the functionality of the generate_feature.sh script
 /// but allows for more complex integration with IDE plugins or Flutter tools.
+library;
 
 import 'dart:io';
 
@@ -445,7 +446,7 @@ final selected${pascalCase}Provider = FutureProvider<${pascalCase}Entity?>((ref)
   
   return result.fold(
     (failure) => throw Exception(failure.toString()),
-    (${camelCase}) => ${camelCase},
+    ($camelCase) => $camelCase,
   );
 });
 ''');
@@ -490,7 +491,7 @@ class ${pascalCase}ListScreen extends ConsumerWidget {
         data: (${camelCase}s) => ListView.builder(
           itemCount: ${camelCase}s.length,
           itemBuilder: (context, index) => ${pascalCase}ListItem(
-            ${camelCase}: ${camelCase}s[index],
+            $camelCase: ${camelCase}s[index],
             onTap: () {
               ref.read(selected${pascalCase}IdProvider.notifier).state = ${camelCase}s[index].id;
               // Navigate to detail screen
@@ -536,8 +537,8 @@ class ${pascalCase}DetailScreen extends ConsumerWidget {
         title: const Text('$pascalCase Details'),
       ),
       body: ${camelCase}Async.when(
-        data: (${camelCase}) {
-          if (${camelCase} == null) {
+        data: ($camelCase) {
+          if ($camelCase == null) {
             return const Center(child: Text('$pascalCase not found'));
           }
           
@@ -546,7 +547,7 @@ class ${pascalCase}DetailScreen extends ConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('ID: \${${camelCase}.id}', style: Theme.of(context).textTheme.headlineSmall),
+                Text('ID: \${$camelCase.id}', style: Theme.of(context).textTheme.headlineSmall),
                 const SizedBox(height: 16),
                 // Add more fields here
               ],
@@ -574,12 +575,12 @@ import 'package:flutter/material.dart';
 import '../../domain/entities/${featureName}_entity.dart';
 
 class ${pascalCase}ListItem extends StatelessWidget {
-  final ${pascalCase}Entity ${camelCase};
+  final ${pascalCase}Entity $camelCase;
   final VoidCallback onTap;
   
   const ${pascalCase}ListItem({
     Key? key,
-    required this.${camelCase},
+    required this.$camelCase,
     required this.onTap,
   }) : super(key: key);
 
@@ -588,7 +589,7 @@ class ${pascalCase}ListItem extends StatelessWidget {
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: ListTile(
-        title: Text('$pascalCase \${${camelCase}.id}'),
+        title: Text('$pascalCase \${$camelCase.id}'),
         // Add more details here
         trailing: const Icon(Icons.arrow_forward_ios),
         onTap: onTap,

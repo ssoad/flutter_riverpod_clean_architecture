@@ -28,19 +28,13 @@ final updateInfoProvider = FutureProvider.autoDispose<UpdateInfo?>((ref) async {
 });
 
 /// Controller for the update flow
-class UpdateController extends StateNotifier<AsyncValue<UpdateCheckResult>> {
-  final UpdateService _updateService;
-
-  UpdateController(this._updateService) : super(const AsyncValue.loading()) {
-    _init();
-  }
-
-  Future<void> _init() async {
-    // Initialize the update service
-    await _updateService.init();
-
-    // Check for updates
-    await checkForUpdates();
+/// Controller for the update flow
+class UpdateController extends AsyncNotifier<UpdateCheckResult> {
+  @override
+  Future<UpdateCheckResult> build() async {
+    final updateService = ref.watch(updateServiceProvider);
+    await updateService.init();
+    return await updateService.checkForUpdates();
   }
 
   /// Check for updates
@@ -48,7 +42,8 @@ class UpdateController extends StateNotifier<AsyncValue<UpdateCheckResult>> {
     state = const AsyncValue.loading();
 
     try {
-      final result = await _updateService.checkForUpdates();
+      final updateService = ref.read(updateServiceProvider);
+      final result = await updateService.checkForUpdates();
       state = AsyncValue.data(result);
     } catch (e, stack) {
       state = AsyncValue.error(e, stack);
@@ -57,24 +52,27 @@ class UpdateController extends StateNotifier<AsyncValue<UpdateCheckResult>> {
 
   /// Prompt the user to update the app
   Future<bool> promptForUpdate({bool force = false}) async {
-    return await _updateService.promptUpdate(force: force);
+    final updateService = ref.read(updateServiceProvider);
+    return await updateService.promptUpdate(force: force);
   }
 
   /// Open the update URL
   Future<bool> openUpdateUrl() async {
-    return await _updateService.openUpdateUrl();
+    final updateService = ref.read(updateServiceProvider);
+    return await updateService.openUpdateUrl();
   }
 
   /// Get information about the available update
   Future<UpdateInfo?> getUpdateInfo() async {
-    return await _updateService.getUpdateInfo();
+    final updateService = ref.read(updateServiceProvider);
+    return await updateService.getUpdateInfo();
   }
 }
 
 /// Provider for the update controller
 final updateControllerProvider =
-    StateNotifierProvider<UpdateController, AsyncValue<UpdateCheckResult>>(
-      (ref) => UpdateController(ref.watch(updateServiceProvider)),
+    AsyncNotifierProvider<UpdateController, UpdateCheckResult>(
+      UpdateController.new,
     );
 
 /// Widget that shows an update dialog when an update is available
@@ -90,11 +88,11 @@ class UpdateChecker extends ConsumerWidget {
 
   /// Create an update checker
   const UpdateChecker({
-    Key? key,
+    super.key,
     required this.child,
     this.autoPrompt = true,
     this.enforceCriticalUpdates = true,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -129,9 +127,8 @@ class UpdateChecker extends ConsumerWidget {
     showDialog(
       context: context,
       barrierDismissible: !isCritical,
-      builder:
-          (context) =>
-              UpdateDialog(updateInfo: updateInfo, isCritical: isCritical),
+      builder: (context) =>
+          UpdateDialog(updateInfo: updateInfo, isCritical: isCritical),
     );
   }
 }
@@ -146,10 +143,10 @@ class UpdateDialog extends ConsumerWidget {
 
   /// Create an update dialog
   const UpdateDialog({
-    Key? key,
+    super.key,
     required this.updateInfo,
     this.isCritical = false,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

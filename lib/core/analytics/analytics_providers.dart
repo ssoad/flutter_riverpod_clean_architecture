@@ -194,11 +194,11 @@ class AnalyticsScreenView extends StatefulWidget {
   final Widget child;
 
   const AnalyticsScreenView({
-    Key? key,
+    super.key,
     required this.screenName,
     this.parameters,
     required this.child,
-  }) : super(key: key);
+  });
 
   @override
   State<AnalyticsScreenView> createState() => _AnalyticsScreenViewState();
