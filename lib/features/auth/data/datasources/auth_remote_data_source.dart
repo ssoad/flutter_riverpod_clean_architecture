@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod_clean_architecture/core/error/exceptions.dart';
 import 'package:flutter_riverpod_clean_architecture/core/network/api_client.dart';
+import 'package:flutter_riverpod_clean_architecture/core/providers/network_providers.dart';
 import 'package:flutter_riverpod_clean_architecture/core/utils/app_utils.dart';
 import 'package:flutter_riverpod_clean_architecture/features/auth/data/models/user_model.dart';
 
@@ -118,4 +119,7 @@ final authRemoteDataSourceProvider = Provider<AuthRemoteDataSource>((ref) {
 });
 
 // ApiClient provider
-final apiClientProvider = Provider<ApiClient>((ref) => ApiClient());
+final apiClientProvider = Provider.autoDispose<ApiClient>((ref) {
+  final dio = ref.watch(dioProvider);
+  return ApiClient(dio);
+});

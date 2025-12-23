@@ -1,32 +1,17 @@
+import 'dart:async';
 import 'package:dio/dio.dart';
-import 'package:flutter_riverpod_clean_architecture/core/constants/app_constants.dart';
-import 'package:flutter_riverpod_clean_architecture/core/error/exceptions.dart';
+import '../../core/error/exceptions.dart';
 
 class ApiClient {
   final Dio _dio;
 
-  ApiClient() : _dio = Dio() {
-    _dio.options.baseUrl = AppConstants.apiBaseUrl;
-    _dio.options.connectTimeout = const Duration(milliseconds: 30000);
-    _dio.options.receiveTimeout = const Duration(milliseconds: 30000);
-    _dio.options.headers = {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json',
-    };
-
-    // Add interceptors for logging
-    _dio.interceptors.add(LogInterceptor(
-      request: true,
-      requestHeader: true,
-      requestBody: true,
-      responseHeader: true,
-      responseBody: true,
-      error: true,
-    ));
-  }
+  ApiClient(this._dio);
 
   // GET request
-  Future<dynamic> get(String path, {Map<String, dynamic>? queryParameters}) async {
+  Future<dynamic> get(
+    String path, {
+    Map<String, dynamic>? queryParameters,
+  }) async {
     try {
       final response = await _dio.get(path, queryParameters: queryParameters);
       return response.data;
@@ -89,7 +74,8 @@ class ApiClient {
             throw ServerException(message: e.response?.data['message']);
           default:
             throw ServerException(
-                message: e.response?.data['message'] ?? 'Unknown error occurred');
+              message: e.response?.data['message'] ?? 'Unknown error occurred',
+            );
         }
       case DioExceptionType.cancel:
         throw RequestCancelledException();
