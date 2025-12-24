@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:typed_data'; // Required for Uint8List
 import 'package:flutter/foundation.dart'; // Required for FlutterError
 import 'package:flutter_test/flutter_test.dart';
 import 'package:golden_toolkit/golden_toolkit.dart';
@@ -34,7 +33,7 @@ class LocalFileComparatorWithThreshold extends LocalFileComparator {
     );
 
     if (!result.passed && result.diffPercent <= threshold) {
-      print(
+      debugPrint(
         'Golden difference of ${result.diffPercent * 100}% '
         'is within threshold of ${threshold * 100}%. Passing.',
       );
