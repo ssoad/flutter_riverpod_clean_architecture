@@ -87,6 +87,20 @@ This creates:
 - `providers/` (DI configuration)
 - Unit tests for all layers
 
+## 📦 App Renaming
+
+Start your project with the right identity! Use our renaming utility:
+
+```bash
+./rename_app.sh --app-name "My Super App" --package-name com.company.superapp
+```
+
+This updates:
+- Android: `AndroidManifest.xml`, `build.gradle`, Kotlin files
+- iOS: `Info.plist`, Project files
+- macOS, Windows, Linux Build files
+- Dart package name & imports
+
 ---
 
 ## 🏗️ Project Structure

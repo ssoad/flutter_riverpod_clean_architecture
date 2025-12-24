@@ -1,0 +1,3 @@
+tags:
+  golden:
+    description: "Golden tests that verify pixel-perfect rendering"
