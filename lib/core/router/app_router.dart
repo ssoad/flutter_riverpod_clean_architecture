@@ -11,6 +11,8 @@ import 'package:flutter_riverpod_clean_architecture/features/auth/presentation/p
 import 'package:flutter_riverpod_clean_architecture/features/settings/presentation/screens/settings_screen.dart';
 import 'package:flutter_riverpod_clean_architecture/features/settings/presentation/screens/language_settings_screen.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_riverpod_clean_architecture/features/chat/presentation/screens/chat_screen.dart';
+import 'package:flutter_riverpod_clean_architecture/features/survey/presentation/screens/survey_screen.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
   final authState = ref.watch(authProvider);
@@ -89,6 +91,20 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: AppConstants.localizationAssetsDemoRoute,
         name: 'localization_assets_demo',
         builder: (context, state) => const LocalizationAssetsDemo(),
+      ),
+
+      // Chat route
+      GoRoute(
+        path: AppConstants.chatRoute,
+        name: 'chat',
+        builder: (context, state) => const ChatScreen(),
+      ),
+
+      // Survey route
+      GoRoute(
+        path: AppConstants.surveyRoute,
+        name: 'survey',
+        builder: (context, state) => const SurveyScreen(),
       ),
 
       // Initial route - redirects based on auth state

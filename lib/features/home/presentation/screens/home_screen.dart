@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod_clean_architecture/core/utils/app_utils.dart';
 import 'package:flutter_riverpod_clean_architecture/features/auth/presentation/providers/auth_provider.dart';
+import 'package:go_router/go_router.dart';
+import 'package:flutter_riverpod_clean_architecture/core/constants/app_constants.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -157,17 +159,21 @@ class HomeScreen extends ConsumerWidget {
                       ),
                       _buildFeatureTile(
                         context,
-                        icon: Icons.people,
-                        title: 'Users',
+                        icon: Icons.assignment,
+                        title: 'Survey',
                         color: Colors.orange,
-                        onTap: () {},
+                        onTap: () {
+                          context.push(AppConstants.surveyRoute);
+                        },
                       ),
                       _buildFeatureTile(
                         context,
-                        icon: Icons.comment,
-                        title: 'Comments',
+                        icon: Icons.chat_bubble_outline,
+                        title: 'Live Chat',
                         color: Colors.purple,
-                        onTap: () {},
+                        onTap: () {
+                          context.push(AppConstants.chatRoute);
+                        },
                       ),
                     ],
                   ),
