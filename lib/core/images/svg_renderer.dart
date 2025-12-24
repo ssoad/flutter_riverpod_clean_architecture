@@ -30,7 +30,7 @@ class SvgRenderer {
   }) async {
     // Create a cache key based on the parameters
     final cacheKey =
-        '${assetName}_${width}_${height}_${color?.value}_${colorBlendMode.index}';
+        '${assetName}_${width}_${height}_${color?.hashCode}_${colorBlendMode.index}';
 
     // Check if the SVG is already cached
     final cachedImage = _cache.getItem(cacheKey);
@@ -49,10 +49,9 @@ class SvgRenderer {
     // Create a simple colored square as a placeholder for the SVG
     final recorder = ui.PictureRecorder();
     final canvas = Canvas(recorder);
-    final paint =
-        Paint()
-          ..color = color ?? Colors.blue
-          ..style = PaintingStyle.fill;
+    final paint = Paint()
+      ..color = color ?? Colors.blue
+      ..style = PaintingStyle.fill;
 
     // Determine dimensions
     final size = Size(width ?? 100, height ?? 100);
@@ -102,7 +101,7 @@ class SvgRenderer {
   }) async {
     // Create a cache key based on the parameters
     final cacheKey =
-        '${url}_${width}_${height}_${color?.value}_${colorBlendMode.index}';
+        '${url}_${width}_${height}_${color?.hashCode}_${colorBlendMode.index}';
 
     // Check if the SVG is already cached
     final cachedImage = _cache.getItem(cacheKey);
@@ -121,10 +120,9 @@ class SvgRenderer {
     // Create a simple colored square as a placeholder for the SVG
     final recorder = ui.PictureRecorder();
     final canvas = Canvas(recorder);
-    final paint =
-        Paint()
-          ..color = color ?? Colors.green
-          ..style = PaintingStyle.fill;
+    final paint = Paint()
+      ..color = color ?? Colors.green
+      ..style = PaintingStyle.fill;
 
     // Determine dimensions
     final size = Size(width ?? 100, height ?? 100);
@@ -238,27 +236,26 @@ class SvgImage extends ConsumerWidget {
     final renderer = ref.watch(svgRendererProvider);
 
     return FutureBuilder<ui.Image>(
-      future:
-          isAsset
-              ? renderer.renderSvgAsset(
-                source,
-                width: width,
-                height: height,
-                fit: fit,
-                color: color,
-                colorBlendMode: colorBlendMode,
-                semanticsLabel: semanticsLabel,
-              )
-              : renderer.renderSvgNetwork(
-                source,
-                width: width,
-                height: height,
-                fit: fit,
-                color: color,
-                colorBlendMode: colorBlendMode,
-                headers: headers,
-                semanticsLabel: semanticsLabel,
-              ),
+      future: isAsset
+          ? renderer.renderSvgAsset(
+              source,
+              width: width,
+              height: height,
+              fit: fit,
+              color: color,
+              colorBlendMode: colorBlendMode,
+              semanticsLabel: semanticsLabel,
+            )
+          : renderer.renderSvgNetwork(
+              source,
+              width: width,
+              height: height,
+              fit: fit,
+              color: color,
+              colorBlendMode: colorBlendMode,
+              headers: headers,
+              semanticsLabel: semanticsLabel,
+            ),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return placeholder ??

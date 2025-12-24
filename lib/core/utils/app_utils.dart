@@ -6,7 +6,7 @@ class AppUtils {
   // Network connectivity check
   static Future<bool> hasNetworkConnection() async {
     final connectivityResult = await Connectivity().checkConnectivity();
-    return connectivityResult != ConnectivityResult.none;
+    return !connectivityResult.contains(ConnectivityResult.none);
   }
 
   // Date formatting

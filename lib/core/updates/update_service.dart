@@ -92,7 +92,6 @@ abstract class UpdateService {
 class BasicUpdateService implements UpdateService {
   final String _androidPackageName;
   final String _iOSAppId;
-  final String _appcastUrl;
 
   PackageInfo? _packageInfo;
   UpdateInfo? _updateInfo;
@@ -101,10 +100,8 @@ class BasicUpdateService implements UpdateService {
   BasicUpdateService({
     required String androidPackageName,
     required String iOSAppId,
-    required String appcastUrl,
   }) : _androidPackageName = androidPackageName,
-       _iOSAppId = iOSAppId,
-       _appcastUrl = appcastUrl;
+       _iOSAppId = iOSAppId;
 
   @override
   Future<void> init() async {
@@ -293,10 +290,9 @@ class BasicUpdateService implements UpdateService {
       minimumRequiredVersion: minRequired,
       isCritical: false,
       releaseNotes: 'Bug fixes and performance improvements.',
-      updateUrl:
-          Platform.isAndroid
-              ? 'https://play.google.com/store/apps/details?id=$_androidPackageName'
-              : 'https://apps.apple.com/app/id$_iOSAppId',
+      updateUrl: Platform.isAndroid
+          ? 'https://play.google.com/store/apps/details?id=$_androidPackageName'
+          : 'https://apps.apple.com/app/id$_iOSAppId',
     );
   }
 }

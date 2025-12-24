@@ -109,15 +109,15 @@ class OfflineChange {
       entityType: json['entityType'],
       entityId: json['entityId'],
       operationType: _parseOperationType(json['operationType']),
-      data:
-          json['data'] != null ? Map<String, dynamic>.from(json['data']) : null,
+      data: json['data'] != null
+          ? Map<String, dynamic>.from(json['data'])
+          : null,
       status: _parseSyncStatus(json['status']),
       timestamp: DateTime.parse(json['timestamp']),
       retryCount: json['retryCount'] ?? 0,
-      lastRetryTime:
-          json['lastRetryTime'] != null
-              ? DateTime.parse(json['lastRetryTime'])
-              : null,
+      lastRetryTime: json['lastRetryTime'] != null
+          ? DateTime.parse(json['lastRetryTime'])
+          : null,
       errorMessage: json['errorMessage'],
     );
   }
@@ -298,7 +298,6 @@ abstract class OfflineSyncService {
 class HiveOfflineSyncService implements OfflineSyncService {
   final Box<String> _box;
   final Connectivity _connectivity;
-  final ConflictResolutionStrategy _conflictStrategy;
   final Lock _syncLock = Lock();
 
   final _uuid = const Uuid();
@@ -311,14 +310,13 @@ class HiveOfflineSyncService implements OfflineSyncService {
     required Connectivity connectivity,
     ConflictResolutionStrategy? conflictStrategy,
   }) : _box = box,
-       _connectivity = connectivity,
-       _conflictStrategy = conflictStrategy ?? ServerWinsStrategy();
+       _connectivity = connectivity;
 
   @override
   Future<void> init() async {
     // Set up connectivity listener for auto-sync
     _connectivity.onConnectivityChanged.listen((result) {
-      if (result != ConnectivityResult.none) {
+      if (!result.contains(ConnectivityResult.none)) {
         syncChanges();
       }
     });
@@ -429,10 +427,9 @@ class HiveOfflineSyncService implements OfflineSyncService {
   Future<SyncStatus?> getSyncStatus(String entityType, String entityId) async {
     // Find the latest change for this entity
     final changes = await getPendingChanges();
-    final entityChanges =
-        changes
-            .where((c) => c.entityType == entityType && c.entityId == entityId)
-            .toList();
+    final entityChanges = changes
+        .where((c) => c.entityType == entityType && c.entityId == entityId)
+        .toList();
 
     if (entityChanges.isEmpty) return null;
 
@@ -498,7 +495,7 @@ class HiveOfflineSyncService implements OfflineSyncService {
   @override
   Future<bool> isOnline() async {
     final connectivityResult = await _connectivity.checkConnectivity();
-    return connectivityResult != ConnectivityResult.none;
+    return !connectivityResult.contains(ConnectivityResult.none);
   }
 }
 
@@ -521,5 +518,5 @@ class StreamController<T> {
       Stream<T>.periodic(const Duration(days: 365), (_) {
           throw UnimplementedError('This is a mock stream for demo purposes');
         }).asBroadcastStream()
-        ..listen((event) {}, onDone: () {}, onError: (_, __) {});
+        ..listen((event) {}, onDone: () {}, onError: (error, stack) {});
 }

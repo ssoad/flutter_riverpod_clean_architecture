@@ -94,18 +94,14 @@ class AppReviewServiceImpl implements AppReviewService {
         _preferences.getInt(_keyLastReviewRequestTime) ?? 0;
 
     // Calculate days since first launch
-    final daysSinceFirstLaunch =
-        DateTime.now()
-            .difference(DateTime.fromMillisecondsSinceEpoch(firstLaunchTime))
-            .inDays;
+    final daysSinceFirstLaunch = DateTime.now()
+        .difference(DateTime.fromMillisecondsSinceEpoch(firstLaunchTime))
+        .inDays;
 
     // Calculate days since last review request
-    final daysSinceLastReviewRequest =
-        DateTime.now()
-            .difference(
-              DateTime.fromMillisecondsSinceEpoch(lastReviewRequestTime),
-            )
-            .inDays;
+    final daysSinceLastReviewRequest = DateTime.now()
+        .difference(DateTime.fromMillisecondsSinceEpoch(lastReviewRequestTime))
+        .inDays;
 
     // Check if we've waited long enough since the last request
     if (lastReviewRequestTime > 0 &&
@@ -172,42 +168,41 @@ class AppReviewServiceImpl implements AppReviewService {
     // Show a dialog to collect feedback
     await showDialog(
       context: context,
-      builder:
-          (context) => AlertDialog(
-            title: Text(title),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(message),
-                const SizedBox(height: 16),
-                TextField(
-                  controller: controller,
-                  maxLines: 4,
-                  decoration: const InputDecoration(
-                    hintText: "Enter your feedback here",
-                    border: OutlineInputBorder(),
-                  ),
-                ),
-              ],
+      builder: (context) => AlertDialog(
+        title: Text(title),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(message),
+            const SizedBox(height: 16),
+            TextField(
+              controller: controller,
+              maxLines: 4,
+              decoration: const InputDecoration(
+                hintText: 'Enter your feedback here',
+                border: OutlineInputBorder(),
+              ),
             ),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: const Text("Cancel"),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  result = true;
-                  // In a real app, send this feedback to your server
-                  debugPrint('⭐️ User feedback: ${controller.text}');
-                  Navigator.of(context).pop();
-                },
-                child: const Text("Submit"),
-              ),
-            ],
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: const Text('Cancel'),
           ),
+          ElevatedButton(
+            onPressed: () {
+              result = true;
+              // In a real app, send this feedback to your server
+              debugPrint('⭐️ User feedback: ${controller.text}');
+              Navigator.of(context).pop();
+            },
+            child: const Text('Submit'),
+          ),
+        ],
+      ),
     );
 
     return result;

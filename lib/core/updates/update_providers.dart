@@ -8,7 +8,6 @@ final updateServiceProvider = Provider<UpdateService>((ref) {
   return BasicUpdateService(
     androidPackageName: AppConstants.packageName,
     iOSAppId: AppConstants.iOSAppId,
-    appcastUrl: AppConstants.appcastUrl,
   );
 });
 
@@ -152,8 +151,8 @@ class UpdateDialog extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
 
-    return WillPopScope(
-      onWillPop: () async => !isCritical,
+    return PopScope(
+      canPop: !isCritical,
       child: AlertDialog(
         title: Text(isCritical ? 'Required Update' : 'Update Available'),
         content: SingleChildScrollView(

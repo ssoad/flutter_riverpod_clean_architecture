@@ -80,7 +80,7 @@ final pendingChangesProvider = StreamProvider<List<OfflineChange>>((ref) {
 final isOnlineProvider = FutureProvider.autoDispose<bool>((ref) async {
   final connectivity = ref.watch(connectivityProvider);
   final connectivityResult = await connectivity.checkConnectivity();
-  return connectivityResult != ConnectivityResult.none;
+  return !connectivityResult.contains(ConnectivityResult.none);
 });
 
 /// Loading placeholder for offline sync service
@@ -238,27 +238,23 @@ class OfflineStatusIndicator extends ConsumerWidget {
               );
             }
           },
-          loading:
-              () => _buildIndicator(
-                Icons.sync,
-                'Checking sync',
-                Colors.blue,
-                isAnimated: true,
-              ),
-          error:
-              (_, __) =>
-                  _buildIndicator(Icons.cloud_off, 'Sync error', Colors.red),
+          loading: () => _buildIndicator(
+            Icons.sync,
+            'Checking sync',
+            Colors.blue,
+            isAnimated: true,
+          ),
+          error: (error, stack) =>
+              _buildIndicator(Icons.cloud_off, 'Sync error', Colors.red),
         );
       },
-      loading:
-          () => _buildIndicator(
-            Icons.cloud_queue,
-            'Checking connection',
-            Colors.grey,
-          ),
-      error:
-          (_, __) =>
-              _buildIndicator(Icons.cloud_off, 'Connection error', Colors.red),
+      loading: () => _buildIndicator(
+        Icons.cloud_queue,
+        'Checking connection',
+        Colors.grey,
+      ),
+      error: (error, stack) =>
+          _buildIndicator(Icons.cloud_off, 'Connection error', Colors.red),
     );
   }
 
