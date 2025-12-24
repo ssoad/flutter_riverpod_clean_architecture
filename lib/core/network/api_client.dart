@@ -1,6 +1,7 @@
+import 'package:fpdart/fpdart.dart';
 import 'dart:async';
 import 'package:dio/dio.dart';
-import '../../core/error/exceptions.dart';
+import '../../core/error/failures.dart';
 
 class ApiClient {
   final Dio _dio;
@@ -8,84 +9,94 @@ class ApiClient {
   ApiClient(this._dio);
 
   // GET request
-  Future<dynamic> get(
+  Future<Either<Failure, dynamic>> get(
     String path, {
     Map<String, dynamic>? queryParameters,
   }) async {
     try {
       final response = await _dio.get(path, queryParameters: queryParameters);
-      return response.data;
+      return Right(response.data);
     } on DioException catch (e) {
-      _handleError(e);
+      return Left(_handleError(e));
     }
   }
 
   // POST request
-  Future<dynamic> post(String path, {dynamic data}) async {
+  Future<Either<Failure, dynamic>> post(String path, {dynamic data}) async {
     try {
       final response = await _dio.post(path, data: data);
-      return response.data;
+      return Right(response.data);
     } on DioException catch (e) {
-      _handleError(e);
+      return Left(_handleError(e));
     }
   }
 
   // PUT request
-  Future<dynamic> put(String path, {dynamic data}) async {
+  Future<Either<Failure, dynamic>> put(String path, {dynamic data}) async {
     try {
       final response = await _dio.put(path, data: data);
-      return response.data;
+      return Right(response.data);
     } on DioException catch (e) {
-      _handleError(e);
+      return Left(_handleError(e));
     }
   }
 
   // DELETE request
-  Future<dynamic> delete(String path) async {
+  Future<Either<Failure, dynamic>> delete(String path) async {
     try {
       final response = await _dio.delete(path);
-      return response.data;
+      return Right(response.data);
     } on DioException catch (e) {
-      _handleError(e);
+      return Left(_handleError(e));
     }
   }
 
   // Handle Dio errors
-  void _handleError(DioException e) {
+  Failure _handleError(DioException e) {
     switch (e.type) {
       case DioExceptionType.connectionTimeout:
       case DioExceptionType.sendTimeout:
       case DioExceptionType.receiveTimeout:
-        throw TimeoutException();
+        return const ServerFailure(message: 'Connection timeout');
       case DioExceptionType.badResponse:
         switch (e.response?.statusCode) {
           case 400:
-            throw BadRequestException(message: e.response?.data['message']);
+            return ServerFailure(
+              message: e.response?.data['message'] ?? 'Bad Request',
+            );
           case 401:
-            throw UnauthorizedException(message: e.response?.data['message']);
+            return UnauthorizedFailure(
+              message: e.response?.data['message'] ?? 'Unauthorized',
+            );
           case 403:
-            throw ForbiddenException(message: e.response?.data['message']);
+            return ServerFailure(
+              message: e.response?.data['message'] ?? 'Forbidden',
+            );
           case 404:
-            throw NotFoundException(message: e.response?.data['message']);
+            return ServerFailure(
+              message: e.response?.data['message'] ?? 'Not Found',
+            );
           case 500:
           case 501:
           case 502:
           case 503:
-            throw ServerException(message: e.response?.data['message']);
+            return ServerFailure(
+              message: e.response?.data['message'] ?? 'Server Error',
+            );
           default:
-            throw ServerException(
+            return ServerFailure(
               message: e.response?.data['message'] ?? 'Unknown error occurred',
             );
         }
       case DioExceptionType.cancel:
-        throw RequestCancelledException();
+        return const ServerFailure(message: 'Request cancelled');
       case DioExceptionType.unknown:
         if (e.error.toString().contains('SocketException')) {
-          throw NetworkException();
+          return const ServerFailure(message: 'No internet connection');
         }
-        throw ServerException(message: 'Unknown error occurred');
+        return const ServerFailure(message: 'Unknown error occurred');
       default:
-        throw ServerException(message: 'Unknown error occurred');
+        return const ServerFailure(message: 'Unknown error occurred');
     }
   }
 

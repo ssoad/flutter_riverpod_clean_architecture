@@ -211,7 +211,7 @@ class ${pascalCase}LocalDataSourceImpl implements ${pascalCase}LocalDataSource {
 // $pascalCase Repository Implementation
 // Implements the repository interface from domain layer
 
-import 'package:dartz/dartz.dart';
+import 'package:fpdart/fpdart.dart';
 
 import '../../../../core/error/failures.dart';
 import '../../../../core/error/exceptions.dart';
@@ -289,7 +289,7 @@ class ${pascalCase}Entity extends Equatable {
 // $pascalCase Repository Interface
 // Define contract for data operations
 
-import 'package:dartz/dartz.dart';
+import 'package:fpdart/fpdart.dart';
 
 import '../../../../core/error/failures.dart';
 import '../entities/${featureName}_entity.dart';
@@ -314,7 +314,7 @@ abstract class ${pascalCase}Repository {
 // Get All ${pascalCase}s Use Case
 // Business logic for retrieving all $camelCase entities
 
-import 'package:dartz/dartz.dart';
+import 'package:fpdart/fpdart.dart';
 
 import '../../../../core/error/failures.dart';
 import '../../../../core/usecases/usecase.dart';

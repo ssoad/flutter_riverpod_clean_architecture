@@ -41,7 +41,6 @@ dependencies:
   freezed_annotation: ^3.0.0
   json_annotation: ^4.9.0
   equatable: ^2.0.7
-  dartz: ^0.10.1
   dio: ^5.8.0+1
   shared_preferences: ^2.5.3
   hive: ^2.2.3
@@ -59,6 +58,8 @@ dependencies:
   synchronized: ^3.1.0
   local_auth: ^3.0.0
   riverpod_annotation: ^3.0.3
+  fpdart: ^1.2.0
+  golden_toolkit: ^0.15.0
 
 dev_dependencies:
   flutter_test:

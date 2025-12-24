@@ -1,7 +1,7 @@
 // Base Use Case Interface
 // Defines the contract for all use cases in the application
 
-import 'package:dartz/dartz.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:equatable/equatable.dart';
 
 import '../error/failures.dart';
