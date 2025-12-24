@@ -1,5 +1,5 @@
 /// Flutter Riverpod Clean Architecture Feature Generator
-/// 
+///
 /// This Dart file can be used programmatically to generate new features
 /// It mirrors the functionality of the generate_feature.sh script
 /// but allows for more complex integration with IDE plugins or Flutter tools.
@@ -12,10 +12,10 @@ class FeatureGenerator {
   final bool withUi;
   final bool withTests;
   final bool withDocs;
-  
+
   /// Feature name in PascalCase (e.g., UserProfile)
   late final String pascalCase;
-  
+
   /// Feature name in camelCase (e.g., userProfile)
   late final String camelCase;
 
@@ -31,38 +31,38 @@ class FeatureGenerator {
 
   /// Generate all files and folders for the feature
   Future<void> generate() async {
-    print('Generating feature: $featureName');
-    
+    stdout.writeln('Generating feature: $featureName');
+
     await _createDirectories();
     await _createFiles();
-    
-    print('Feature $featureName generated successfully!');
+
+    stdout.writeln('Feature $featureName generated successfully!');
   }
 
   /// Create the directory structure for the feature
   Future<void> _createDirectories() async {
     final baseDir = 'lib/features/$featureName';
-    
+
     // Data layer
     await _createDir('$baseDir/data/datasources');
     await _createDir('$baseDir/data/models');
     await _createDir('$baseDir/data/repositories');
-    
+
     // Domain layer
     await _createDir('$baseDir/domain/entities');
     await _createDir('$baseDir/domain/repositories');
     await _createDir('$baseDir/domain/usecases');
-    
+
     // Presentation layer (if enabled)
     if (withUi) {
       await _createDir('$baseDir/presentation/providers');
       await _createDir('$baseDir/presentation/screens');
       await _createDir('$baseDir/presentation/widgets');
     }
-    
+
     // Providers folder
     await _createDir('$baseDir/providers');
-    
+
     // Test directories (if enabled)
     if (withTests) {
       await _createDir('test/features/$featureName/data');
@@ -71,7 +71,7 @@ class FeatureGenerator {
         await _createDir('test/features/$featureName/presentation');
       }
     }
-    
+
     // Documentation (if enabled)
     if (withDocs) {
       await _createDir('docs/features');
@@ -81,11 +81,9 @@ class FeatureGenerator {
   /// Create all template files for the feature
   Future<void> _createFiles() async {
     final baseDir = 'lib/features/$featureName';
-    
+
     // Data Layer Files
-    await _createFile(
-      '$baseDir/data/models/${featureName}_model.dart',
-      '''
+    await _createFile('$baseDir/data/models/${featureName}_model.dart', '''
 // $pascalCase Model
 // Implements the ${pascalCase}Entity with additional data layer functionality
 
@@ -165,7 +163,8 @@ class ${pascalCase}RemoteDataSourceImpl implements ${pascalCase}RemoteDataSource
     throw UnimplementedError();
   }
 }
-''');
+''',
+    );
 
     await _createFile(
       '$baseDir/data/datasources/${featureName}_local_datasource.dart',
@@ -203,7 +202,8 @@ class ${pascalCase}LocalDataSourceImpl implements ${pascalCase}LocalDataSource {
     throw UnimplementedError();
   }
 }
-''');
+''',
+    );
 
     await _createFile(
       '$baseDir/data/repositories/${featureName}_repository_impl.dart',
@@ -259,12 +259,11 @@ class ${pascalCase}RepositoryImpl implements ${pascalCase}Repository {
     throw UnimplementedError();
   }
 }
-''');
+''',
+    );
 
     // Domain Layer Files
-    await _createFile(
-      '$baseDir/domain/entities/${featureName}_entity.dart',
-      '''
+    await _createFile('$baseDir/domain/entities/${featureName}_entity.dart', '''
 // $pascalCase Entity
 // Core business entity, independent of data sources
 
@@ -306,7 +305,8 @@ abstract class ${pascalCase}Repository {
   /// Returns [Failure] or [${pascalCase}Entity]
   Future<Either<Failure, ${pascalCase}Entity>> get${pascalCase}ById(String id);
 }
-''');
+''',
+    );
 
     await _createFile(
       '$baseDir/domain/usecases/get_all_${featureName}s.dart',
@@ -331,7 +331,8 @@ class GetAll${pascalCase}s implements UseCase<List<${pascalCase}Entity>, NoParam
     return repository.getAll${pascalCase}s();
   }
 }
-''');
+''',
+    );
 
     await _createFile(
       '$baseDir/domain/usecases/get_${featureName}_by_id.dart',
@@ -366,17 +367,16 @@ class ${pascalCase}Params extends Equatable {
   @override
   List<Object> get props => [id];
 }
-''');
+''',
+    );
 
     // Add UI files if requested
     if (withUi) {
       await _createUiFiles(baseDir);
     }
-    
+
     // Provider Files
-    await _createFile(
-      '$baseDir/providers/${featureName}_providers.dart',
-      '''
+    await _createFile('$baseDir/providers/${featureName}_providers.dart', '''
 // $pascalCase Providers
 // Riverpod providers for the $featureName feature
 
@@ -512,7 +512,8 @@ class ${pascalCase}ListScreen extends ConsumerWidget {
     );
   }
 }
-''');
+''',
+    );
 
     await _createFile(
       '$baseDir/presentation/screens/${featureName}_detail_screen.dart',
@@ -562,7 +563,8 @@ class ${pascalCase}DetailScreen extends ConsumerWidget {
     );
   }
 }
-''');
+''',
+    );
 
     await _createFile(
       '$baseDir/presentation/widgets/${featureName}_list_item.dart',
@@ -597,7 +599,8 @@ class ${pascalCase}ListItem extends StatelessWidget {
     );
   }
 }
-''');
+''',
+    );
 
     await _createFile(
       '$baseDir/presentation/providers/${featureName}_ui_providers.dart',
@@ -613,7 +616,8 @@ final ${camelCase}FilterProvider = StateProvider<String>((ref) => '');
 final ${camelCase}SortOrderProvider = StateProvider<SortOrder>((ref) => SortOrder.asc);
 
 enum SortOrder { asc, desc }
-''');
+''',
+    );
   }
 
   /// Create test files
@@ -633,7 +637,7 @@ enum SortOrder { asc, desc }
     final dir = Directory(path);
     if (!await dir.exists()) {
       await dir.create(recursive: true);
-      print('Created directory: $path');
+      stdout.writeln('Created directory: $path');
     }
   }
 
@@ -641,15 +645,18 @@ enum SortOrder { asc, desc }
   Future<void> _createFile(String path, String content) async {
     final file = File(path);
     await file.writeAsString(content);
-    print('Created file: $path');
+    stdout.writeln('Created file: $path');
   }
 
   /// Convert snake_case to PascalCase
   String _toPascalCase(String input) {
-    return input.split('_')
-        .map((word) => word.isEmpty 
-            ? '' 
-            : word[0].toUpperCase() + word.substring(1).toLowerCase())
+    return input
+        .split('_')
+        .map(
+          (word) => word.isEmpty
+              ? ''
+              : word[0].toUpperCase() + word.substring(1).toLowerCase(),
+        )
         .join('');
   }
 
@@ -664,10 +671,10 @@ void main(List<String> args) {
   // Example usage:
   // dart run lib/core/cli/feature_generator.dart user_profile
   if (args.isEmpty) {
-    print('Please provide a feature name in snake_case format.');
+    stdout.writeln('Please provide a feature name in snake_case format.');
     return;
   }
-  
+
   final generator = FeatureGenerator(featureName: args.first);
   generator.generate();
 }

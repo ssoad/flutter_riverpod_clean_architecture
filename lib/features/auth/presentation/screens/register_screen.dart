@@ -49,8 +49,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
       final authState = ref.read(authProvider);
       if (authState.errorMessage != null) {
         // Show error message if registration failed
-        if (!context.mounted) return;
+        if (!mounted) return;
 
+        // ignore: use_build_context_synchronously
         AppUtils.showSnackBar(
           context,
           message: authState.errorMessage!,

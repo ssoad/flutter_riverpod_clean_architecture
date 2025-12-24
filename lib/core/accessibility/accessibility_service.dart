@@ -95,7 +95,7 @@ class FlutterAccessibilityService implements AccessibilityService {
 
   void _updateSettings() {
     final mediaQueryData = MediaQueryData.fromView(
-      WidgetsBinding.instance.window,
+      WidgetsBinding.instance.platformDispatcher.views.first,
     );
 
     _currentSettings = AccessibilitySettings(
@@ -103,7 +103,7 @@ class FlutterAccessibilityService implements AccessibilityService {
       isHighContrastEnabled: mediaQueryData.highContrast,
       isBoldTextEnabled: mediaQueryData.boldText,
       isReduceMotionEnabled: mediaQueryData.disableAnimations,
-      fontScale: mediaQueryData.textScaleFactor,
+      fontScale: mediaQueryData.textScaler.scale(1.0),
     );
 
     // Notify all listeners
@@ -125,6 +125,7 @@ class FlutterAccessibilityService implements AccessibilityService {
   @override
   Future<void> announce(String message) async {
     if (await isScreenReaderActive()) {
+      // ignore: deprecated_member_use
       SemanticsService.announce(message, TextDirection.ltr);
 
       // Optionally, use TTS for platforms where semantics announce isn't well supported

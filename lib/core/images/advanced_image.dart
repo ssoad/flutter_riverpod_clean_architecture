@@ -200,7 +200,7 @@ class _AdvancedImageState extends ConsumerState<AdvancedImage> {
       height: widget.height,
       fit: widget.fit,
       fadeInDuration: widget.fadeInDuration,
-      imageErrorBuilder: (_, __, ___) {
+      imageErrorBuilder: (context, error, stackTrace) {
         return widget.errorWidget ??
             Container(
               width: widget.width,

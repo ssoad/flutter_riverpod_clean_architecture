@@ -141,6 +141,8 @@ class _AdvancedFeaturesShowcaseState
             ElevatedButton(
               onPressed: () {
                 service.fetchAndActivate().then((_) {
+                  if (!context.mounted) return;
+                  // ignore: use_build_context_synchronously
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text('Remote configs updated')),
                   );
@@ -287,6 +289,8 @@ class _AdvancedFeaturesShowcaseState
                               action: '/showcase',
                               channel: 'demo',
                             );
+                            if (!context.mounted) return;
+                            // ignore: use_build_context_synchronously
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
                                 content: Text('Notification sent'),
@@ -301,9 +305,8 @@ class _AdvancedFeaturesShowcaseState
                 );
               },
               loading: () => const CircularProgressIndicator(),
-              error:
-                  (_, __) =>
-                      const Text('Error checking notification permissions'),
+              error: (error, stack) =>
+                  const Text('Error checking notification permissions'),
             ),
           ],
         ),
@@ -442,8 +445,8 @@ class _AdvancedFeaturesShowcaseState
                 min: 0.0,
                 max: 1.0,
                 divisions: 10,
-                label:
-                    (_effectsIntensity[_selectedEffect] ?? 0.0).toStringAsFixed(1),
+                label: (_effectsIntensity[_selectedEffect] ?? 0.0)
+                    .toStringAsFixed(1),
                 onChanged: (value) {
                   setState(() {
                     _effectsIntensity[_selectedEffect] = value;
@@ -602,6 +605,7 @@ class _AdvancedFeaturesShowcaseState
                       accessibilitySettingsProvider.notifier,
                     );
                     notifier.announce('This is a screen reader announcement');
+                    if (!context.mounted) return;
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
                         content: Text('Message announced to screen readers'),
@@ -637,7 +641,7 @@ class _AdvancedFeaturesShowcaseState
                     updateCheck.when(
                       data: (result) => result.toString().split('.').last,
                       loading: () => 'Checking...',
-                      error: (_, __) => 'Error checking for updates',
+                      error: (error, stack) => 'Error checking for updates',
                     ),
                   ),
                   leading: updateCheck.when(
@@ -659,14 +663,13 @@ class _AdvancedFeaturesShowcaseState
                           );
                       }
                     },
-                    loading:
-                        () => const SizedBox(
-                          width: 24,
-                          height: 24,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        ),
-                    error:
-                        (_, __) => const Icon(Icons.error, color: Colors.red),
+                    loading: () => const SizedBox(
+                      width: 24,
+                      height: 24,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    ),
+                    error: (error, stack) =>
+                        const Icon(Icons.error, color: Colors.red),
                   ),
                 );
               },
@@ -680,6 +683,8 @@ class _AdvancedFeaturesShowcaseState
                   onPressed: () {
                     final updateService = ref.read(updateServiceProvider);
                     updateService.checkForUpdates().then((_) {
+                      if (!context.mounted) return;
+                      // ignore: use_build_context_synchronously
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
                           content: Text('Checking for updates...'),
@@ -694,49 +699,51 @@ class _AdvancedFeaturesShowcaseState
                   onPressed: () {
                     final updateService = ref.read(updateServiceProvider);
                     updateService.getUpdateInfo().then((updateInfo) {
-                      if (updateInfo != null && context.mounted) {
+                      if (!context.mounted) return;
+                      if (updateInfo != null) {
                         showDialog(
+                          // ignore: use_build_context_synchronously
                           context: context,
-                          builder:
-                              (context) => AlertDialog(
-                                title: Text(
-                                  updateInfo.isCritical
-                                      ? 'Critical Update Available'
-                                      : 'Update Available',
+                          builder: (context) => AlertDialog(
+                            title: Text(
+                              updateInfo.isCritical
+                                  ? 'Critical Update Available'
+                                  : 'Update Available',
+                            ),
+                            content: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'New version: ${updateInfo.latestVersion}',
                                 ),
-                                content: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      'New version: ${updateInfo.latestVersion}',
-                                    ),
-                                    if (updateInfo.releaseNotes != null) ...[
-                                      const SizedBox(height: 8),
-                                      Text(updateInfo.releaseNotes!),
-                                    ],
-                                  ],
-                                ),
-                                actions: [
-                                  if (!updateInfo.isCritical)
-                                    TextButton(
-                                      onPressed: () {
-                                        Navigator.of(context).pop();
-                                      },
-                                      child: const Text('Later'),
-                                    ),
-                                  ElevatedButton(
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
-                                      // Open the app store
-                                      updateService.openUpdateUrl();
-                                    },
-                                    child: const Text('Update Now'),
-                                  ),
+                                if (updateInfo.releaseNotes != null) ...[
+                                  const SizedBox(height: 8),
+                                  Text(updateInfo.releaseNotes!),
                                 ],
+                              ],
+                            ),
+                            actions: [
+                              if (!updateInfo.isCritical)
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: const Text('Later'),
+                                ),
+                              ElevatedButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                  // Open the app store
+                                  updateService.openUpdateUrl();
+                                },
+                                child: const Text('Update Now'),
                               ),
+                            ],
+                          ),
                         );
                       } else {
+                        // ignore: use_build_context_synchronously
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
                             content: Text('No update info available'),
@@ -802,9 +809,9 @@ class _AdvancedFeaturesShowcaseState
                       ],
                     );
                   },
-                  loading:
-                      () => const Center(child: CircularProgressIndicator()),
-                  error: (_, __) => const Text('Error loading changes'),
+                  loading: () =>
+                      const Center(child: CircularProgressIndicator()),
+                  error: (error, stack) => const Text('Error loading changes'),
                 );
               },
             ),
@@ -826,6 +833,8 @@ class _AdvancedFeaturesShowcaseState
                           },
                         )
                         .then((_) {
+                          if (!context.mounted) return;
+                          // ignore: use_build_context_synchronously
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
                               content: Text('Test operation created'),
@@ -841,6 +850,8 @@ class _AdvancedFeaturesShowcaseState
                     ref.read(offlineSyncServiceProvider).syncChanges().then((
                       _,
                     ) {
+                      if (!context.mounted) return;
+                      // ignore: use_build_context_synchronously
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(content: Text('Sync triggered')),
                       );
@@ -909,29 +920,24 @@ class _AdvancedFeaturesShowcaseState
                   title: const Text('Review Status'),
                   subtitle: Text(
                     shouldRequestReview.when(
-                      data:
-                          (shouldRequest) =>
-                              shouldRequest
-                                  ? 'Ready to request review'
-                                  : 'Not ready for review yet',
+                      data: (shouldRequest) => shouldRequest
+                          ? 'Ready to request review'
+                          : 'Not ready for review yet',
                       loading: () => 'Checking...',
-                      error: (_, __) => 'Error checking review status',
+                      error: (error, stack) => 'Error checking review status',
                     ),
                   ),
                   leading: shouldRequestReview.when(
-                    data:
-                        (shouldRequest) =>
-                            shouldRequest
-                                ? const Icon(Icons.star, color: Colors.amber)
-                                : const Icon(Icons.star_border),
-                    loading:
-                        () => const SizedBox(
-                          width: 24,
-                          height: 24,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        ),
-                    error:
-                        (_, __) => const Icon(Icons.error, color: Colors.red),
+                    data: (shouldRequest) => shouldRequest
+                        ? const Icon(Icons.star, color: Colors.amber)
+                        : const Icon(Icons.star_border),
+                    loading: () => const SizedBox(
+                      width: 24,
+                      height: 24,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    ),
+                    error: (error, stack) =>
+                        const Icon(Icons.error, color: Colors.red),
                   ),
                 );
               },
@@ -945,6 +951,8 @@ class _AdvancedFeaturesShowcaseState
                   onPressed: () {
                     final reviewService = ref.read(appReviewServiceProvider);
                     reviewService.recordSignificantAction().then((_) {
+                      if (!context.mounted) return;
+                      // ignore: use_build_context_synchronously
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
                           content: Text('Significant action recorded'),
@@ -959,6 +967,8 @@ class _AdvancedFeaturesShowcaseState
                   onPressed: () {
                     final reviewService = ref.read(appReviewServiceProvider);
                     reviewService.recordAppSession().then((_) {
+                      if (!context.mounted) return;
+                      // ignore: use_build_context_synchronously
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(content: Text('App session recorded')),
                       );
@@ -978,7 +988,9 @@ class _AdvancedFeaturesShowcaseState
                               'We\'d love to hear your feedback! Please let us know what you think.',
                         )
                         .then((hasFeedback) {
+                          if (!context.mounted) return;
                           if (hasFeedback) {
+                            // ignore: use_build_context_synchronously
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
                                 content: Text('Thank you for your feedback!'),

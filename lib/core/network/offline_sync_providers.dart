@@ -55,8 +55,8 @@ final offlineSyncServiceProvider = Provider<OfflineSyncService>((ref) {
 
       return service;
     },
-    loading: () => _LoadingOfflineSyncService(),
-    error: (error, stack) => _ErrorOfflineSyncService(error.toString()),
+    loading: () => LoadingOfflineSyncService(),
+    error: (error, stack) => ErrorOfflineSyncService(error.toString()),
   );
 });
 
@@ -64,11 +64,11 @@ final offlineSyncServiceProvider = Provider<OfflineSyncService>((ref) {
 final pendingChangesProvider = StreamProvider<List<OfflineChange>>((ref) {
   final offlineSyncService = ref.watch(offlineSyncServiceProvider);
 
-  if (offlineSyncService is _LoadingOfflineSyncService) {
+  if (offlineSyncService is LoadingOfflineSyncService) {
     return const Stream.empty();
   }
 
-  if (offlineSyncService is _ErrorOfflineSyncService) {
+  if (offlineSyncService is ErrorOfflineSyncService) {
     // Return empty list for now, but could handle error state differently
     return const Stream.empty();
   }
@@ -84,7 +84,7 @@ final isOnlineProvider = FutureProvider.autoDispose<bool>((ref) async {
 });
 
 /// Loading placeholder for offline sync service
-class _LoadingOfflineSyncService implements OfflineSyncService {
+class LoadingOfflineSyncService implements OfflineSyncService {
   @override
   Future<OfflineChange> queueChange({
     required String entityType,
@@ -133,10 +133,10 @@ class _LoadingOfflineSyncService implements OfflineSyncService {
 }
 
 /// Error placeholder for offline sync service
-class _ErrorOfflineSyncService implements OfflineSyncService {
+class ErrorOfflineSyncService implements OfflineSyncService {
   final String errorMessage;
 
-  _ErrorOfflineSyncService(this.errorMessage);
+  ErrorOfflineSyncService(this.errorMessage);
 
   @override
   Future<OfflineChange> queueChange({
@@ -293,7 +293,7 @@ class RotatingIcon extends StatefulWidget {
   const RotatingIcon({super.key, required this.icon, required this.color});
 
   @override
-  _RotatingIconState createState() => _RotatingIconState();
+  State<RotatingIcon> createState() => _RotatingIconState();
 }
 
 class _RotatingIconState extends State<RotatingIcon>

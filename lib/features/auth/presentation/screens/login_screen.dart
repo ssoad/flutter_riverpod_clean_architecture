@@ -43,8 +43,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       final authState = ref.read(authProvider);
       if (authState.errorMessage != null) {
         // Show error message if login failed
-        if (!context.mounted) return;
+        if (!mounted) return;
 
+        // ignore: use_build_context_synchronously
         AppUtils.showSnackBar(
           context,
           message: authState.errorMessage!,
