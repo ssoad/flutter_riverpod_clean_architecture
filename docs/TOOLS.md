@@ -1,3 +1,7 @@
+---
+title: Utility Tools & Scripts
+---
+
 # Utility Tools & Scripts
 
 The Flutter Riverpod Clean Architecture template includes several utility scripts that help streamline development workflows.
@@ -17,6 +21,23 @@ This script updates:
 - File structures and import references
 - Build configurations for all supported platforms
 
+## Icon Generation
+
+Generate native app icons for all platforms in one command:
+
+1. Place your icon file (1024x1024) at `assets/icon/app_icon.png`.
+2. Run the generator script:
+
+```bash
+./generate_icons.sh
+```
+
+This updates:
+- Android `mipmap` resources
+- iOS `Assets.xcassets`
+- Web `manifest.json` and icons
+- Windows/macOS/Linux icon files
+
 ## Language Generation
 
 Add new languages or update translations with the localization helper:
@@ -32,7 +53,7 @@ Add new languages or update translations with the localization helper:
 Quickly scaffold new features with all the necessary files:
 
 ```bash
-./create_feature.sh feature_name        # Create a new feature structure
+./generate_feature.sh --name feature_name        # Create a new feature structure
 ```
 
 This creates a new feature folder with data, domain, and presentation layers according to Clean Architecture principles.
@@ -63,7 +84,7 @@ This script converts the Markdown documentation files to HTML and generates a be
 
 ```bash
 # Create a new feature called "user_profile"
-./create_feature.sh user_profile
+./generate_feature.sh --name user_profile
 
 # Generate test files for the user_profile feature
 ./test_generator.sh user_profile
@@ -74,20 +95,4 @@ This script converts the Markdown documentation files to HTML and generates a be
 ```bash
 # Rename your app for production release
 ./rename_app.sh --app-name "My Awesome App" --package-name com.mycompany.awesomeapp
-
-# Update AppStore and PlayStore configurations
-./rename_app.sh --app-name "My Awesome App" --package-name com.mycompany.awesomeapp --app-store-id 123456789 --play-store-id com.mycompany.awesomeapp
-```
-
-### Adding Multiple Languages
-
-```bash
-# Add support for French, German, and Japanese
-./generate_language.sh --add fr,de,ja
-
-# Update all translation files with new strings from the base English file
-./generate_language.sh --sync
-
-# Generate Dart code from the ARB files
-./generate_language.sh --gen
 ```

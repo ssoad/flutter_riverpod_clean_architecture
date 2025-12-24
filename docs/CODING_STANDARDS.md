@@ -1,4 +1,9 @@
-# Coding Standards & Best Practices
+---
+title: Coding Standards
+---
+
+# Coding Standards
+ & Best Practices
 
 To maintain the high quality of this codebase, strict adherence to the following standards is required.
 

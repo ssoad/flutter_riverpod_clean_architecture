@@ -9,6 +9,6 @@ mkdir -p docs/_site
 pip install markdown pyyaml beautifulsoup4 lxml || pip3 install markdown pyyaml beautifulsoup4 lxml
 
 # Run the improved site generator script
-python3 docs/build_site.py || python docs/build_site.py
+python3 build_site.py || python build_site.py
 
 echo "Documentation site built successfully in docs/_site directory"

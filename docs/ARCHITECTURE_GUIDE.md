@@ -1,3 +1,7 @@
+---
+title: Architecture Guide
+---
+
 # Architecture Guide
 
 This project follows strict **Clean Architecture** principles, adapted for Flutter using **Riverpod** 2.0. The core goal is separation of concerns and testability.

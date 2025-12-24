@@ -225,6 +225,20 @@
     <a href="./architecture.html" style="display: inline-block; background: rgba(255,255,255,0.15); backdrop-filter: blur(4px); color: white; padding: 14px 28px; border-radius: 40px; text-decoration: none; font-weight: 600; transition: all 0.3s ease; font-size: 1.05em; box-shadow: 0 6px 15px rgba(0,0,0,0.15);">View Guide</a>
   </div>
 
+  <!-- Coding Standards -->
+  <div style="background: linear-gradient(135deg, #FF9800, #FFB74D); color: white; border-radius: 16px; padding: 35px 30px; box-shadow: 0 15px 30px rgba(255, 152, 0, 0.3); transition: all 0.35s ease; position: relative; overflow: hidden;">
+    <div style="position: absolute; top: -20px; right: -20px; width: 120px; height: 120px; border-radius: 50%; background: rgba(255,255,255,0.1);"></div>
+    <div style="position: absolute; bottom: -30px; left: -20px; width: 80px; height: 80px; border-radius: 50%; background: rgba(255,255,255,0.1);"></div>
+    <div style="font-size: 2.8em; margin-bottom: 20px;">🛡️</div>
+    <h3 style="margin-top: 0; font-size: 1.8em; margin-bottom: 15px; font-weight: 700;">Coding Standards</h3>
+    <p style="margin: 0 0 20px 0; line-height: 1.6; font-size: 1.1em; opacity: 0.9;">Best practices, linting rules, and style guides</p>
+    <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; margin-bottom: 25px;">
+      <span style="display: inline-block; background: rgba(255,255,255,0.15); padding: 6px 14px; border-radius: 30px; font-size: 0.9em;">Best Practices</span>
+      <span style="display: inline-block; background: rgba(255,255,255,0.15); padding: 6px 14px; border-radius: 30px; font-size: 0.9em;">Linting</span>
+    </div>
+    <a href="./coding_standards.html" style="display: inline-block; background: rgba(255,255,255,0.15); backdrop-filter: blur(4px); color: white; padding: 14px 28px; border-radius: 40px; text-decoration: none; font-weight: 600; transition: all 0.3s ease; font-size: 1.05em; box-shadow: 0 6px 15px rgba(0,0,0,0.15);">View Guide</a>
+  </div>
+
   <!-- Features -->
   <div style="background: linear-gradient(135deg, #673AB7, #9575CD); color: white; border-radius: 16px; padding: 35px 30px; box-shadow: 0 15px 30px rgba(103, 58, 183, 0.3); transition: all 0.35s ease; position: relative; overflow: hidden;">
     <div style="position: absolute; top: -20px; right: -20px; width: 120px; height: 120px; border-radius: 50%; background: rgba(255,255,255,0.1);"></div>
@@ -251,6 +265,20 @@
       <span style="display: inline-block; background: rgba(255,255,255,0.15); padding: 6px 14px; border-radius: 30px; font-size: 0.9em;">Tutorials</span>
     </div>
     <a href="./examples.html" style="display: inline-block; background: rgba(255,255,255,0.15); backdrop-filter: blur(4px); color: white; padding: 14px 28px; border-radius: 40px; text-decoration: none; font-weight: 600; transition: all 0.3s ease; font-size: 1.05em; box-shadow: 0 6px 15px rgba(0,0,0,0.15);">View Guide</a>
+  </div>
+
+  <!-- CLI Tools -->
+  <div style="background: linear-gradient(135deg, #607D8B, #90A4AE); color: white; border-radius: 16px; padding: 35px 30px; box-shadow: 0 15px 30px rgba(96, 125, 139, 0.3); transition: all 0.35s ease; position: relative; overflow: hidden;">
+    <div style="position: absolute; top: -20px; right: -20px; width: 120px; height: 120px; border-radius: 50%; background: rgba(255,255,255,0.1);"></div>
+    <div style="position: absolute; bottom: -30px; left: -20px; width: 80px; height: 80px; border-radius: 50%; background: rgba(255,255,255,0.1);"></div>
+    <div style="font-size: 2.8em; margin-bottom: 20px;">🛠️</div>
+    <h3 style="margin-top: 0; font-size: 1.8em; margin-bottom: 15px; font-weight: 700;">CLI Tools</h3>
+    <p style="margin: 0 0 20px 0; line-height: 1.6; font-size: 1.1em; opacity: 0.9;">Generators and automation scripts</p>
+    <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; margin-bottom: 25px;">
+      <span style="display: inline-block; background: rgba(255,255,255,0.15); padding: 6px 14px; border-radius: 30px; font-size: 0.9em;">Automation</span>
+      <span style="display: inline-block; background: rgba(255,255,255,0.15); padding: 6px 14px; border-radius: 30px; font-size: 0.9em;">Scripts</span>
+    </div>
+    <a href="./tools.html" style="display: inline-block; background: rgba(255,255,255,0.15); backdrop-filter: blur(4px); color: white; padding: 14px 28px; border-radius: 40px; text-decoration: none; font-weight: 600; transition: all 0.3s ease; font-size: 1.05em; box-shadow: 0 6px 15px rgba(0,0,0,0.15);">View Guide</a>
   </div>
 </div>
 

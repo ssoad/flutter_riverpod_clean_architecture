@@ -1,3 +1,7 @@
+---
+title: Features
+---
+
 # Core Features
 
 This document provides detailed information about the core features in the Flutter Riverpod Clean Architecture template.
