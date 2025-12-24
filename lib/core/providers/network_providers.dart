@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import '../network/interceptors/retry_interceptor.dart';
 import '../constants/app_constants.dart';
 
 part 'network_providers.g.dart';
@@ -27,6 +28,7 @@ Dio dio(Ref ref) {
       error: true,
     ),
   );
+  dio.interceptors.add(RetryInterceptor(dio: dio));
 
   return dio;
 }
