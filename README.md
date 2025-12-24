@@ -101,6 +101,23 @@ This updates:
 - macOS, Windows, Linux Build files
 - Dart package name & imports
 
+## 🎨 Icon Generation
+
+Generate native app icons for all platforms in one command:
+
+1. Place your icon file (1024x1024) at `assets/icon/app_icon.png`.
+2. Run the generator script:
+
+```bash
+./generate_icons.sh
+```
+
+This updates:
+- Android `mipmap` resources
+- iOS `Assets.xcassets`
+- Web `manifest.json` and icons
+- Windows/macOS/Linux icon files
+
 ---
 
 ## 🏗️ Project Structure
