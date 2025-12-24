@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:flutter_riverpod_clean_architecture/core/utils/app_utils.dart';
 import 'package:flutter_riverpod_clean_architecture/features/survey/presentation/providers/survey_provider.dart';
+import 'package:flutter_riverpod_clean_architecture/features/survey/providers/survey_providers.dart';
 
 class SurveyScreen extends ConsumerStatefulWidget {
   const SurveyScreen({super.key});

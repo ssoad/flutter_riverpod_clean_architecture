@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:flutter_riverpod_clean_architecture/features/chat/data/models/message_model.dart';
-import 'package:flutter/foundation.dart';
+import 'package:flutter_riverpod_clean_architecture/core/utils/logger.dart';
 
 abstract class ChatRemoteDataSource {
   Stream<MessageModel> get messages;
@@ -33,23 +33,23 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
 
       _channel!.stream.listen(
         (data) {
-          debugPrint('WebSocket received: $data');
+          Logger.debug('WebSocket received: $data');
           // Expecting simple text echo from this server
           if (data is String) {
             _messageController.add(MessageModel.fromText(data));
           }
         },
         onError: (error) {
-          debugPrint('WebSocket error: $error');
+          Logger.error('WebSocket error', error);
           // Reconnection logic could go here
         },
         onDone: () {
-          debugPrint('WebSocket closed');
+          Logger.info('WebSocket closed');
           _channel = null;
         },
       );
     } catch (e) {
-      debugPrint('WebSocket Connection Failed: $e');
+      Logger.error('WebSocket Connection Failed', e);
       rethrow;
     }
   }

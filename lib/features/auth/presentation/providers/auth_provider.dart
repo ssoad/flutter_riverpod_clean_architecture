@@ -1,8 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod_clean_architecture/features/auth/domain/entities/user_entity.dart';
-import 'package:flutter_riverpod_clean_architecture/features/auth/domain/usecases/login_use_case.dart';
-import 'package:flutter_riverpod_clean_architecture/features/auth/domain/usecases/logout_use_case.dart';
-import 'package:flutter_riverpod_clean_architecture/features/auth/domain/usecases/register_use_case.dart';
+import 'package:flutter_riverpod_clean_architecture/features/auth/providers/auth_providers.dart';
 
 // Auth state
 class AuthState {
