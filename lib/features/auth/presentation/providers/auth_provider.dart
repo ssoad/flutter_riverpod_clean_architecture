@@ -55,8 +55,6 @@ class AuthNotifier extends Notifier<AuthState> {
     final loginUseCase = ref.read(loginUseCaseProvider);
     final result = await loginUseCase.execute(email: email, password: password);
 
-    if (!ref.exists(authProvider)) return;
-
     result.fold(
       (failure) => state = state.copyWith(
         isLoading: false,
@@ -87,8 +85,6 @@ class AuthNotifier extends Notifier<AuthState> {
       password: password,
     );
 
-    if (!ref.exists(authProvider)) return;
-
     result.fold(
       (failure) => state = state.copyWith(
         isLoading: false,
@@ -110,8 +106,6 @@ class AuthNotifier extends Notifier<AuthState> {
 
     final logoutUseCase = ref.read(logoutUseCaseProvider);
     final result = await logoutUseCase.execute();
-
-    if (!ref.exists(authProvider)) return;
 
     result.fold(
       (failure) => state = state.copyWith(
