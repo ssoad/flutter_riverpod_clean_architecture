@@ -80,8 +80,8 @@ dev_dependencies:
   flutter_gen_runner: ^5.10.0
   change_app_package_name: ^1.5.0
   riverpod_generator: ^3.0.3
-  riverpod_lint: ^3.0.3
-  custom_lint: ^0.8.1
+  riverpod_lint: ^2.3.13
+  custom_lint: ^0.6.4
   mocktail: ^1.0.4
   flutter_launcher_icons: ^0.14.4
 
