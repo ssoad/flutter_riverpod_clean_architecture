@@ -45,8 +45,8 @@ A production-ready, highly scalable Flutter template designed for modern applica
 ## 🛠️ Quick Start
 
 ### 1. Prerequisites
-- Flutter SDK (3.7+)
-- Dart SDK (3.0+)
+- Flutter SDK (3.35+, latest stable recommended)
+- Dart SDK (3.10+)
 
 ### 2. Installation
 ```bash

@@ -21,22 +21,18 @@ class UserEntity extends Equatable {
 
   @override
   List<Object?> get props => [
-        id,
-        name,
-        email,
-        profilePicture,
-        phone,
-        createdAt,
-        updatedAt,
-      ];
+    id,
+    name,
+    email,
+    profilePicture,
+    phone,
+    createdAt,
+    updatedAt,
+  ];
 
   // Factory constructor to create an empty user
   factory UserEntity.empty() {
-    return const UserEntity(
-      id: '',
-      name: '',
-      email: '',
-    );
+    return const UserEntity(id: '', name: '', email: '');
   }
 
   // CopyWith method for creating a new instance with some updated properties

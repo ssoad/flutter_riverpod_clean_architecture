@@ -9,6 +9,16 @@
 // ignore_for_file: type=lint
 // ignore_for_file: deprecated_member_use,directives_ordering,implicit_dynamic_list_literal,unnecessary_import
 
+class $AssetsFontsGen {
+  const $AssetsFontsGen();
+
+  /// File path: assets/fonts/PLACE_FONTS_HERE
+  String get placeFontsHere => 'assets/fonts/PLACE_FONTS_HERE';
+
+  /// List of all assets
+  List<String> get values => [placeFontsHere];
+}
+
 class $AssetsImagesGen {
   const $AssetsImagesGen();
 
@@ -97,8 +107,7 @@ class $AssetsImagesJaGen {
   List<String> get values => [welcomePng];
 }
 
-class Assets {
-  const Assets._();
-
+abstract final class Assets {
+  static const $AssetsFontsGen fonts = $AssetsFontsGen();
   static const $AssetsImagesGen images = $AssetsImagesGen();
 }

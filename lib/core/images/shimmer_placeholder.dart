@@ -72,10 +72,9 @@ class _ShimmerPlaceholderState extends State<ShimmerPlaceholder>
           height: widget.height,
           decoration: BoxDecoration(
             shape: widget.shape,
-            borderRadius:
-                widget.shape == BoxShape.rectangle
-                    ? widget.borderRadius ?? BorderRadius.zero
-                    : null,
+            borderRadius: widget.shape == BoxShape.rectangle
+                ? widget.borderRadius ?? BorderRadius.zero
+                : null,
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,

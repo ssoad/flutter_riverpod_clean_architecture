@@ -45,10 +45,9 @@ class LanguageSelectorWidget extends ConsumerWidget {
                   style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
               ),
-              trailing:
-                  isSelected
-                      ? const Icon(Icons.check, color: Colors.green)
-                      : null,
+              trailing: isSelected
+                  ? const Icon(Icons.check, color: Colors.green)
+                  : null,
               selected: isSelected,
               onTap: () async {
                 await ref

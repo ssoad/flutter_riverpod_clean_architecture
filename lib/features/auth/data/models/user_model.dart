@@ -23,22 +23,23 @@ class UserModel extends Equatable {
     this.createdAt,
     this.updatedAt,
   });
-  
+
   @override
   List<Object?> get props => [
-    id, 
-    name, 
-    email, 
-    profilePicture, 
-    phone, 
-    createdAt, 
-    updatedAt
+    id,
+    name,
+    email,
+    profilePicture,
+    phone,
+    createdAt,
+    updatedAt,
   ];
 
-  factory UserModel.fromJson(Map<String, dynamic> json) => _$UserModelFromJson(json);
-  
+  factory UserModel.fromJson(Map<String, dynamic> json) =>
+      _$UserModelFromJson(json);
+
   Map<String, dynamic> toJson() => _$UserModelToJson(this);
-      
+
   // Factory constructor to convert UserEntity to UserModel
   factory UserModel.fromEntity(UserEntity entity) {
     return UserModel(
