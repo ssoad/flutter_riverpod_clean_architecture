@@ -10,8 +10,23 @@
 include: package:flutter_lints/flutter.yaml
 
 analyzer:
+  exclude:
+    - build/**
+    - android/**
+    - ios/**
+    - web/**
+    - windows/**
+    - macos/**
+    - linux/**
   plugins:
     - custom_lint
+  # custom_lint (as of 0.8.1, the latest release) still uses the legacy
+  # analyzer-plugin mechanism; there is no published version yet that
+  # supports the new plugin protocol this warns about, so silence it until
+  # one exists. See https://dart.dev/tools/analyzer-plugins and
+  # https://pub.dev/packages/custom_lint/changelog.
+  errors:
+    analysis_options_deprecated_plugins: ignore
 
 linter:
   rules:
