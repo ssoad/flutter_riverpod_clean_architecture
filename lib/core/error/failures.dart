@@ -12,15 +12,24 @@ abstract class Failure extends Equatable {
 
 // Network failures
 class NetworkFailure extends Failure {
-  const NetworkFailure({super.message = 'No internet connection', super.statusCode});
+  const NetworkFailure({
+    super.message = 'No internet connection',
+    super.statusCode,
+  });
 }
 
 class ServerFailure extends Failure {
-  const ServerFailure({super.message = 'Server error occurred', super.statusCode});
+  const ServerFailure({
+    super.message = 'Server error occurred',
+    super.statusCode,
+  });
 }
 
 class TimeoutFailure extends Failure {
-  const TimeoutFailure({super.message = 'Connection timeout', super.statusCode});
+  const TimeoutFailure({
+    super.message = 'Connection timeout',
+    super.statusCode,
+  });
 }
 
 // Data failures
@@ -29,16 +38,25 @@ class CacheFailure extends Failure {
 }
 
 class ValidationFailure extends Failure {
-  const ValidationFailure({super.message = 'Validation error', super.statusCode});
+  const ValidationFailure({
+    super.message = 'Validation error',
+    super.statusCode,
+  });
 }
 
 // Auth failures
 class AuthFailure extends Failure {
-  const AuthFailure({super.message = 'Authentication failed', super.statusCode});
+  const AuthFailure({
+    super.message = 'Authentication failed',
+    super.statusCode,
+  });
 }
 
 class UnauthorizedFailure extends Failure {
-  const UnauthorizedFailure({super.message = 'Unauthorized access', super.statusCode});
+  const UnauthorizedFailure({
+    super.message = 'Unauthorized access',
+    super.statusCode,
+  });
 }
 
 class InputFailure extends Failure {

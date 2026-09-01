@@ -144,6 +144,28 @@ class AuthRepositoryImpl implements AuthRepository {
       return const Left(ServerFailure());
     }
   }
+
+  @override
+  Future<Either<Failure, UserEntity>> updateProfile(UserEntity user) async {
+    try {
+      final updated = UserModel.fromEntity(
+        user.copyWith(updatedAt: DateTime.now()),
+      );
+
+      // Persist the updated profile locally. In a real app this would also
+      // be synced to a remote backend via the data source.
+      await _localStorageService.setObject(
+        AppConstants.userDataKey,
+        updated.toJson(),
+      );
+
+      return Right(updated.toEntity());
+    } on CacheException catch (e) {
+      return Left(CacheFailure(message: e.message));
+    } on Exception {
+      return const Left(ServerFailure());
+    }
+  }
 }
 
 final secureStorageServiceProvider = Provider<SecureStorageService>((ref) {

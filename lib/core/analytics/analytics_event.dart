@@ -1,4 +1,3 @@
-
 /// Base class for all analytics events in the app
 abstract class AnalyticsEvent {
   /// The name of the event as it will be reported to analytics services
@@ -24,7 +23,7 @@ class ScreenViewEvent extends AnalyticsEvent {
   @override
   Map<String, dynamic> get parameters => {
     'screen_name': screenName,
-    if (screenParameters != null) ...screenParameters!,
+    ...?screenParameters,
   };
 }
 
@@ -53,7 +52,7 @@ class UserActionEvent extends AnalyticsEvent {
     if (category != null) 'category': category,
     if (label != null) 'label': label,
     if (value != null) 'value': value,
-    if (extraParams != null) ...extraParams!,
+    ...?extraParams,
   };
 }
 
@@ -105,6 +104,6 @@ class PerformanceEvent extends AnalyticsEvent {
     'metric_name': metricName,
     'value': value,
     'unit': unit,
-    if (extraParams != null) ...extraParams!,
+    ...?extraParams,
   };
 }

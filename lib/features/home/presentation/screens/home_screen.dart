@@ -119,7 +119,7 @@ class HomeScreen extends ConsumerWidget {
                           IconButton(
                             icon: const Icon(Icons.edit),
                             onPressed: () {
-                              // Add edit profile logic
+                              context.push(AppConstants.profileRoute);
                             },
                           ),
                         ],
@@ -148,14 +148,18 @@ class HomeScreen extends ConsumerWidget {
                         icon: Icons.post_add,
                         title: 'Posts',
                         color: Colors.blue,
-                        onTap: () {},
+                        onTap: () {
+                          context.push(AppConstants.postsRoute);
+                        },
                       ),
                       _buildFeatureTile(
                         context,
-                        icon: Icons.photo_library,
-                        title: 'Photos',
-                        color: Colors.green,
-                        onTap: () {},
+                        icon: Icons.checklist,
+                        title: 'Tasks',
+                        color: Colors.teal,
+                        onTap: () {
+                          context.push(AppConstants.tasksRoute);
+                        },
                       ),
                       _buildFeatureTile(
                         context,
@@ -173,6 +177,24 @@ class HomeScreen extends ConsumerWidget {
                         color: Colors.purple,
                         onTap: () {
                           context.push(AppConstants.chatRoute);
+                        },
+                      ),
+                      _buildFeatureTile(
+                        context,
+                        icon: Icons.notifications_outlined,
+                        title: 'Notifications',
+                        color: Colors.pink,
+                        onTap: () {
+                          context.push(AppConstants.notificationsRoute);
+                        },
+                      ),
+                      _buildFeatureTile(
+                        context,
+                        icon: Icons.explore_outlined,
+                        title: 'Examples',
+                        color: Colors.indigo,
+                        onTap: () {
+                          context.push(AppConstants.examplesHubRoute);
                         },
                       ),
                     ],
@@ -245,11 +267,18 @@ class HomeScreen extends ConsumerWidget {
         ],
         onTap: (index) {
           // Handle navigation
-          if (index != 0) {
-            AppUtils.showSnackBar(
-              context,
-              message: 'This feature is not implemented yet',
-            );
+          switch (index) {
+            case 0:
+              break;
+            case 1:
+              context.push(AppConstants.examplesHubRoute);
+              break;
+            case 2:
+              context.push(AppConstants.notificationsRoute);
+              break;
+            case 3:
+              context.push(AppConstants.settingsRoute);
+              break;
           }
         },
       ),

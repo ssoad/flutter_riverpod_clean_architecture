@@ -5,14 +5,31 @@ import 'package:flutter_riverpod_clean_architecture/core/providers/localization_
 import 'package:flutter_riverpod_clean_architecture/core/router/locale_aware_router.dart';
 import 'package:flutter_riverpod_clean_architecture/examples/localization_assets_demo.dart';
 import 'package:flutter_riverpod_clean_architecture/features/auth/presentation/screens/login_screen.dart';
+import 'package:flutter_riverpod_clean_architecture/features/auth/presentation/screens/profile_screen.dart';
 import 'package:flutter_riverpod_clean_architecture/features/auth/presentation/screens/register_screen.dart';
 import 'package:flutter_riverpod_clean_architecture/features/home/presentation/screens/home_screen.dart';
 import 'package:flutter_riverpod_clean_architecture/features/auth/presentation/providers/auth_provider.dart';
+import 'package:flutter_riverpod_clean_architecture/features/notifications/presentation/screens/notifications_screen.dart';
+import 'package:flutter_riverpod_clean_architecture/features/posts/domain/entities/post_entity.dart';
+import 'package:flutter_riverpod_clean_architecture/features/posts/presentation/screens/post_detail_screen.dart';
+import 'package:flutter_riverpod_clean_architecture/features/posts/presentation/screens/posts_screen.dart';
 import 'package:flutter_riverpod_clean_architecture/features/settings/presentation/screens/settings_screen.dart';
 import 'package:flutter_riverpod_clean_architecture/features/settings/presentation/screens/language_settings_screen.dart';
+import 'package:flutter_riverpod_clean_architecture/features/tasks/presentation/screens/tasks_screen.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod_clean_architecture/features/chat/presentation/screens/chat_screen.dart';
 import 'package:flutter_riverpod_clean_architecture/features/survey/presentation/screens/survey_screen.dart';
+import 'package:flutter_riverpod_clean_architecture/examples/integrations/websocket_example_screen.dart';
+import 'package:flutter_riverpod_clean_architecture/examples/integrations/webhook_example_screen.dart';
+import 'package:flutter_riverpod_clean_architecture/examples/integrations/graphql_example_screen.dart';
+import 'package:flutter_riverpod_clean_architecture/examples/integrations/grpc_example_screen.dart';
+import 'package:flutter_riverpod_clean_architecture/examples/integrations/background_tasks_example_screen.dart';
+import 'package:flutter_riverpod_clean_architecture/examples/integrations/file_transfer_example_screen.dart';
+import 'package:flutter_riverpod_clean_architecture/examples/integrations/biometric_example_screen.dart';
+import 'package:flutter_riverpod_clean_architecture/examples/advanced_features_showcase.dart';
+import 'package:flutter_riverpod_clean_architecture/examples/localization_demo.dart';
+import 'package:flutter_riverpod_clean_architecture/examples/language_selector.dart';
+import 'package:flutter_riverpod_clean_architecture/examples/examples_hub_screen.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
   final authState = ref.watch(authProvider);
@@ -105,6 +122,123 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: AppConstants.surveyRoute,
         name: 'survey',
         builder: (context, state) => const SurveyScreen(),
+      ),
+
+      // Profile route
+      GoRoute(
+        path: AppConstants.profileRoute,
+        name: 'profile',
+        builder: (context, state) => const ProfileScreen(),
+      ),
+
+      // Tasks route
+      GoRoute(
+        path: AppConstants.tasksRoute,
+        name: 'tasks',
+        builder: (context, state) => const TasksScreen(),
+      ),
+
+      // Notifications route
+      GoRoute(
+        path: AppConstants.notificationsRoute,
+        name: 'notifications',
+        builder: (context, state) => const NotificationsScreen(),
+      ),
+
+      // Posts route
+      GoRoute(
+        path: AppConstants.postsRoute,
+        name: 'posts',
+        builder: (context, state) => const PostsScreen(),
+      ),
+
+      // Post detail route - expects a PostEntity via `extra`
+      GoRoute(
+        path: AppConstants.postDetailRoute,
+        name: 'post_detail',
+        builder: (context, state) =>
+            PostDetailScreen(post: state.extra as PostEntity),
+      ),
+
+      // WebSocket integration example route
+      GoRoute(
+        path: AppConstants.webSocketDemoRoute,
+        name: 'websocket_demo',
+        builder: (context, state) => const WebSocketExampleScreen(),
+      ),
+
+      // Webhook integration example route
+      GoRoute(
+        path: AppConstants.webhookDemoRoute,
+        name: 'webhook_demo',
+        builder: (context, state) => const WebhookExampleScreen(),
+      ),
+
+      // GraphQL integration example route
+      GoRoute(
+        path: AppConstants.graphqlDemoRoute,
+        name: 'graphql_demo',
+        builder: (context, state) => const GraphQLExampleScreen(),
+      ),
+
+      // gRPC integration example route
+      GoRoute(
+        path: AppConstants.grpcDemoRoute,
+        name: 'grpc_demo',
+        builder: (context, state) => const GrpcExampleScreen(),
+      ),
+
+      // Background tasks (WorkManager) example route
+      GoRoute(
+        path: AppConstants.backgroundTasksDemoRoute,
+        name: 'background_tasks_demo',
+        builder: (context, state) => const BackgroundTasksExampleScreen(),
+      ),
+
+      // File transfer (upload/download with progress) example route
+      GoRoute(
+        path: AppConstants.fileTransferDemoRoute,
+        name: 'file_transfer_demo',
+        builder: (context, state) => const FileTransferExampleScreen(),
+      ),
+
+      // Biometric authentication example route
+      GoRoute(
+        path: AppConstants.biometricDemoRoute,
+        name: 'biometric_demo',
+        builder: (context, state) => const BiometricExampleScreen(),
+      ),
+
+      // Advanced features showcase route (feature flags, analytics,
+      // notifications, images, logging, accessibility, updates, offline
+      // sync, app review - previously implemented but unreachable)
+      GoRoute(
+        path: AppConstants.advancedFeaturesRoute,
+        name: 'advanced_features',
+        builder: (context, state) => const AdvancedFeaturesShowcase(),
+      ),
+
+      // Localization demo route (previously implemented but unreachable)
+      GoRoute(
+        path: AppConstants.localizationDemoScreenRoute,
+        name: 'localization_demo_screen',
+        builder: (context, state) => const LocalizationDemo(),
+      ),
+
+      // Language selector demo route (previously implemented but
+      // unreachable)
+      GoRoute(
+        path: AppConstants.languageSelectorDemoRoute,
+        name: 'language_selector_demo',
+        builder: (context, state) => const LanguageSelectorExample(),
+      ),
+
+      // Examples hub - the single entry point listing every pattern demo
+      // in this template
+      GoRoute(
+        path: AppConstants.examplesHubRoute,
+        name: 'examples_hub',
+        builder: (context, state) => const ExamplesHubScreen(),
       ),
 
       // Initial route - redirects based on auth state

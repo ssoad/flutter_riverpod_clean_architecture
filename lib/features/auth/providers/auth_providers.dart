@@ -3,6 +3,7 @@ import 'package:flutter_riverpod_clean_architecture/features/auth/data/repositor
 import 'package:flutter_riverpod_clean_architecture/features/auth/domain/usecases/login_use_case.dart';
 import 'package:flutter_riverpod_clean_architecture/features/auth/domain/usecases/logout_use_case.dart';
 import 'package:flutter_riverpod_clean_architecture/features/auth/domain/usecases/register_use_case.dart';
+import 'package:flutter_riverpod_clean_architecture/features/auth/domain/usecases/update_profile_use_case.dart';
 
 /// Data layer dependency injection providers
 /// These providers are responsible for creating and managing data layer instances
@@ -20,4 +21,8 @@ final logoutUseCaseProvider = Provider<LogoutUseCase>((ref) {
 
 final registerUseCaseProvider = Provider<RegisterUseCase>((ref) {
   return RegisterUseCase(ref.watch(authRepositoryProvider));
+});
+
+final updateProfileUseCaseProvider = Provider<UpdateProfileUseCase>((ref) {
+  return UpdateProfileUseCase(ref.watch(authRepositoryProvider));
 });

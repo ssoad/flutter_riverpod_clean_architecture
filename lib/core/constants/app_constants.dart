@@ -31,11 +31,34 @@ class AppConstants {
   static const String languageSettingsRoute = '/settings/language';
   static const String localizationDemoRoute = '/demo/localization';
   static const String localizationAssetsDemoRoute = '/demo/localization/assets';
+  static const String tasksRoute = '/tasks';
+  static const String notificationsRoute = '/notifications';
+  static const String postsRoute = '/posts';
+  static const String postDetailRoute = '/posts/detail';
+
+  // Examples hub & integration pattern demo routes
+  static const String examplesHubRoute = '/examples';
+  static const String advancedFeaturesRoute = '/examples/advanced';
+  static const String localizationDemoScreenRoute = '/examples/localization';
+  static const String languageSelectorDemoRoute =
+      '/examples/localization/selector';
+  static const String biometricDemoRoute = '/examples/biometric';
+  static const String webSocketDemoRoute = '/examples/websocket';
+  static const String webhookDemoRoute = '/examples/webhook';
+  static const String graphqlDemoRoute = '/examples/graphql';
+  static const String grpcDemoRoute = '/examples/grpc';
+  static const String backgroundTasksDemoRoute = '/examples/background-tasks';
+  static const String fileTransferDemoRoute = '/examples/file-transfer';
 
   // Hive box names
   static const String settingsBox = 'settings';
   static const String cacheBox = 'cache';
   static const String offlineSyncBox = 'offlineSync';
+
+  // Local storage keys
+  static const String tasksStorageKey = 'tasks_data';
+  static const String notificationsStorageKey = 'notifications_data';
+  static const String postsCacheKey = 'posts_cache_data';
 
   // Animation durations
   static const Duration defaultAnimationDuration = Duration(milliseconds: 300);

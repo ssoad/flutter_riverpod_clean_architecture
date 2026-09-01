@@ -43,8 +43,6 @@ final localizationRouterObserverProvider = Provider<NavigatorObserver>((ref) {
 class _LocalizationRouterObserverWithRef extends NavigatorObserver {
   _LocalizationRouterObserverWithRef(this.ref);
   final Ref ref;
-
-
 }
 
 /// Extension for locale-aware navigation

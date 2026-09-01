@@ -79,7 +79,12 @@ class LanguageSelectorExample extends ConsumerWidget {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      context.tr('lastUpdated').replaceAll('{date}', context.formatDate(DateTime.now())),
+                      context
+                          .tr('lastUpdated')
+                          .replaceAll(
+                            '{date}',
+                            context.formatDate(DateTime.now()),
+                          ),
                       style: Theme.of(context).textTheme.bodyMedium,
                     ),
                   ],

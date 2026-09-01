@@ -33,6 +33,35 @@ A production-ready, highly scalable Flutter template designed for modern applica
 
 ---
 
+## 🧭 Examples Hub - start here for any requirement
+
+This template isn't just Clean Architecture boilerplate - it ships small,
+copyable examples of the integration and platform patterns most apps need
+sooner or later, so you can pick the one your requirement matches and adapt
+it instead of researching it from scratch. Run the app, sign in, and tap
+**Examples** (home screen tile, or the compass icon in the bottom nav) to
+browse all of them from `lib/examples/examples_hub_screen.dart`.
+
+| Pattern | Where | Notes |
+|---|---|---|
+| REST | `features/posts/` (uses `core/network/api_client.dart`) | Repository pattern over Dio, with offline cache fallback |
+| WebSocket | `core/network/integrations/websocket_client.dart` | Connect/send/receive/reconnect; demoed against a public echo server |
+| Webhook (send) | `core/network/integrations/webhook_sender.dart` + `webhook_signature.dart` | HMAC-SHA256 signed outbound POST |
+| Webhook (receive) | `core/network/integrations/local_webhook_receiver.dart` | Local-only `dart:io HttpServer` for dev/testing; not available on web |
+| GraphQL | `core/network/integrations/graphql_client.dart` | Thin Dio wrapper - a query and a mutation, no extra state-management framework |
+| gRPC | `core/network/integrations/grpc/` | Real `protoc`-generated client for a unary + a server-streaming call; not available on web. Run `dart run tool/grpc_demo_server.dart` locally to exercise the streaming call end-to-end |
+| Background tasks | `core/background/background_task_service.dart` | `workmanager`: one-off and periodic scheduled work, survives the app being closed |
+| Biometric auth | `core/auth/local_biometric_service.dart` + `examples/biometrics_demo.dart` | Fingerprint/Face ID gating app access and sensitive transactions |
+| File upload/download | `core/network/integrations/file_transfer_service.dart` | Multipart upload and download, both with progress callbacks; not available on web |
+| Feature flags, analytics, notifications, images, logging, accessibility, app updates, offline sync, app reviews | `examples/advanced_features_showcase.dart` | One screen touring the rest of `core/` |
+
+A few of these (the local webhook receiver, gRPC, and file transfer to disk)
+need a real filesystem or raw TCP socket and are intentionally unavailable
+on Flutter Web - each says so in its own screen and doc comment rather than
+failing silently.
+
+---
+
 ## 📚 Documentation
 
 - [**Architecture Guide**](docs/ARCHITECTURE_GUIDE.md): Deep dive into the project structure.
@@ -45,8 +74,8 @@ A production-ready, highly scalable Flutter template designed for modern applica
 ## 🛠️ Quick Start
 
 ### 1. Prerequisites
-- Flutter SDK (3.7+)
-- Dart SDK (3.0+)
+- Flutter SDK (3.35+, latest stable recommended)
+- Dart SDK (3.10+)
 
 ### 2. Installation
 ```bash
