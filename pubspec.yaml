@@ -62,6 +62,10 @@ dependencies:
   web_socket_channel: ^3.0.3
   flutter_form_builder: ^10.2.0
   form_builder_validators: ^11.2.0
+  grpc: ^4.0.4
+  protobuf: ^4.0.0
+  crypto: ^3.0.6
+  path_provider: ^2.1.5
 
 dev_dependencies:
   flutter_test:

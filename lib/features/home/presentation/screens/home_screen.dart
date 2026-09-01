@@ -188,6 +188,15 @@ class HomeScreen extends ConsumerWidget {
                           context.push(AppConstants.notificationsRoute);
                         },
                       ),
+                      _buildFeatureTile(
+                        context,
+                        icon: Icons.explore_outlined,
+                        title: 'Examples',
+                        color: Colors.indigo,
+                        onTap: () {
+                          context.push(AppConstants.examplesHubRoute);
+                        },
+                      ),
                     ],
                   ),
 
@@ -261,14 +270,15 @@ class HomeScreen extends ConsumerWidget {
           switch (index) {
             case 0:
               break;
+            case 1:
+              context.push(AppConstants.examplesHubRoute);
+              break;
             case 2:
               context.push(AppConstants.notificationsRoute);
               break;
-            default:
-              AppUtils.showSnackBar(
-                context,
-                message: 'This feature is not implemented yet',
-              );
+            case 3:
+              context.push(AppConstants.settingsRoute);
+              break;
           }
         },
       ),

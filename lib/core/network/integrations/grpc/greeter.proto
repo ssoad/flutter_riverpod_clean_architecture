@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+// The classic gRPC "Greeter" example contract - `SayHello` matches the
+// canonical helloworld.Greeter service that ships with every gRPC
+// getting-started guide (and that public test servers such as grpcb.in
+// implement), so the unary call in this demo works against a real server
+// with zero setup. `SayHelloStream` extends it with a server-streaming call;
+// point the demo at your own server (see tool/grpc_demo_server.dart for a
+// local reference implementation of both) to exercise it.
+package helloworld;
+
+service Greeter {
+  // Unary RPC: one request, one response.
+  rpc SayHello (HelloRequest) returns (HelloReply);
+
+  // Server-streaming RPC: one request, a stream of responses.
+  rpc SayHelloStream (HelloRequest) returns (stream HelloReply);
+}
+
+message HelloRequest {
+  string name = 1;
+}
+
+message HelloReply {
+  string message = 1;
+}
