@@ -24,4 +24,7 @@ abstract class AuthRepository {
 
   /// Get the current authenticated user
   Future<Either<Failure, UserEntity>> getCurrentUser();
+
+  /// Update the current user's profile information
+  Future<Either<Failure, UserEntity>> updateProfile(UserEntity user);
 }

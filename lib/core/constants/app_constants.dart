@@ -31,11 +31,20 @@ class AppConstants {
   static const String languageSettingsRoute = '/settings/language';
   static const String localizationDemoRoute = '/demo/localization';
   static const String localizationAssetsDemoRoute = '/demo/localization/assets';
+  static const String tasksRoute = '/tasks';
+  static const String notificationsRoute = '/notifications';
+  static const String postsRoute = '/posts';
+  static const String postDetailRoute = '/posts/detail';
 
   // Hive box names
   static const String settingsBox = 'settings';
   static const String cacheBox = 'cache';
   static const String offlineSyncBox = 'offlineSync';
+
+  // Local storage keys
+  static const String tasksStorageKey = 'tasks_data';
+  static const String notificationsStorageKey = 'notifications_data';
+  static const String postsCacheKey = 'posts_cache_data';
 
   // Animation durations
   static const Duration defaultAnimationDuration = Duration(milliseconds: 300);

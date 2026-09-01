@@ -120,6 +120,29 @@ class AuthNotifier extends Notifier<AuthState> {
       ),
     );
   }
+
+  // Update profile
+  Future<bool> updateProfile(UserEntity user) async {
+    state = state.copyWith(isLoading: true, errorMessage: null);
+
+    final updateProfileUseCase = ref.read(updateProfileUseCaseProvider);
+    final result = await updateProfileUseCase.execute(user);
+
+    return result.fold(
+      (failure) {
+        state = state.copyWith(isLoading: false, errorMessage: failure.message);
+        return false;
+      },
+      (updatedUser) {
+        state = state.copyWith(
+          isLoading: false,
+          user: updatedUser,
+          errorMessage: null,
+        );
+        return true;
+      },
+    );
+  }
 }
 
 // Auth provider
